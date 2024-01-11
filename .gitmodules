@@ -1,0 +1,3 @@
+[submodule "hkplusplus"]
+	path = hkplusplus
+	url = https://github.com/lpolech/hkplusplus.git
