@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class GeneticAlgorithm<PROBLEM extends BaseProblemRepresentation> extends EvolutionaryAlgorithm<Integer, PROBLEM> {
 
 	protected List<BaseIndividual<Integer, PROBLEM>> population;
-  protected double crossoverProbability;
+  	protected double crossoverProbability;
 	protected double mutationProbability;
 	protected int numObjectives;
 

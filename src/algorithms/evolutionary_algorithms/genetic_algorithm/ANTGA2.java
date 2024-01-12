@@ -82,6 +82,7 @@ public class ANTGA2 <PROBLEM extends BaseProblemRepresentation> extends GeneticA
         combinedPopulations = getNondominated(combinedPopulations);
 
         while (generation < generationLimit) {
+            System.out.println(generation);
             newPopulation = new ArrayList<>();
             sorter.nondominatedSorting(population);
 
