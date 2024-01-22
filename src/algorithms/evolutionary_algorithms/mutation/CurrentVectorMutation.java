@@ -53,4 +53,9 @@ public class CurrentVectorMutation extends BaseMutation<Double, BaseProblemRepre
     return mutant;
   }
 
+  @Override
+  public List<Double> mutate(List<BaseIndividual<Double, BaseProblemRepresentation>> population, double TSPf, double KNAPf, List<Double> genesToMutate, int current, int populationSize, ParameterSet<Double, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
 }

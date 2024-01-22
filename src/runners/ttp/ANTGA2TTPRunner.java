@@ -33,14 +33,14 @@ import java.util.stream.Stream;
 public class ANTGA2TTPRunner {
     private static final Logger LOGGER = Logger.getLogger( ANTGA2TTPRunner.class.getName() );
     private static final String baseDir = "assets/definitions/TTP/selected_01/";
-    private static final String[] files = new String[]{"eil51_n50_uncorr-similar-weights_01.ttp"};
+    private static final String[] files = new String[]{"kroA100_n990_uncorr_01.ttp"};//"eil51_n50_uncorr-similar-weights_01.ttp", "kroA100_n990_uncorr_01.ttp"
     public static void main(String[] args) {
         run(args);
     }
 
     private static List<BaseIndividual<Integer, TTP>> run(String[] args) {
-        int generationLimit = 1000;
-        int populationSize = 50;
+        int generationLimit = 500;
+        int populationSize = 1000;
         int maxAdditionalPopulationSize = populationSize / 2;
         int minAdditionalPopulationSize = populationSize / 10;
         double mutationProbability = 0.4;
@@ -66,10 +66,6 @@ public class ANTGA2TTPRunner {
 
             var result = geneticAlgorithm.optimize();
             printResults(result);
-
-            HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
-            System.out.print(hv.getMeasure(result));
-            System.out.print(" ");
         }
         return null;
     }

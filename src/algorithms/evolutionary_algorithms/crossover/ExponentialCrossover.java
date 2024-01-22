@@ -53,4 +53,9 @@ public class ExponentialCrossover extends BaseCrossover<Double, BaseProblemRepre
     return result;
   }
 
+  @Override
+  public List<List<Double>> crossover(double TSPcr, double KNAPcr, List<Double> firstParent, List<Double> secondParent, ParameterSet<Double, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
 }

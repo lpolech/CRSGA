@@ -9,6 +9,11 @@ import java.util.stream.IntStream;
 
 public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepresentation> {
 
+  @Override
+  public List<List<Integer>> crossover(double cr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
   /**
    * Crossover specialized for TTP.
    * EDGE for TSP. Single-Point for KP.
@@ -20,11 +25,11 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
    * @return array of children genes
    */
   @Override
-  public List<List<Integer>> crossover(double cr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
+  public List<List<Integer>> crossover(double TSPcr, double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
     List<Integer> firstChild = new ArrayList<>(firstParent);
     List<Integer> secondChild = new ArrayList<>(secondParent);
 
-    if (parameters.random.nextDouble() < cr) {
+    if (parameters.random.nextDouble() < TSPcr) {
       // EDGE
       List<Set<Integer>> firstNeighbourhood = generateNeighbourhood(firstParent, secondParent, parameters);
       List<Set<Integer>> secondNeighbourhood = copyNeighbourhood(firstNeighbourhood);
@@ -33,7 +38,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     }
 
     int numGenes = parameters.geneSplitPoint;
-    if (parameters.random.nextDouble() < cr) {
+    if (parameters.random.nextDouble() < KNAPcr) {
       for (int i = numGenes; i < firstParent.size(); ++i) {
         int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
 

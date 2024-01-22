@@ -50,4 +50,9 @@ public class SinglePointCrossover<GENE extends Number> extends BaseCrossover<GEN
     return result;
   }
 
+  @Override
+  public List<List<GENE>> crossover(double TSPcr, double KNAPcr, List<GENE> firstParent, List<GENE> secondParent, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
 }

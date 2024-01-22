@@ -21,4 +21,6 @@ abstract public class BaseCrossover<GENE extends Number, PROBLEM extends BasePro
    */
   abstract public List<List<GENE>> crossover(double cr, List<GENE> firstParent, List<GENE> secondParent, ParameterSet<GENE, PROBLEM> parameters);
 
+  abstract public List<List<GENE>> crossover(double TSPcr, double KNAPcr, List<GENE> firstParent, List<GENE> secondParent, ParameterSet<GENE, PROBLEM> parameters);
+
 }

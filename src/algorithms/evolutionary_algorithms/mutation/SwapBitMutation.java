@@ -40,4 +40,9 @@ public class SwapBitMutation extends BaseMutation<Number, BaseProblemRepresentat
     return genesToMutate;
   }
 
+  @Override
+  public List<Number> mutate(List<BaseIndividual<Number, BaseProblemRepresentation>> population, double TSPf, double KNAPf, List<Number> genesToMutate, int current, int populationSize, ParameterSet<Number, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
 }

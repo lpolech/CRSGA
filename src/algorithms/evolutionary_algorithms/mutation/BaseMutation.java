@@ -27,4 +27,6 @@ abstract public class BaseMutation<GENE extends Number, PROBLEM extends BaseProb
   abstract public List<GENE> mutate(List<BaseIndividual<GENE, PROBLEM>> population, double f, List<GENE> genesToMutate,
                                     int current, int populationSize, ParameterSet<GENE, PROBLEM> parameters);
 
+  abstract public List<GENE> mutate(List<BaseIndividual<GENE, PROBLEM>> population, double TSPf, double KNAPf, List<GENE> genesToMutate,
+                                    int current, int populationSize, ParameterSet<GENE, PROBLEM> parameters);
 }

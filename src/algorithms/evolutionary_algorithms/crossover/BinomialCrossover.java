@@ -44,4 +44,9 @@ public class BinomialCrossover extends BaseCrossover<Double, BaseProblemRepresen
     return result;
   }
 
+  @Override
+  public List<List<Double>> crossover(double TSPcr, double KNAPcr, List<Double> firstParent, List<Double> secondParent, ParameterSet<Double, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
 }

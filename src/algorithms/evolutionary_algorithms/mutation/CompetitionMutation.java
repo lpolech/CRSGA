@@ -9,6 +9,11 @@ import java.util.List;
 
 public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepresentation> {
 
+  @Override
+  public List<Integer> mutate(List<BaseIndividual<Integer, BaseProblemRepresentation>> population, double f, List<Integer> genesToMutate, int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
+    return null;
+  }
+
   /**
    * Swaps
    *
@@ -21,11 +26,12 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
    * @return
    */
   @Override
-  public List<Integer> mutate(List<BaseIndividual<Integer, BaseProblemRepresentation>> population, double mutationProbability, List<Integer> genesToMutate,
-                             int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
+  public List<Integer> mutate(List<BaseIndividual<Integer, BaseProblemRepresentation>> population,
+                              double TSPmutationProbability, double KNAPmutationProbability, List<Integer> genesToMutate,
+                              int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
     int splitPoint = parameters.geneSplitPoint;
 
-    if (parameters.random.nextDouble() < mutationProbability) {
+    if (parameters.random.nextDouble() < TSPmutationProbability) {
 
       int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
       int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
@@ -40,10 +46,16 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
       }
 
     }
-    if (parameters.random.nextDouble() < mutationProbability) {
-      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
-      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+//    if (parameters.random.nextDouble() < mutationProbability) {
+//      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
+//      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+//    }
+    for(int i  = splitPoint; i < genesToMutate.size(); i++) {
+      if (parameters.random.nextDouble() < KNAPmutationProbability) {
+        genesToMutate.set(i, genesToMutate.get(i) ^ 1);
+      }
     }
+
     return genesToMutate;
   }
 
