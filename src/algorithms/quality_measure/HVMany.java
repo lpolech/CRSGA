@@ -32,7 +32,8 @@ public class HVMany extends BaseMeasure {
       s = sPrim;
     }
     for (Pair<Double, List<T>> pair : s) {
-      hyperVolume += pair.getKey() * Math.abs(pair.getValue().get(0).getNormalObjectives()[numObjectives - 1] - referencePoint.getNormalObjectives()[numObjectives - 1]);
+      hyperVolume += pair.getKey() * Math.abs(pair.getValue().get(0).getNormalObjectives()[numObjectives - 1]
+              - referencePoint.getNormalObjectives()[numObjectives - 1]);
     }
 
     return hyperVolume;

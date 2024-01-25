@@ -34,8 +34,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         HashMap<Integer,String> dimensionNumberAndItsName = new HashMap<>();
         dimensionNumberAndItsName.put(0, "TravellingTime");
         dimensionNumberAndItsName.put(1, "KnapsackProfit");
-        DataStatistics dataStats = DataReader.calculateDataStatistics(dataToCluster, population.getFirst().getObjectives().length, null);
-        Data data = new Data(dataToCluster, dataToCluster.length, population.getFirst().getObjectives().length, dataStats, dimensionNumberAndItsName);
+        DataStatistics dataStats = DataReader.calculateDataStatistics(dataToCluster, population.get(0).getObjectives().length, null);
+        Data data = new Data(dataToCluster, dataToCluster.length, population.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
         Cluster dataCluster = centreMethod.makeCluster(data, measure);
         ClustersAndTheirStatistics clustering = dataCluster.performSplit(clusterSize, -1);
         var clusteringDispersion = clustering.getClustersAvgVariances();
