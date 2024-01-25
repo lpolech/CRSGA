@@ -26,7 +26,12 @@ import java.util.logging.Logger;
 public class CNTGA2TTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CNTGA2TTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
-    private static final String[] files = new String[]{"eil51_n50_bounded-strongly-corr_01.ttp"};//"kroA100_n990_uncorr_01.ttp"};//"kroA100_n297_bounded-strongly-corr_01.ttp"};//  "eil51_n50_uncorr-similar-weights_01.ttp", "kroA100_n990_uncorr_01.ttp"
+    private static final String[] files = new String[]{
+            "eil51_n50_bounded-strongly-corr_01.ttp", "eil51_n50_uncorr_01.ttp", "eil51_n50_uncorr-similar-weights_01.ttp",
+            "eil51_n150_bounded-strongly-corr_01.ttp", "eil51_n150_uncorr_01.ttp", "eil51_n150_uncorr-similar-weights_01.ttp",
+            "eil51_n250_bounded-strongly-corr_01.ttp", "eil51_n250_uncorr_01.ttp", "eil51_n250_uncorr-similar-weights_01.ttp",
+            "eil51_n500_bounded-strongly-corr_01.ttp", "eil51_n500_uncorr_01.ttp", "eil51_n500_uncorr-similar-weights_01.ttp",
+            };//"kroA100_n990_uncorr_01.ttp"};//"kroA100_n297_bounded-strongly-corr_01.ttp"};//  "eil51_n50_uncorr-similar-weights_01.ttp", "kroA100_n990_uncorr_01.ttp"
     public static void main(String[] args) {
         run(args);
     }
@@ -36,14 +41,14 @@ public class CNTGA2TTPRunner {
             TTP ttp = readFile(k);
             if (ttp == null) return null;
 
-            int NUMBER_OF_REPEATS = 5;
+            int NUMBER_OF_REPEATS = 30;
             int[] generationLimitList = new int[] {1000};//500};
             int[] populationSizeList = new int[] {200};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.01, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] TSPmutationProbabilityList = new double[] {0.7};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.005};//01};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.5};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPcrossoverProbabilityList = new double[] {-666.00};
-            int[] numberOfClusterList = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            int[] numberOfClusterList = new int[]{8};//, 2, 3, 4, 5, 6, 7, 8, 9, 10};
             int[] clusterisationAlgorithmIterList = new int[]{100};//50};
 
             ArrayList<HashMap<String, Double>> cartesianProductOfParams = new ArrayList<>();
@@ -85,17 +90,19 @@ public class CNTGA2TTPRunner {
             }
 
             Collections.shuffle(cartesianProductOfParams);
-            String header = "counter;avgHV;stdev;generationLimit;populationSize;TSPmutationProbability" +
+            String header = "dataset;counter;avgHV;stdev;generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
                     ";clusterIterLimit";
             System.out.println(header);
             try {
-
-                FileWriter fw = new FileWriter(baseDir + "result.csv", true);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(header);
-                bw.newLine();
-                bw.close();
+                File f = new File(baseDir + "result.csv");
+                if(!f.exists()) {
+                    FileWriter fw = new FileWriter(baseDir + "result.csv", true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write(header);
+                    bw.newLine();
+                    bw.close();
+                }
             } catch(IOException e) {
                 e.printStackTrace();
             }
@@ -118,6 +125,19 @@ public class CNTGA2TTPRunner {
                 int clusterIterLimit = params.get("clusterIterLimit").intValue();
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
+
+                String outputFilename = "." + File.separator + files[k] + "_genLmt-" + generationLimit + "_popSiz-" + populationSize
+                        + "_maxAddPopSiz-" + maxAdditionalPopulationSize + "_minAddPopSiz-" + minAdditionalPopulationSize
+                        + "_TSPmutP-" + TSPmutationProbability + "_KNAPmutP-" + KNAPmutationProbability
+                        + "_TSPcrP-" + TSPcrossoverProbability + "_KNAPcrP-" + KNAPcrossoverProbability
+                        + "_noClus-" + numberOfClusters + "_clsIterLmt-" + clusterIterLimit;
+
+                String bestAPFoutputFile = "bestAPF";
+                int bestIterNumber = 0;
+                File theDir = new File(outputFilename);
+                if (!theDir.exists()){
+                    theDir.mkdirs();
+                }
 
                 for(int i = 0; i < NUMBER_OF_REPEATS; i++) {
                     ParameterSet<Integer, TTP> parameters = setParameters(ttp);
@@ -145,7 +165,16 @@ public class CNTGA2TTPRunner {
                     if(hvValue > bestAPFHV) {
                         bestAPFHV = hvValue;
                         bestAPF = result;
+                        bestIterNumber = i;
                     }
+
+                    try {
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator + "individual" + i + ".csv"));
+                        writer.write(printResults(result, false));
+                        writer.close();
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    };
                 }
 
                 OptionalDouble average = eachRepeatHV
@@ -161,7 +190,7 @@ public class CNTGA2TTPRunner {
 
                 standardDeviation = Math.sqrt(standardDeviation/eachRepeatHV.size());
 
-                String runResult = paramCounter + "/" + numberOfParamConfigs + ";" + avgHV + ";" + standardDeviation
+                String runResult = files[k] + ";" + paramCounter + "/" + numberOfParamConfigs + ";" + avgHV + ";" + standardDeviation
                         + ";" + generationLimit + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
                         + ";" + numberOfClusters + ";" + clusterIterLimit;
@@ -176,22 +205,10 @@ public class CNTGA2TTPRunner {
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
-                String outputFilename = "." + File.separator + files[k] + "_genLmt-" + generationLimit + "_popSiz-" + populationSize
-                        + "_maxAddPopSiz-" + maxAdditionalPopulationSize + "_minAddPopSiz-" + minAdditionalPopulationSize
-                        + "_TSPmutP-" + TSPmutationProbability + "_KNAPmutP-" + KNAPmutationProbability
-                        + "_TSPcrP-" + TSPcrossoverProbability + "_KNAPcrP-" + KNAPcrossoverProbability
-                        + "_noClus-" + numberOfClusters + "_clsIterLmt-" + clusterIterLimit;
-
-                String bestAPFoutputFile = "bestAPF.csv";
-                File theDir = new File(outputFilename);
-                if (!theDir.exists()){
-                    theDir.mkdirs();
-                }
 
                 try {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator + bestAPFoutputFile));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator + bestAPFoutputFile + bestIterNumber + ".csv"));
                     writer.write(printResults(bestAPF, false));
-
                     writer.close();
                 } catch(IOException e) {
                     e.printStackTrace();
@@ -230,8 +247,9 @@ public class CNTGA2TTPRunner {
     }
 
     private static String printResults(List<BaseIndividual<Integer, TTP>> resultIndividuals, boolean isVerbose) {
-        String output = "Profit; Travelling Time\n";
+        String output = "";
         if(isVerbose) {
+            output += "Profit; Travelling Time\n";
             System.out.println("Profit; Travelling Time");
         }
         for (int i = 0; i < resultIndividuals.size(); ++i) {
@@ -243,9 +261,9 @@ public class CNTGA2TTPRunner {
                     profit += resultIndividuals.get(i).getProblem().getKnapsack().getItem(j).getProfit();
                 }
             }
-            output += profit + ";" + travellingTime + "\n";
+            output += travellingTime + ";" + (-1)*profit + "\n";
             if(isVerbose) {
-                System.out.println(profit + ";" + travellingTime);
+                System.out.println(travellingTime + ";" + (-1)*profit);
             }
         }
         return output;
