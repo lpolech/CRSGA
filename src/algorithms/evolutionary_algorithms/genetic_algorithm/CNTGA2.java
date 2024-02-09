@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
+    private final double edgeCLustersDispersionVal;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -38,6 +39,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                   String directory,
                   int clusterSize,
                   int clusterIterLimit,
+                  double edgeCLustersDispersionVal,
                   int maxAdditionalPopulationSize,
                   int minAdditionalPopulationSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
@@ -48,6 +50,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         this.maxAdditionalPopulationSize = maxAdditionalPopulationSize;
         this.minAdditionalPopulationSize = minAdditionalPopulationSize;
         this.clusterSize = clusterSize;
+        this.edgeCLustersDispersionVal = edgeCLustersDispersionVal;
         this.clusterIterLimit = clusterIterLimit;
 
         sorter = new NondominatedSorter<>();
@@ -94,34 +97,35 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
             newPopulation = new ArrayList<>();
             sorter.nondominatedSorting(population);
 
-            while (newPopulation.size() < populationSize) {
-                firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
-                secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
+//            while (newPopulation.size() < populationSize) {
+//                firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
+//                secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
+//
+//                children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
+//                                                            firstParent.getGenes(), secondParent.getGenes(), parameters);
+//                children.set(0, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
+//                                                            children.get(0), 0, populationSize, parameters));
+//                children.set(1, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
+//                                                            children.get(1), 0, populationSize, parameters));
+//
+//                firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+//                secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+//
+//                clonePreventionMethod(newPopulation, firstChild, secondChild);
+//                best = setBestIndividual(best, firstChild, secondChild);
+//            }
 
-                children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-                                                            firstParent.getGenes(), secondParent.getGenes(), parameters);
-                children.set(0, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
-                                                            children.get(0), 0, populationSize, parameters));
-                children.set(1, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
-                                                            children.get(1), 0, populationSize, parameters));
+//            population = newPopulation;
+//            removeDuplicatesAndDominated(population, archive);
 
-                firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
-                secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
-
-                clonePreventionMethod(newPopulation, firstChild, secondChild);
-                best = setBestIndividual(best, firstChild, secondChild);
-            }
-
-            population = newPopulation;
-            removeDuplicatesAndDominated(population, archive);
-
-            if(archive.size() > clusterSize) {
+//            if(archive.size() > clusterSize) {
                 Collections.sort(archive);
                 crowdingDistance(archive);
                 List<BaseIndividual<Integer, PROBLEM>> previousArchive = new ArrayList<>(archive);
-                clusters = kmeansCluster.clustering(archive, clusterSize, clusterIterLimit);
+                clusters = kmeansCluster.clustering(archive, clusterSize, clusterIterLimit, edgeCLustersDispersionVal);
 
-                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
+//                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
+                while (newPopulation.size() < populationSize) {
                     firstParent = clusterDensityBasedSelection.select(clusters, parameters);
                     secondParent = clusterDensityBasedSelection.select(clusters, parameters);
 
@@ -140,32 +144,44 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
                 population = newPopulation;
                 removeDuplicatesAndDominated(population, archive);
-                int individualsAddedToParetoFront = getIndividualsAddedToParetoFront(archive, previousArchive);
 
-                if(individualsAddedToParetoFront != 0 && currentAdditionalPopulationSize < maxAdditionalPopulationSize){
-                    var expectedAdditionalPopulationSize = currentAdditionalPopulationSize + individualsAddedToParetoFront;
-                    currentAdditionalPopulationSize = expectedAdditionalPopulationSize <= maxAdditionalPopulationSize
-                            ? expectedAdditionalPopulationSize
-                            : maxAdditionalPopulationSize;
-                    lastAddedIndividuals = individualsAddedToParetoFront;
-                    lastGenerationWithImprovement = generation;
-                } else if (generation - lastGenerationWithImprovement > 10 && currentAdditionalPopulationSize > minAdditionalPopulationSize){
-                    var expectedAdditionalPopulationSize = currentAdditionalPopulationSize - lastAddedIndividuals;
-                    currentAdditionalPopulationSize = expectedAdditionalPopulationSize >= minAdditionalPopulationSize
-                            ? expectedAdditionalPopulationSize
-                            : minAdditionalPopulationSize;
-                }
+//                int individualsAddedToParetoFront = getIndividualsAddedToParetoFront(archive, previousArchive);
+
+//                if(individualsAddedToParetoFront != 0 && currentAdditionalPopulationSize < maxAdditionalPopulationSize){
+//                    var expectedAdditionalPopulationSize = currentAdditionalPopulationSize + individualsAddedToParetoFront;
+//                    currentAdditionalPopulationSize = expectedAdditionalPopulationSize <= maxAdditionalPopulationSize
+//                            ? expectedAdditionalPopulationSize
+//                            : maxAdditionalPopulationSize;
+//                    lastAddedIndividuals = individualsAddedToParetoFront;
+//                    lastGenerationWithImprovement = generation;
+//                } else if (generation - lastGenerationWithImprovement > 10 && currentAdditionalPopulationSize > minAdditionalPopulationSize){
+//                    var expectedAdditionalPopulationSize = currentAdditionalPopulationSize - lastAddedIndividuals;
+//                    currentAdditionalPopulationSize = expectedAdditionalPopulationSize >= minAdditionalPopulationSize
+//                            ? expectedAdditionalPopulationSize
+//                            : minAdditionalPopulationSize;
+//                }
                 // generation; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure
 //                System.out.println(generation + ";\t" + currentAdditionalPopulationSize + ";\t" + archive.size()
-//                        + ";\t" + hv.getMeasure(archive) + ";\t" + individualsAddedToParetoFront
+//                        + ";\t" + hv.getMeasure(archive) + ";\t" //+ individualsAddedToParetoFront
 //                        + ";\t" + previousArchive.size() + ";\t" + hv.getMeasure(previousArchive));
-            }
+//            }
             ++generation;
         }
 
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    public List<BaseIndividual<Integer, PROBLEM>> getNondominatedFromTwoLists(
+            List<BaseIndividual<Integer, PROBLEM>> population1,
+            List<BaseIndividual<Integer, PROBLEM>> population2) {
+
+        List<BaseIndividual<Integer, PROBLEM>> combinedLists = new ArrayList<>();
+        combinedLists.addAll(population1);
+        combinedLists.addAll(population2);
+
+        return getNondominated(combinedLists);
     }
 
     private int getIndividualsAddedToParetoFront(List<BaseIndividual<Integer, PROBLEM>> combinedPopulations, List<BaseIndividual<Integer, PROBLEM>> previousCombinedPopulation) {

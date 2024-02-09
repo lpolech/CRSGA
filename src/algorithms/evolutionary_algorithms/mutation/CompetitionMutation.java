@@ -46,6 +46,28 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
       }
 
     }
+
+//    for(int i  = 0; i < splitPoint; i++) {
+//      if (parameters.random.nextDouble() < KNAPmutationProbability) {
+////        int firstGene = i;
+////        int secondGene = parameters.random.nextInt(splitPoint);
+////        while (firstGene == secondGene) {
+////          secondGene = parameters.random.nextInt(splitPoint);
+////        }
+////        Collections.swap(genesToMutate, firstGene, secondGene);
+//        int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//        int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//        while (firstGene == secondGene) {
+//          secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//        }
+//  //      Collections.swap(genesToMutate, firstGene, secondGene);
+//        if (firstGene < secondGene) {
+//          Collections.reverse(genesToMutate.subList(firstGene, secondGene));
+//        } else {
+//          Collections.reverse(genesToMutate.subList(secondGene, firstGene));
+//        }
+//      }
+//    }
 //    if (parameters.random.nextDouble() < mutationProbability) {
 //      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
 //      genesToMutate.set(random, genesToMutate.get(random) ^ 1);

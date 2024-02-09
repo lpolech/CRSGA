@@ -13,7 +13,7 @@ import java.util.*;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
-    public List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustering(List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize, int clusterIterLimit) {
+    public List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustering(List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize, int clusterIterLimit, double edgeCLustersDispersionVal) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         var measure = new L2Norm();
@@ -37,7 +37,9 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         DataStatistics dataStats = DataReader.calculateDataStatistics(dataToCluster, population.get(0).getObjectives().length, null);
         Data data = new Data(dataToCluster, dataToCluster.length, population.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
         Cluster dataCluster = centreMethod.makeCluster(data, measure);
-        ClustersAndTheirStatistics clustering = dataCluster.performSplit(clusterSize, -1);
+
+        int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
+        ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
         var clusteringDispersion = clustering.getClustersAvgVariances();
 
 //        var dispersionMax = -Double.MIN_VALUE;
@@ -53,9 +55,28 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 //            scaledDispersion[i] = (clusteringDispersion[i] - dispersionMin)/dispersionRange;
 //        }
 
+        int minTravellingTimeClusterNumber = -1;
+        double minTravellingTimeVal = Double.MAX_VALUE;
+
+        int minProfitClusterNumber = -1;
+        double minProfitVal = Double.MAX_VALUE;
+
         List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersWithDispersion = new ArrayList(dataLength);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
+            double travellingTime = cluster.getCenter().getCoordinate(0);
+            double profit = cluster.getCenter().getCoordinate(1);
+
+            if(travellingTime < minTravellingTimeVal) {
+                minTravellingTimeVal = travellingTime;
+                minTravellingTimeClusterNumber = i;
+            }
+
+            if(profit < minProfitVal) {
+                minProfitVal = profit;
+                minProfitClusterNumber = i;
+            }
+
             var clusterDispersion = clustering.getClustersAvgVariances()[i];
             List<BaseIndividual<Integer, PROBLEM>> clusterPoints = new ArrayList<>();
 
@@ -65,6 +86,12 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             }
             clustersWithDispersion.add(new Pair<>(clusterDispersion, clusterPoints));
         }
+
+        var minTravellingElem = clustersWithDispersion.get(minTravellingTimeClusterNumber);
+        clustersWithDispersion.set(minTravellingTimeClusterNumber, new Pair<>(edgeCLustersDispersionVal, minTravellingElem.getValue()));
+
+        var minProfitElem = clustersWithDispersion.get(minProfitClusterNumber);
+        clustersWithDispersion.set(minProfitClusterNumber, new Pair<>(edgeCLustersDispersionVal, minProfitElem.getValue()));
 
         Collections.sort(clustersWithDispersion, Comparator.comparing(p -> -p.getKey()));
         return clustersWithDispersion;
