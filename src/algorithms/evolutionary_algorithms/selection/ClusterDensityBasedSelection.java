@@ -24,7 +24,14 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             }
         }
 
-        var chosenFirstIndividualIndex = parameters.random.nextInt(chosenCluster.size());
+        var chosenFirstIndividualIndex = -1;
+        double maxDistance = -Double.MIN_VALUE;
+        for(int i = 0; i < chosenCluster.size(); i++) {
+            if(chosenCluster.get(i).getKey() > maxDistance) {
+                maxDistance = chosenCluster.get(i).getKey();
+                chosenFirstIndividualIndex = i;
+            }
+        }
         var chosenFirstIndividual = chosenCluster.get(chosenFirstIndividualIndex).getValue();
 
         var chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.size());
