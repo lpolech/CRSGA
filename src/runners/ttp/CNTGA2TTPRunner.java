@@ -42,8 +42,8 @@ public class CNTGA2TTPRunner {
             if (ttp == null) return null;
 
             int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {1000};//500};
-            int[] populationSizeList = new int[] {200, 500, 750, 1000};// 100};
+            int[] generationLimitList = new int[] {500};//500};
+            int[] populationSizeList = new int[] {100};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.5};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.005};//01};//, 0.005, 0.015};
             double[] TSPcrossoverProbabilityList = new double[] {0.4};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
@@ -95,9 +95,11 @@ public class CNTGA2TTPRunner {
             }
 
 //            Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;avgHV;stdev;avgND;stdev;uber pareto size;generationLimit;populationSize;TSPmutationProbability" +
+            String header = "dataset;counter;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
+                    + "generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
                     ";clusterIterLimit;edgeClustersProb";
+
             System.out.println(header);
             try {
                 File f = new File(baseDir + "result.csv");
@@ -116,6 +118,7 @@ public class CNTGA2TTPRunner {
             int numberOfParamConfigs = cartesianProductOfParams.size();
             for(var params: cartesianProductOfParams) {
                 var eachRepeatHV = new ArrayList<Double>();
+                var eachRepeatUberParetoHV = new ArrayList<Double>();
                 var eachRepeatND = new ArrayList<Integer>();
                 paramCounter += 1;
 
@@ -170,6 +173,7 @@ public class CNTGA2TTPRunner {
                     var result = geneticAlgorithm.optimize();
                     uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
                     //            printResults(result);
+                    eachRepeatUberParetoHV.add(hv.getMeasure(uberPareto));
                     var hvValue = hv.getMeasure(result);
                     eachRepeatHV.add(hvValue);
                     eachRepeatND.add(result.size());
@@ -224,8 +228,24 @@ public class CNTGA2TTPRunner {
 
                 standardDeviation = Math.sqrt(standardDeviation/eachRepeatHV.size());
 
+
+                OptionalDouble averageUberHv = eachRepeatUberParetoHV
+                        .stream()
+                        .mapToDouble(a -> a)
+                        .average();
+                var uberParetoHV = averageUberHv.isPresent() ? averageUberHv.getAsDouble() : -666.0;
+
+                double uberParetostdev = 0.0;
+                for(double num: eachRepeatUberParetoHV) {
+                    uberParetostdev += Math.pow(num - uberParetoHV, 2);
+                }
+
+                uberParetostdev = Math.sqrt(uberParetostdev/eachRepeatUberParetoHV.size());
+
                 String runResult = files[k] + ";" + paramCounter + "/" + numberOfParamConfigs + ";" + avgHV + ";" + standardDeviation
-                        + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size() + ";" + generationLimit
+                        + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size() + ";" +
+                        eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
+                        + ";" + generationLimit
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
                         + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal;

@@ -8,7 +8,7 @@ import javafx.util.Pair;
 import java.util.List;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
-    public BaseIndividual<Integer, PROBLEM> select(List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clusters, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+    public BaseIndividual<Integer, PROBLEM> select(List<Pair<Double, Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>>> clusters, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
         for(var ind: clusters) {
             dispersionSum += ind.getKey();
@@ -17,7 +17,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         dispersionSum = 0.0;
         List<BaseIndividual<Integer, PROBLEM>> chosenCluster = null;
         for(int i = 0; i < clusters.size() && chosenCluster == null; i++) {
-            var cluster = clusters.get(i);
+            var cluster = clusters.get(i).getValue();
             dispersionSum += cluster.getKey();
             if(dispersionSum >= clusterSelectionRandom) {
                 chosenCluster = cluster.getValue();

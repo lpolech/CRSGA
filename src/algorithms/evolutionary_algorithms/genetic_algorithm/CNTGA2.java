@@ -69,7 +69,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         int lastGenerationWithImprovement = 0;
         int lastAddedIndividuals = 0;
 
-        List<Pair<Integer, List<BaseIndividual<Integer, PROBLEM>>>> clusters;
+        List<Pair<Integer, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clusterDispersionWithIndividualsAndTheirDistanceToTheCentre;
 
         BaseIndividual<Integer, PROBLEM> firstParent;
         BaseIndividual<Integer, PROBLEM> secondParent;
@@ -122,12 +122,16 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                 Collections.sort(archive);
                 crowdingDistance(archive);
                 List<BaseIndividual<Integer, PROBLEM>> previousArchive = new ArrayList<>(archive);
-                clusters = kmeansCluster.clustering(archive, clusterSize, clusterIterLimit, edgeCLustersDispersionVal);
+                clusterDispersionWithIndividualsAndTheirDistanceToTheCentre = kmeansCluster.clustering(archive,
+                        clusterSize,
+                        clusterIterLimit,
+                        edgeCLustersDispersionVal,
+                        generation);
 
 //                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
                 while (newPopulation.size() < populationSize) {
-                    firstParent = clusterDensityBasedSelection.select(clusters, parameters);
-                    secondParent = clusterDensityBasedSelection.select(clusters, parameters);
+                    firstParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
+                    secondParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
 
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
                                                     firstParent.getGenes(), secondParent.getGenes(), parameters);

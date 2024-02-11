@@ -9,13 +9,17 @@ import distance.measures.L2Norm;
 import javafx.util.Pair;
 import utils.Utils;
 
+import java.io.File;
 import java.util.*;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
-    public List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustering(List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize, int clusterIterLimit, double edgeCLustersDispersionVal) {
+    public List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clustering(
+            List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize,
+            int clusterIterLimit, double edgeCLustersDispersionVal, int generationNum) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
+        Parameters.setInstanceName(true);
         var measure = new L2Norm();
         Kmeans.setMeasure(measure);
         Centroid centreMethod = new Centroid();
@@ -40,7 +44,6 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
         int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
         ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
-        var clusteringDispersion = clustering.getClustersAvgVariances();
 
 //        var dispersionMax = -Double.MIN_VALUE;
 //        var dispersionMin = Double.MAX_VALUE;
@@ -57,11 +60,13 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
         int minTravellingTimeClusterNumber = -1;
         double minTravellingTimeVal = Double.MAX_VALUE;
+        int minTravellingTimeClusterId = -1;
 
         int minProfitClusterNumber = -1;
         double minProfitVal = Double.MAX_VALUE;
+        int maxTravellingTimeClusterId = -1;
 
-        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersWithDispersion = new ArrayList(dataLength);
+        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clustersWithDispersion = new ArrayList(dataLength);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
             double travellingTime = cluster.getCenter().getCoordinate(0);
@@ -70,19 +75,22 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             if(travellingTime < minTravellingTimeVal) {
                 minTravellingTimeVal = travellingTime;
                 minTravellingTimeClusterNumber = i;
+                minTravellingTimeClusterId = cluster.getClusterId();
             }
 
             if(profit < minProfitVal) {
                 minProfitVal = profit;
                 minProfitClusterNumber = i;
+                maxTravellingTimeClusterId = cluster.getClusterId();
             }
 
             var clusterDispersion = clustering.getClustersAvgVariances()[i];
-            List<BaseIndividual<Integer, PROBLEM>> clusterPoints = new ArrayList<>();
+            List<Pair<Double, BaseIndividual<Integer, PROBLEM>>> clusterPoints = new ArrayList<>();
 
             for(var point: cluster.getPoints()) {
                 var ind = populationMapping.get(point.getInstanceName());
-                clusterPoints.add(ind);
+                double indDistToTheCentre = measure.distance(cluster, point);
+                clusterPoints.add(new Pair<>(indDistToTheCentre, ind));
             }
             clustersWithDispersion.add(new Pair<>(clusterDispersion, clusterPoints));
         }
@@ -94,6 +102,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         clustersWithDispersion.set(minProfitClusterNumber, new Pair<>(edgeCLustersDispersionVal, minProfitElem.getValue()));
 
         Collections.sort(clustersWithDispersion, Comparator.comparing(p -> -p.getKey()));
+
+        clustering.toFile("clustering_res", "clusteringRes_" + generationNum + ".csv", minTravellingTimeClusterId, maxTravellingTimeClusterId);
         return clustersWithDispersion;
 
 //        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersResult = new ArrayList();
