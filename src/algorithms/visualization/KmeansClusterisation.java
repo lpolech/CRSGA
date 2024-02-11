@@ -66,7 +66,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         double minProfitVal = Double.MAX_VALUE;
         int maxTravellingTimeClusterId = -1;
 
-        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clustersWithDispersion = new ArrayList(dataLength);
+        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> dispersionWithIndividualDistanceToCentreAndTheIndividual
+                = new ArrayList(dataLength);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
             double travellingTime = cluster.getCenter().getCoordinate(0);
@@ -92,19 +93,19 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
                 double indDistToTheCentre = measure.distance(cluster, point);
                 clusterPoints.add(new Pair<>(indDistToTheCentre, ind));
             }
-            clustersWithDispersion.add(new Pair<>(clusterDispersion, clusterPoints));
+            dispersionWithIndividualDistanceToCentreAndTheIndividual.add(new Pair<>(clusterDispersion, clusterPoints));
         }
 
-        var minTravellingElem = clustersWithDispersion.get(minTravellingTimeClusterNumber);
-        clustersWithDispersion.set(minTravellingTimeClusterNumber, new Pair<>(edgeCLustersDispersionVal, minTravellingElem.getValue()));
+        var minTravellingElem = dispersionWithIndividualDistanceToCentreAndTheIndividual.get(minTravellingTimeClusterNumber);
+        dispersionWithIndividualDistanceToCentreAndTheIndividual.set(minTravellingTimeClusterNumber, new Pair<>(edgeCLustersDispersionVal, minTravellingElem.getValue()));
 
-        var minProfitElem = clustersWithDispersion.get(minProfitClusterNumber);
-        clustersWithDispersion.set(minProfitClusterNumber, new Pair<>(edgeCLustersDispersionVal, minProfitElem.getValue()));
+        var minProfitElem = dispersionWithIndividualDistanceToCentreAndTheIndividual.get(minProfitClusterNumber);
+        dispersionWithIndividualDistanceToCentreAndTheIndividual.set(minProfitClusterNumber, new Pair<>(edgeCLustersDispersionVal, minProfitElem.getValue()));
 
-        Collections.sort(clustersWithDispersion, Comparator.comparing(p -> -p.getKey()));
+        Collections.sort(dispersionWithIndividualDistanceToCentreAndTheIndividual, Comparator.comparing(p -> -p.getKey()));
 
         clustering.toFile("clustering_res", "clusteringRes_" + generationNum + ".csv", minTravellingTimeClusterId, maxTravellingTimeClusterId);
-        return clustersWithDispersion;
+        return dispersionWithIndividualDistanceToCentreAndTheIndividual;
 
 //        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersResult = new ArrayList();
 //        for (int j = 0; i < population.size(); i += clusterSize) {
