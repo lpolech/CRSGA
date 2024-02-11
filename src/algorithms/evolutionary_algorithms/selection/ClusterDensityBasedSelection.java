@@ -28,7 +28,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenFirstIndividual = chosenCluster.get(chosenFirstIndividualIndex).getValue();
 
         var chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.size());
-        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex) {
+        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.size() > 1) {
             chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.size());
         }
         var chosenSecondIndividual = chosenCluster.get(chosenSecondIndividualIndex).getValue();
