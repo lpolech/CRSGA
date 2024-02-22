@@ -44,6 +44,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
         int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
         ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
+        clustering = clustering.addGapClusters(measure, centreMethod);
 
 //        var dispersionMax = -Double.MIN_VALUE;
 //        var dispersionMin = Double.MAX_VALUE;

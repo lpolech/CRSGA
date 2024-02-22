@@ -38,7 +38,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     }
 
     int numGenes = parameters.geneSplitPoint;
-    if (parameters.random.nextDouble() < TSPcr) { //KNAPcr) {
+    if (parameters.random.nextDouble() < KNAPcr) {
       for (int i = numGenes; i < firstParent.size(); ++i) {
         int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
 

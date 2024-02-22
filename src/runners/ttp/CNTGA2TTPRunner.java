@@ -44,13 +44,13 @@ public class CNTGA2TTPRunner {
             int NUMBER_OF_REPEATS = 30;
             int[] generationLimitList = new int[] {500};//500};
             int[] populationSizeList = new int[] {100};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.5};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.005};//01};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.4};//, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {-666.00};
-            int[] numberOfClusterList = new int[]{5};//, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-            int[] clusterisationAlgorithmIterList = new int[]{100};//50};
-            double[] edgeClustersDispersion = new double[]{0.2}; //{0.1, 0.2, 0.5, 2.0, 3.0, 4.0, 5.0};
+            double[] TSPmutationProbabilityList = new double[] {0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[]{3, 4}; //{3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100};
+            int[] clusterisationAlgorithmIterList = new int[]{50};//100};
+            double[] edgeClustersDispersion = new double[]{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
 
             ArrayList<HashMap<String, Double>> cartesianProductOfParams = new ArrayList<>();
             for(int i = 0; i < generationLimitList.length; i++) {
@@ -94,7 +94,7 @@ public class CNTGA2TTPRunner {
                 }
             }
 
-//            Collections.shuffle(cartesianProductOfParams);
+            Collections.shuffle(cartesianProductOfParams);
             String header = "dataset;counter;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
                     + "generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
