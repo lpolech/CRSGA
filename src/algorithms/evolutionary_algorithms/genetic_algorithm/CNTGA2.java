@@ -130,12 +130,11 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
 //                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
                 while (newPopulation.size() < populationSize) {
-                    Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> chosenParents
-                            = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
-//                    secondParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
+                    firstParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
+                    secondParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
 
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-                            chosenParents.getKey().getGenes(), chosenParents.getValue().getGenes(), parameters);
+                                                    firstParent.getGenes(), secondParent.getGenes(), parameters);
                     children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
                                                     children.get(0), 0, newPopulation.size(), parameters));
                     children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,

@@ -8,39 +8,25 @@ import javafx.util.Pair;
 import java.util.List;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
-    public Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> select(List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> dispersionWithIndDstToCentreAndTheInd, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+    public BaseIndividual<Integer, PROBLEM> select(List<Pair<Double, Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>>> clusters, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
-        for(var ind: dispersionWithIndDstToCentreAndTheInd) {
+        for(var ind: clusters) {
             dispersionSum += ind.getKey();
         }
         double clusterSelectionRandom = parameters.random.nextDouble() * dispersionSum;
         dispersionSum = 0.0;
-        List<Pair<Double, BaseIndividual<Integer, PROBLEM>>> chosenCluster = null;
-        for(int i = 0; i < dispersionWithIndDstToCentreAndTheInd.size() && chosenCluster == null; i++) {
-            var cluster = dispersionWithIndDstToCentreAndTheInd.get(i);
+        List<BaseIndividual<Integer, PROBLEM>> chosenCluster = null;
+        for(int i = 0; i < clusters.size() && chosenCluster == null; i++) {
+            var cluster = clusters.get(i).getValue();
             dispersionSum += cluster.getKey();
             if(dispersionSum >= clusterSelectionRandom) {
                 chosenCluster = cluster.getValue();
             }
         }
 
-        var chosenFirstIndividualIndex = -1;
-        double maxDistance = -Double.MIN_VALUE;
-        for(int i = 0; i < chosenCluster.size(); i++) {
-            if(chosenCluster.get(i).getKey() > maxDistance) {
-                maxDistance = chosenCluster.get(i).getKey();
-                chosenFirstIndividualIndex = i;
-            }
-        }
-        var chosenFirstIndividual = chosenCluster.get(chosenFirstIndividualIndex).getValue();
-
-        var chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.size());
-        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.size() > 1) {
-            chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.size());
-        }
-        var chosenSecondIndividual = chosenCluster.get(chosenSecondIndividualIndex).getValue();
-
-        return new Pair<>(chosenFirstIndividual, chosenSecondIndividual);
+        var chosenIndividualIndex = parameters.random.nextInt(chosenCluster.size());
+        var chosenIndividual = chosenCluster.get(chosenIndividualIndex);
+        return chosenIndividual;
     }
 
     private BaseIndividual<Integer, PROBLEM> findIndividual(double individualValue, List<BaseIndividual<Integer, PROBLEM>> cluster, List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clusters, int clusterValue) {
