@@ -69,7 +69,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         int lastGenerationWithImprovement = 0;
         int lastAddedIndividuals = 0;
 
-        List<Pair<Integer, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clusterDispersionWithIndividualsAndTheirDistanceToTheCentre;
+        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clusterDispersionWithIndividualsAndTheirDistanceToTheCentre;
 
         BaseIndividual<Integer, PROBLEM> firstParent;
         BaseIndividual<Integer, PROBLEM> secondParent;
