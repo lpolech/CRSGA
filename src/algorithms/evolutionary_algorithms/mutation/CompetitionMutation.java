@@ -31,47 +31,56 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
                               int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
     int splitPoint = parameters.geneSplitPoint;
 
-    if (parameters.random.nextDouble() < TSPmutationProbability) {
+    // Individual - wise reverse mutation TSP
+//    if (parameters.random.nextDouble() < TSPmutationProbability) {
+//
+//      int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//      int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//      while (firstGene == secondGene) {
+//        secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//      }
+////      Collections.swap(genesToMutate, firstGene, secondGene);
+//      if (firstGene < secondGene) {
+//        Collections.reverse(genesToMutate.subList(firstGene, secondGene));
+//      } else {
+//        Collections.reverse(genesToMutate.subList(secondGene, firstGene));
+//      }
+//
+//    }
 
-      int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
-      int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-      while (firstGene == secondGene) {
-        secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+    // gene-wise swap bit mutation TSP
+    for(int i  = 0; i < splitPoint; i++) {
+      if (parameters.random.nextDouble() < TSPmutationProbability) {
+        int secondGene = parameters.random.nextInt(splitPoint);
+        while (i == secondGene) {
+          secondGene = parameters.random.nextInt(splitPoint);
+        }
+        Collections.swap(genesToMutate, i, secondGene);
       }
-//      Collections.swap(genesToMutate, firstGene, secondGene);
-      if (firstGene < secondGene) {
-        Collections.reverse(genesToMutate.subList(firstGene, secondGene));
-      } else {
-        Collections.reverse(genesToMutate.subList(secondGene, firstGene));
-      }
-
     }
 
-//    for(int i  = 0; i < splitPoint; i++) {
-//      if (parameters.random.nextDouble() < KNAPmutationProbability) {
-////        int firstGene = i;
-////        int secondGene = parameters.random.nextInt(splitPoint);
-////        while (firstGene == secondGene) {
-////          secondGene = parameters.random.nextInt(splitPoint);
-////        }
-////        Collections.swap(genesToMutate, firstGene, secondGene);
-//        int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//        int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//        while (firstGene == secondGene) {
-//          secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//        }
-//  //      Collections.swap(genesToMutate, firstGene, secondGene);
-//        if (firstGene < secondGene) {
-//          Collections.reverse(genesToMutate.subList(firstGene, secondGene));
-//        } else {
-//          Collections.reverse(genesToMutate.subList(secondGene, firstGene));
-//        }
-//      }
-//    }
+    // gene-wise reverse mutation TSP
+    for(int i  = 0; i < splitPoint; i++) {
+      if (parameters.random.nextDouble() < TSPmutationProbability) {
+        int firstGene = i;//parameters.random.nextInt(splitPoint - 1) + 1;
+        int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+        while (firstGene == secondGene) {
+          secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+        }
+        if (firstGene < secondGene) {
+          Collections.reverse(genesToMutate.subList(firstGene, secondGene));
+        } else {
+          Collections.reverse(genesToMutate.subList(secondGene, firstGene));
+        }
+      }
+    }
+
+    //individual-wise knapsack mutation
 //    if (parameters.random.nextDouble() < mutationProbability) {
 //      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
 //      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
 //    }
+
     for(int i  = splitPoint; i < genesToMutate.size(); i++) {
       if (parameters.random.nextDouble() < KNAPmutationProbability) {
         genesToMutate.set(i, genesToMutate.get(i) ^ 1);
