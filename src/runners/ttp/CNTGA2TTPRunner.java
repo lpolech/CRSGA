@@ -41,8 +41,8 @@ public class CNTGA2TTPRunner {
             TTP ttp = readFile(k);
             if (ttp == null) return null;
 
-            int NUMBER_OF_REPEATS = 3;
-            int[] generationLimitList = new int[] {5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {100};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {50};//{10, 20, 50, 100, 150, 200, 500, 1000};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.004};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -267,7 +267,8 @@ public class CNTGA2TTPRunner {
                 }
 
                 try {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator + bestAPFoutputFile + bestIterNumber + ".csv"));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
+                            + bestAPFoutputFile + bestIterNumber + ".csv"));
                     writer.write(printResults(bestAPF, false));
                     writer.close();
                 } catch(IOException e) {

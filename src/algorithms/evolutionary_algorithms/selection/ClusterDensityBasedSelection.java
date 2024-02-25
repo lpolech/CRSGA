@@ -1,35 +1,49 @@
 package algorithms.evolutionary_algorithms.selection;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
+import algorithms.evolutionary_algorithms.util.ClusteringResult;
+import algorithms.evolutionary_algorithms.util.IndividualCluster;
+import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import data.Cluster;
+import data.ClustersAndTheirStatistics;
 import javafx.util.Pair;
 
 import java.util.List;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
     public BaseIndividual<Integer, PROBLEM> select(
-            List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> dispersionWithIndDstToCentreAndTheInd,
+            ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
-        for(var ind: dispersionWithIndDstToCentreAndTheInd) {
-            dispersionSum += ind.getKey();
+//        Pair<ClustersAndTheirStatistics, List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>>>
+        for(var ind: clusteringResult.getClustersDispersion()) {
+            dispersionSum += ind;
         }
         double clusterSelectionRandom = parameters.random.nextDouble() * dispersionSum;
         dispersionSum = 0.0;
-        List<Pair<Double, BaseIndividual<Integer, PROBLEM>>> chosenCluster = null;
-        for(int i = 0; i < dispersionWithIndDstToCentreAndTheInd.size() && chosenCluster == null; i++) {
-            Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>> cluster = dispersionWithIndDstToCentreAndTheInd.get(i);
-
-            dispersionSum += cluster.getKey();
+//        Pair<Cluster, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>> chosenCluster = null;
+        int chosenClusterIndex = -1;
+        for(int i = 0; i < clusteringResult.getClustersWithIndDstToCentre().size() && chosenClusterIndex == -1; i++) {
+//            Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>> cluster = dispersionWithIndDstToCentreAndTheInd.getValue().get(i);
+            dispersionSum += clusteringResult.getClustersDispersion().get(i);
             if(dispersionSum >= clusterSelectionRandom) {
-                chosenCluster = cluster.getValue();
+                chosenClusterIndex = i;
+//                var clust = dispersionWithIndDstToCentreAndTheInd.getKey().getClusters()[i];
+//                chosenCluster = new Pair<>(clust, cluster.getValue());
+//                clust.recordUsage();
             }
         }
 
-        var chosenIndividualIndex = parameters.random.nextInt(chosenCluster.size());
-        var chosenIndividual = chosenCluster.get(chosenIndividualIndex).getValue();
-        return chosenIndividual;
+        var chosenCluster = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterIndex);
+        var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
+        chosenClusteringCluster.getCenter().recordUsage();
+        var chosenIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
+        var chosenIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenIndividualIndex);
+        chosenClusteringCluster.getPoints()[chosenIndividualIndex].recordUsage();
+
+        return chosenIndividual.getIndividual();
     }
 
     private BaseIndividual<Integer, PROBLEM> findIndividual(double individualValue, List<BaseIndividual<Integer, PROBLEM>> cluster, List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clusters, int clusterValue) {

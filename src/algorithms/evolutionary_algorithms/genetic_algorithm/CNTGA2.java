@@ -4,11 +4,13 @@ import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.selection.BaseSelection;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
 import algorithms.evolutionary_algorithms.selection.DiversitySelection;
+import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.quality_measure.HVMany;
 import algorithms.visualization.KmeansClusterisation;
+import data.ClustersAndTheirStatistics;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -69,7 +71,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         int lastGenerationWithImprovement = 0;
         int lastAddedIndividuals = 0;
 
-        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clusterDispersionWithIndividualsAndTheirDistanceToTheCentre;
+        ClusteringResult gaClusteringResults;
 
         BaseIndividual<Integer, PROBLEM> firstParent;
         BaseIndividual<Integer, PROBLEM> secondParent;
@@ -122,7 +124,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                 Collections.sort(archive);
                 crowdingDistance(archive);
                 List<BaseIndividual<Integer, PROBLEM>> previousArchive = new ArrayList<>(archive);
-                clusterDispersionWithIndividualsAndTheirDistanceToTheCentre = kmeansCluster.clustering(archive,
+                gaClusteringResults = kmeansCluster.clustering(archive,
                         clusterSize,
                         clusterIterLimit,
                         edgeCLustersDispersionVal,
@@ -130,8 +132,8 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
 //                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
                 while (newPopulation.size() < populationSize) {
-                    firstParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
-                    secondParent = clusterDensityBasedSelection.select(clusterDispersionWithIndividualsAndTheirDistanceToTheCentre, parameters);
+                    firstParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
+                    secondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
 
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
                                                     firstParent.getGenes(), secondParent.getGenes(), parameters);
@@ -148,6 +150,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
                 population = newPopulation;
                 removeDuplicatesAndDominated(population, archive);
+                gaClusteringResults.toFile();
 
 //                int individualsAddedToParetoFront = getIndividualsAddedToParetoFront(archive, previousArchive);
 
