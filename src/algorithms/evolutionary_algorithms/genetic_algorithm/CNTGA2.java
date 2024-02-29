@@ -56,7 +56,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         this.clusterIterLimit = clusterIterLimit;
 
         sorter = new NondominatedSorter<>();
-        kmeansCluster = new KmeansClusterisation();
+        kmeansCluster = new KmeansClusterisation(false, false);
         clusterDensityBasedSelection = new ClusterDensityBasedSelection();
     }
 

@@ -17,6 +17,13 @@ import java.util.*;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
+    public KmeansClusterisation(boolean disableCostEdgePromotion, boolean disableTravelEdgePromotion) {
+        this.disableCostEdgePromotion = disableCostEdgePromotion;
+        this.disableTravelEdgePromotion = disableTravelEdgePromotion;
+    }
+
+    private boolean disableCostEdgePromotion;
+    private boolean disableTravelEdgePromotion;
     public ClusteringResult clustering(
             List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize,
             int clusterIterLimit, double edgeCLustersDispersionVal, int generationNum) {
@@ -91,31 +98,24 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             }
 
             var clusterDispersion = clustering.getClustersAvgVariances()[i];
-//            List<Pair<Double, BaseIndividual<Integer, PROBLEM>>> clusterPoints = new ArrayList<>();
             List<IndividualWithDstToItsCentre> individualCluster = new ArrayList<>(cluster.getNumberOfPoints());
             for(var point: cluster.getPoints()) {
                 var ind = populationMapping.get(point.getInstanceName());
                 double indDistToTheCentre = measure.distance(cluster, point);
-//                clusterPoints.add(new Pair<>(indDistToTheCentre, ind));
                 individualCluster.add(new IndividualWithDstToItsCentre(indDistToTheCentre, ind));
             }
             individualClusters.add(new IndividualCluster(individualCluster));
-//            clustersWithDispersion.add(new Pair<>(clusterDispersion, clusterPoints));
             clustersDispersion.add(clusterDispersion);
         }
 
-//        var minTravellingElem = clustersWithDispersion.get(minTravellingTimeClusterNumber);
-//        clustersWithDispersion.set(minTravellingTimeClusterNumber, new Pair<>(edgeCLustersDispersionVal, minTravellingElem.getValue()));
-        clustersDispersion.set(minTravellingTimeClusterNumber, edgeCLustersDispersionVal);
+        if(!disableCostEdgePromotion) {
+            clustersDispersion.set(minProfitClusterNumber, edgeCLustersDispersionVal);
+        }
 
-//        var minProfitElem = clustersWithDispersion.get(minProfitClusterNumber);
-//        clustersWithDispersion.set(minProfitClusterNumber, new Pair<>(edgeCLustersDispersionVal, minProfitElem.getValue()));
-        clustersDispersion.set(minProfitClusterNumber, edgeCLustersDispersionVal);
+        if(!disableTravelEdgePromotion) {
+            clustersDispersion.set(minTravellingTimeClusterNumber, edgeCLustersDispersionVal);
+        }
 
-//        Collections.sort(clustersWithDispersion, Comparator.comparing(p -> -p.getKey()));
-
-//        clustering.toFile("clustering_res", "clusteringRes_" + generationNum + ".csv", minTravellingTimeClusterId, maxTravellingTimeClusterId);
-//        Pair<>(clustering, clustersWithDispersion);
         String clusteringResultFilePath = "clustering_res";
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
         return new ClusteringResult(clustering, clustersDispersion, individualClusters, clusteringResultFilePath,
