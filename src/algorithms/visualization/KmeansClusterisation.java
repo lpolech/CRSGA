@@ -26,7 +26,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
     private boolean disableTravelEdgePromotion;
     public ClusteringResult clustering(
             List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize,
-            int clusterIterLimit, double edgeCLustersDispersionVal, int generationNum) {
+            int clusterIterLimit, double edgeClustersDispersionValMultiplier, int generationNum) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);
@@ -77,6 +77,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         double minProfitVal = Double.MAX_VALUE;
         int maxTravellingTimeClusterId = -1;
 
+        double maxClusteringDispersion = -1.0;
+
         List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clustersWithDispersion = new ArrayList(dataLength);
         List<Double> clustersDispersion = new ArrayList<>(clustering.getClusters().length);
         List<IndividualCluster> individualClusters = new ArrayList<>(clustering.getClusters().length);
@@ -106,14 +108,15 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             }
             individualClusters.add(new IndividualCluster(individualCluster));
             clustersDispersion.add(clusterDispersion);
+            maxClusteringDispersion = Math.max(maxClusteringDispersion, clusterDispersion);
         }
 
         if(!disableCostEdgePromotion) {
-            clustersDispersion.set(minProfitClusterNumber, edgeCLustersDispersionVal);
+            clustersDispersion.set(minProfitClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
         }
 
         if(!disableTravelEdgePromotion) {
-            clustersDispersion.set(minTravellingTimeClusterNumber, edgeCLustersDispersionVal);
+            clustersDispersion.set(minTravellingTimeClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
         }
 
         String clusteringResultFilePath = "clustering_res";

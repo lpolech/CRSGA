@@ -13,7 +13,7 @@ import javafx.util.Pair;
 import java.util.List;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
-    public BaseIndividual<Integer, PROBLEM> select(
+    public Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> select(
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
@@ -39,11 +39,19 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenCluster = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterIndex);
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
-        var chosenIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
-        var chosenIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenIndividualIndex);
-        chosenClusteringCluster.getPoints()[chosenIndividualIndex].recordUsage();
+        var chosenFirstIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
+        var chosenSecondIndividualIndex = chosenFirstIndividualIndex;
+        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
+            chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
+        }
 
-        return chosenIndividual.getIndividual();
+        var chosenFirstIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenFirstIndividualIndex);
+        chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+
+        var chosenSecondIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenSecondIndividualIndex);
+        chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+
+        return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
     }
 
     private BaseIndividual<Integer, PROBLEM> findIndividual(double individualValue, List<BaseIndividual<Integer, PROBLEM>> cluster, List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clusters, int clusterValue) {

@@ -10,7 +10,6 @@ import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.quality_measure.HVMany;
 import algorithms.visualization.KmeansClusterisation;
-import data.ClustersAndTheirStatistics;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
-    private final double edgeCLustersDispersionVal;
+    private final double edgeClustersDispersionVal;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -41,7 +40,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                   String directory,
                   int clusterSize,
                   int clusterIterLimit,
-                  double edgeCLustersDispersionVal,
+                  double edgeClustersDispersionVal,
                   int maxAdditionalPopulationSize,
                   int minAdditionalPopulationSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
@@ -52,7 +51,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         this.maxAdditionalPopulationSize = maxAdditionalPopulationSize;
         this.minAdditionalPopulationSize = minAdditionalPopulationSize;
         this.clusterSize = clusterSize;
-        this.edgeCLustersDispersionVal = edgeCLustersDispersionVal;
+        this.edgeClustersDispersionVal = edgeClustersDispersionVal;
         this.clusterIterLimit = clusterIterLimit;
 
         sorter = new NondominatedSorter<>();
@@ -73,8 +72,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
         ClusteringResult gaClusteringResults;
 
-        BaseIndividual<Integer, PROBLEM> firstParent;
-        BaseIndividual<Integer, PROBLEM> secondParent;
+        Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> firstAndSecondParent;
         BaseIndividual<Integer, PROBLEM> firstChild;
         BaseIndividual<Integer, PROBLEM> secondChild;
         List<List<Integer>> children;
@@ -100,11 +98,11 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
             sorter.nondominatedSorting(population);
 
 //            while (newPopulation.size() < populationSize) {
-//                firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
-//                secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
+//                firstAndSecondParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
+//                secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstAndSecondParent, null, parameters);
 //
 //                children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-//                                                            firstParent.getGenes(), secondParent.getGenes(), parameters);
+//                                                            firstAndSecondParent.getGenes(), secondParent.getGenes(), parameters);
 //                children.set(0, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
 //                                                            children.get(0), 0, populationSize, parameters));
 //                children.set(1, parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability,
@@ -127,16 +125,15 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                 gaClusteringResults = kmeansCluster.clustering(archive,
                         clusterSize,
                         clusterIterLimit,
-                        edgeCLustersDispersionVal,
+                        edgeClustersDispersionVal,
                         generation);
 
 //                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
                 while (newPopulation.size() < populationSize) {
-                    firstParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
-                    secondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
+                    firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
 
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-                                                    firstParent.getGenes(), secondParent.getGenes(), parameters);
+                                                    firstAndSecondParent.getKey().getGenes(), firstAndSecondParent.getValue().getGenes(), parameters);
                     children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
                                                     children.get(0), 0, newPopulation.size(), parameters));
                     children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
