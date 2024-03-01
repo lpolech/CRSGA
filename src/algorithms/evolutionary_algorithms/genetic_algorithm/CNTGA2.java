@@ -72,6 +72,8 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
         ClusteringResult gaClusteringResults;
 
+//        BaseIndividual<Integer, PROBLEM> firstParent;
+//        BaseIndividual<Integer, PROBLEM> secondParent;
         Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> firstAndSecondParent;
         BaseIndividual<Integer, PROBLEM> firstChild;
         BaseIndividual<Integer, PROBLEM> secondChild;
@@ -131,6 +133,8 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 //                while (newPopulation.size() - populationSize < currentAdditionalPopulationSize) {
                 while (newPopulation.size() < populationSize) {
                     firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
+//                    firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
+//                    secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
 
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
                                                     firstAndSecondParent.getKey().getGenes(), firstAndSecondParent.getValue().getGenes(), parameters);
