@@ -42,15 +42,16 @@ public class CNTGA2TTPRunner {
             if (ttp == null) return null;
 
             int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {1_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] generationLimitList = new int[] {5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {50};//{10, 20, 50, 100, 150, 200, 500, 1000};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.004};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
             double[] TSPcrossoverProbabilityList = new double[] {0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPcrossoverProbabilityList = new double[] {0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[]{3};//{2, 3, 4, 5};
+            int[] numberOfClusterList = new int[]{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[]{30};//{0, 0.001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 5, 10.0, 50, 100, 1_000, 5_000, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            int[] tournamentSizeList = new int[]{10, 15, 20, 25, 30, 35, 40, 45, 50, 55};//{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50, 100};
 
             ArrayList<HashMap<String, Double>> cartesianProductOfParams = new ArrayList<>();
             for(int i = 0; i < generationLimitList.length; i++) {
@@ -71,23 +72,23 @@ public class CNTGA2TTPRunner {
                                             int clusterisationAlgorithmIterVal = clusterisationAlgorithmIterList[o];
                                             for(int p = 0; p < edgeClustersDispersion.length; p++) {
                                                 double edgeClustersDispersionVal = edgeClustersDispersion[p];
-                                                var cost = generationLimitVal * populationSizeVal;
-//                                                if(cost < 200_000 || cost > 250_000){
-//                                                    continue;
-//                                                }
+                                                for(int q = 0; q < tournamentSizeList.length; q++) {
+                                                    int tournamentSize = tournamentSizeList[q];
 
-                                                var paramsMap = new HashMap<String, Double>();
-                                                paramsMap.put("generationLimit", (double) generationLimitVal);
-                                                paramsMap.put("populationSize", (double) populationSizeVal);
-                                                paramsMap.put("TSPmutationProbability", TSPmutationProbabilityVal);
-                                                paramsMap.put("KNAPmutationProbability", KANPmutationProbabilityVal);
-                                                paramsMap.put("TSPcrossoverProbability", TSPcrossoverProbabilityVal);
-                                                paramsMap.put("KNAPcrossoverProbability", KNAPcrossoverProbabilityVal);
-                                                paramsMap.put("numberOfClusters", (double) numberOfClusterVal);
-                                                paramsMap.put("clusterIterLimit", (double) clusterisationAlgorithmIterVal);
-                                                paramsMap.put("edgeClustersDispersion", edgeClustersDispersionVal);
+                                                    var paramsMap = new HashMap<String, Double>();
+                                                    paramsMap.put("generationLimit", (double) generationLimitVal);
+                                                    paramsMap.put("populationSize", (double) populationSizeVal);
+                                                    paramsMap.put("TSPmutationProbability", TSPmutationProbabilityVal);
+                                                    paramsMap.put("KNAPmutationProbability", KANPmutationProbabilityVal);
+                                                    paramsMap.put("TSPcrossoverProbability", TSPcrossoverProbabilityVal);
+                                                    paramsMap.put("KNAPcrossoverProbability", KNAPcrossoverProbabilityVal);
+                                                    paramsMap.put("numberOfClusters", (double) numberOfClusterVal);
+                                                    paramsMap.put("clusterIterLimit", (double) clusterisationAlgorithmIterVal);
+                                                    paramsMap.put("edgeClustersDispersion", edgeClustersDispersionVal);
+                                                    paramsMap.put("tournamentSize", (double) tournamentSize);
 
-                                                cartesianProductOfParams.add(paramsMap);
+                                                    cartesianProductOfParams.add(paramsMap);
+                                                }
                                             }
                                         }
                                     }
@@ -102,7 +103,7 @@ public class CNTGA2TTPRunner {
             String header = "dataset;counter;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
                     + "generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
-                    ";clusterIterLimit;edgeClustersProb";
+                    ";clusterIterLimit;edgeClustersProb;tournamentSize";
 
             System.out.println(header);
             try {
@@ -137,6 +138,8 @@ public class CNTGA2TTPRunner {
                 int numberOfClusters = params.get("numberOfClusters").intValue();
                 int clusterIterLimit = params.get("clusterIterLimit").intValue();
                 double edgeClustersDispVal = params.get("edgeClustersDispersion");
+                int tournamentSize = params.get("tournamentSize").intValue();
+
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
 
@@ -145,7 +148,7 @@ public class CNTGA2TTPRunner {
                         + "_TSPmutP-" + TSPmutationProbability + "_KNAPmutP-" + KNAPmutationProbability
                         + "_TSPcrP-" + TSPcrossoverProbability + "_KNAPcrP-" + KNAPcrossoverProbability
                         + "_noClus-" + numberOfClusters + "_clsIterLmt-" + clusterIterLimit + "_edgClusDispVal-"
-                        + edgeClustersDispVal;
+                        + edgeClustersDispVal + "_tourSize-" + tournamentSize;
 
                 String bestAPFoutputFile = "bestAPF";
                 int bestIterNumber = 0;
@@ -171,6 +174,7 @@ public class CNTGA2TTPRunner {
                             numberOfClusters,
                             clusterIterLimit,
                             edgeClustersDispVal,
+                            tournamentSize,
                             maxAdditionalPopulationSize,
                             minAdditionalPopulationSize);
 
@@ -253,7 +257,7 @@ public class CNTGA2TTPRunner {
                         + ";" + generationLimit
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
-                        + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal;
+                        + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize;
                 System.out.println(runResult);
                 try {
 

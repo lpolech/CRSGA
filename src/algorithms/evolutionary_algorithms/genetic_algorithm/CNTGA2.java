@@ -41,6 +41,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                   int clusterSize,
                   int clusterIterLimit,
                   double edgeClustersDispersionVal,
+                  int tournamentSize,
                   int maxAdditionalPopulationSize,
                   int minAdditionalPopulationSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
@@ -56,7 +57,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
         sorter = new NondominatedSorter<>();
         kmeansCluster = new KmeansClusterisation(false, false);
-        clusterDensityBasedSelection = new ClusterDensityBasedSelection();
+        clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
