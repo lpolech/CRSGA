@@ -52,8 +52,10 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
-        for (int i = 0; i < tournamentSize - 1; ++i) {
+
+        for (int i = 0; i < dynamicTurSize - 1; ++i) {
             chosenClusterIndex = chooseCluster(chosenClusterIndex,
                     (int) (parameters.random.nextDouble() * numberOfClusters),
                     clusteringResult);
