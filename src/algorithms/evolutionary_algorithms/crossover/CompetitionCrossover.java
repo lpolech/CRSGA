@@ -37,6 +37,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
       secondChild = getChild(secondChild, secondParent, firstParent, secondNeighbourhood, parameters);
     }
 
+    // KNAP SinglePoint Crossover
     int numGenes = parameters.geneSplitPoint;
     if (parameters.random.nextDouble() < KNAPcr) {
       for (int i = numGenes; i < firstParent.size(); ++i) {

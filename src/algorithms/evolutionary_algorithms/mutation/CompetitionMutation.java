@@ -60,20 +60,20 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
     }
 
     // gene-wise reverse mutation TSP
-    for(int i  = 0; i < splitPoint; i++) {
-      if (parameters.random.nextDouble() < TSPmutationProbability) {
-        int firstGene = i;//parameters.random.nextInt(splitPoint - 1) + 1;
-        int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-        while (firstGene == secondGene) {
-          secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-        }
-        if (firstGene < secondGene) {
-          Collections.reverse(genesToMutate.subList(firstGene, secondGene));
-        } else {
-          Collections.reverse(genesToMutate.subList(secondGene, firstGene));
-        }
-      }
-    }
+//    for(int i  = 0; i < splitPoint; i++) {
+//      if (parameters.random.nextDouble() < TSPmutationProbability) {
+//        int firstGene = i;//parameters.random.nextInt(splitPoint - 1) + 1;
+//        int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//        while (firstGene == secondGene) {
+//          secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
+//        }
+//        if (firstGene < secondGene) {
+//          Collections.reverse(genesToMutate.subList(firstGene, secondGene));
+//        } else {
+//          Collections.reverse(genesToMutate.subList(secondGene, firstGene));
+//        }
+//      }
+//    }
 
     //individual-wise knapsack mutation
 //    if (parameters.random.nextDouble() < mutationProbability) {
@@ -81,6 +81,7 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
 //      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
 //    }
 
+    // KNAP gene-wise mutation
     for(int i  = splitPoint; i < genesToMutate.size(); i++) {
       if (parameters.random.nextDouble() < KNAPmutationProbability) {
         genesToMutate.set(i, genesToMutate.get(i) ^ 1);
