@@ -13,7 +13,6 @@ import algorithms.visualization.KmeansClusterisation;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
@@ -43,7 +42,9 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                   double edgeClustersDispersionVal,
                   int tournamentSize,
                   int maxAdditionalPopulationSize,
-                  int minAdditionalPopulationSize) {
+                  int minAdditionalPopulationSize,
+                  double diversityThreshold,
+                  boolean enhanceDiversity) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;

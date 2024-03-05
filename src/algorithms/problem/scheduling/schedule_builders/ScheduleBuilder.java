@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Completes an individual in a greedy manner. Useful for when
- * representation of a individual is described only
+ * representation of an individual is described only
  * by order of tasks. When it is described by assignments, use
  * either {@link ForwardScheduleBuilder} or
  * {@link BackwardScheduleBuilder}
@@ -20,7 +20,7 @@ import java.util.List;
 public class ScheduleBuilder {
 
   /**
-   * Builds a individual by assigning the cheapest resource to
+   * Builds an individual by assigning the cheapest resource to
    * each task and then setting an earliest available time
    * for it.
    *

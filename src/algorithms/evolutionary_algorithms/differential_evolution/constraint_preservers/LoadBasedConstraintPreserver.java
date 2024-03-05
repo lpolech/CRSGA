@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Implementation of load based constraints preserver.
  * Constraints values are based on resource's load.
- * Requires a random random and an array containing
+ * Requires a random generator and an array containing
  * upper bounds of assignment for each task.
  */
 public class LoadBasedConstraintPreserver extends BaseConstraintPreserver {
@@ -88,8 +88,8 @@ public class LoadBasedConstraintPreserver extends BaseConstraintPreserver {
           if (resources[j].getSalary() / (mostExpensive - cheapest) < bestCost) {
             bestCost = resources[j].getSalary() / (mostExpensive - cheapest);
           }
-          if (quality > 1.0 * bestDuration + (1 - 1.0) * bestCost) {
-            quality = 1.0 * bestDuration + (1 - 1.0) * bestCost;
+          if (quality > 1.0 * bestDuration + (1 - 1.0) * bestCost) { // FIXME: te mnozenie i odejmowanie nie ma sensu matematycznego
+            quality = 1.0 * bestDuration + (1 - 1.0) * bestCost; // FIXME: te mnozenie i odejmowanie nie ma sensu matematycznego
             qualityIndex = j;
           }
         }

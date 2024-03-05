@@ -3,7 +3,6 @@ package runners.ttp;
 import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.ANTGA2;
 import algorithms.evolutionary_algorithms.genetic_algorithm.CNTGA2;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
@@ -176,7 +175,8 @@ public class CNTGA2TTPRunner {
                             edgeClustersDispVal,
                             tournamentSize,
                             maxAdditionalPopulationSize,
-                            minAdditionalPopulationSize);
+                            minAdditionalPopulationSize,
+                            -666, true);
 
                     var result = geneticAlgorithm.optimize();
                     uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);

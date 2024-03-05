@@ -60,22 +60,24 @@ public class NTGARunner {
     parameters.hasSuccesors = schedule.getSuccesors();
     parameters.populationMultiplicationFactor = 1;
     parameters.evalRate = 1.0;
+    parameters.tournamentSize = 6;
+    parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.RANDOM);
+    parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_NO_CROWDING_TOURNAMENT);
+
     int populationSize = 50;
     int generationLimit = 2000;
     double mutationProbability = 0.005;
     double crossoverProbability = 0.9;
-    parameters.tournamentSize = 6;
     boolean enhanceDiversity = true;
     double diversityThreshold = 0.8;
 
-    parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.RANDOM);
-    parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_NO_CROWDING_TOURNAMENT);
     parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.UNIFORM);
     parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.RANDOM_BIT);
     parameters.converter = new ConverterFactory(parameters).createConverter(ConverterType.TRUNCATING);
     parameters.scheduleBuilder = new ScheduleBuilderFactory(parameters).createScheduleBuilder(ScheduleBuilderType.FORWARD_SCHEDULE_BUILDER);
     parameters.evaluator = new EvaluatorFactory().createEvaluator(EvaluatorType.WEIGHTED_EVALUATOR, parameters.evalRate);
     parameters.evaluator.setIndividual(new BaseIndividual<>(schedule, parameters.evaluator));
+
 
     NondominatedTournamentGA<Schedule> geneticAlgorithm = new NondominatedTournamentGA<>(schedule,
         populationSize, generationLimit, parameters, mutationProbability,

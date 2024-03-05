@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * Implementation of random constraints preserver.
  * Randomizes each gene that violates constraints.
- * Requires a random random and an array containing upper bounds of assignment for each task.
+ * Requires a random generator and an array containing upper bounds of assignment for each task.
  */
 public class RandomConstraintPreserver extends BaseConstraintPreserver {
 
