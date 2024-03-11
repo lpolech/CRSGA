@@ -1,14 +1,22 @@
 package algorithms.visualization;
 
 import algorithms.Kmeans;
+import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.IndividualCluster;
 import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.problem.TTP;
+import basic_hierarchy.implementation.BasicHierarchy;
+import basic_hierarchy.interfaces.Hierarchy;
 import center.method.Centroid;
 import data.*;
 import distance.measures.L2Norm;
+import distance_measures.Euclidean;
+import interfaces.DistanceMeasure;
+import interfaces.QualityMeasure;
+import internal_measures.*;
 import javafx.util.Pair;
 import utils.Utils;
 
@@ -17,16 +25,25 @@ import java.util.*;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
+
+    private HashMap<String, Double> qualityMeasureValues;
+
+    private boolean disableCostEdgePromotion;
+
+    private boolean disableTravelEdgePromotion;
     public KmeansClusterisation(boolean disableCostEdgePromotion, boolean disableTravelEdgePromotion) {
         this.disableCostEdgePromotion = disableCostEdgePromotion;
         this.disableTravelEdgePromotion = disableTravelEdgePromotion;
     }
 
-    private boolean disableCostEdgePromotion;
-    private boolean disableTravelEdgePromotion;
     public ClusteringResult clustering(
-            List<BaseIndividual<Integer,PROBLEM>> population, int clusterSize,
-            int clusterIterLimit, double edgeClustersDispersionValMultiplier, int generationNum) {
+            QualityMeasure clusterWeightMeasure,
+            List<BaseIndividual<Integer,PROBLEM>> population,
+            int clusterSize,
+            int clusterIterLimit,
+            double edgeClustersDispersionValMultiplier,
+            int generationNum,
+            ParameterSet<Integer, TTP> parameters) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);
@@ -54,6 +71,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
         int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
         ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
+        clustering.calculateInternalMeasures(clusterWeightMeasure, parameters);
+
 //        clustering = clustering.addGapClusters(measure, centreMethod);
 
 //        var dispersionMax = -Double.MIN_VALUE;
@@ -78,9 +97,11 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         int maxTravellingTimeClusterId = -1;
 
         double maxClusteringDispersion = -1.0;
-
-        List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>> clustersWithDispersion = new ArrayList(dataLength);
         List<Double> clustersDispersion = new ArrayList<>(clustering.getClusters().length);
+
+        double maxClusterWeight = -1.0;
+        List<Double> clusterWeights = new ArrayList<>(clustering.getClusters().length);
+
         List<IndividualCluster> individualClusters = new ArrayList<>(clustering.getClusters().length);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
@@ -100,6 +121,13 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             }
 
             var clusterDispersion = clustering.getClustersAvgVariances()[i];
+            clustersDispersion.add(clusterDispersion);
+            maxClusteringDispersion = Math.max(maxClusteringDispersion, clusterDispersion);
+
+            var clusterWeight = clustering.getClustersWeights()[i];
+            clusterWeights.add(clusterWeight);
+            maxClusterWeight = Math.max(maxClusterWeight, clusterWeight);
+
             List<IndividualWithDstToItsCentre> individualCluster = new ArrayList<>(cluster.getNumberOfPoints());
             for(var point: cluster.getPoints()) {
                 var ind = populationMapping.get(point.getInstanceName());
@@ -107,22 +135,22 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
                 individualCluster.add(new IndividualWithDstToItsCentre(indDistToTheCentre, ind));
             }
             individualClusters.add(new IndividualCluster(individualCluster));
-            clustersDispersion.add(clusterDispersion);
-            maxClusteringDispersion = Math.max(maxClusteringDispersion, clusterDispersion);
         }
 
         if(!disableCostEdgePromotion) {
             clustersDispersion.set(minProfitClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
+            clusterWeights.set(minProfitClusterNumber, maxClusterWeight * edgeClustersDispersionValMultiplier);
         }
 
         if(!disableTravelEdgePromotion) {
             clustersDispersion.set(minTravellingTimeClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
+            clusterWeights.set(minTravellingTimeClusterNumber, maxClusterWeight * edgeClustersDispersionValMultiplier);
         }
 
         String clusteringResultFilePath = "clustering_res";
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
-        return new ClusteringResult(clustering, clustersDispersion, individualClusters, clusteringResultFilePath,
-                clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId);
+        return new ClusteringResult(clustering, clustersDispersion, clusterWeights, individualClusters,
+                clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId);
 
 //        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersResult = new ArrayList();
 //        for (int j = 0; i < population.size(); i += clusterSize) {

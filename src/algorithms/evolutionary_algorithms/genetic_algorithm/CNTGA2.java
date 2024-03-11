@@ -10,6 +10,7 @@ import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.quality_measure.HVMany;
 import algorithms.visualization.KmeansClusterisation;
+import interfaces.QualityMeasure;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
+    private final QualityMeasure clusterWeightMeasure;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -29,6 +31,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
     private int clusterIterLimit;
 
     public CNTGA2(PROBLEM problem,
+                  QualityMeasure clusterWeightMeasure,
                   int populationSize,
                   int generationLimit,
                   ParameterSet<Integer, PROBLEM> parameters,
@@ -56,9 +59,10 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         this.edgeClustersDispersionVal = edgeClustersDispersionVal;
         this.clusterIterLimit = clusterIterLimit;
 
-        sorter = new NondominatedSorter<>();
-        kmeansCluster = new KmeansClusterisation(false, false);
-        clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
+        this.sorter = new NondominatedSorter<>();
+        this.kmeansCluster = new KmeansClusterisation(false, false);
+        this.clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
+        this.clusterWeightMeasure = clusterWeightMeasure;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -68,9 +72,6 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         BaseIndividual<Integer, PROBLEM> best;
         List<BaseIndividual<Integer, PROBLEM>> newPopulation;
         List<BaseIndividual<Integer, PROBLEM>> archive = new ArrayList<>();
-        int currentAdditionalPopulationSize = minAdditionalPopulationSize;
-        int lastGenerationWithImprovement = 0;
-        int lastAddedIndividuals = 0;
 
         ClusteringResult gaClusteringResults;
 
@@ -97,14 +98,15 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
         while (generation < generationLimit) {
             newPopulation = new ArrayList<>();
-            gaClusteringResults = kmeansCluster.clustering(archive,
+            gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
+                    archive,
                     clusterSize,
                     clusterIterLimit,
                     edgeClustersDispersionVal,
-                    generation);
+                    generation, parameters);
 
             while (newPopulation.size() < populationSize) {
-                firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters);
+                firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure);
 //                    firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
 //                    secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
 

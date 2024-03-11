@@ -25,7 +25,9 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
    * @return array of children genes
    */
   @Override
-  public List<List<Integer>> crossover(double TSPcr, double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
+  public List<List<Integer>> crossover(double TSPcr, double KNAPcr, List<Integer> firstParent,
+                                       List<Integer> secondParent,
+                                       ParameterSet<Integer, BaseProblemRepresentation> parameters) {
     List<Integer> firstChild = new ArrayList<>(firstParent);
     List<Integer> secondChild = new ArrayList<>(secondParent);
 

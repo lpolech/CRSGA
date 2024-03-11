@@ -5,6 +5,7 @@ import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import interfaces.QualityMeasure;
 import javafx.util.Pair;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
@@ -50,7 +51,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
     /* Same cluster, dynamic tournament cluster selection */
     public Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> select(
             ClusteringResult clusteringResult,
-            ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+            ParameterSet<GENE, BaseProblemRepresentation> parameters,
+            QualityMeasure clusterWeightMeasure) {
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
         int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
@@ -58,7 +60,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
             chosenClusterIndex = chooseCluster(chosenClusterIndex,
                     (int) (parameters.random.nextDouble() * numberOfClusters),
-                    clusteringResult);
+                    clusteringResult, clusterWeightMeasure);
         }
 
         var chosenCluster = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterIndex);
@@ -88,7 +90,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
-            chosenClusterIndex = chooseCluster(chosenClusterIndex,
+            chosenClusterIndex = chooseClusterBasedOnDispersion(chosenClusterIndex,
                     (int) (parameters.random.nextDouble() * numberOfClusters),
                     clusteringResult);
         }
@@ -111,13 +113,24 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
     }
 
-    private int chooseCluster(int firstClusterIndex, int secondClusterIndex, ClusteringResult clusteringResult) {
+    private int chooseClusterBasedOnDispersion(int firstClusterIndex, int secondClusterIndex, ClusteringResult clusteringResult) {
         double firstClusterDispersion = clusteringResult.getClustersDispersion().get(firstClusterIndex);
         double secondClusterDispersion = clusteringResult.getClustersDispersion().get(secondClusterIndex);
         if (firstClusterDispersion > secondClusterDispersion) {
             return firstClusterIndex;
         } else {
             return secondClusterIndex;
+        }
+    }
+
+    private int chooseCluster(int firstClusterIndex, int secondClusterIndex, ClusteringResult clusteringResult,
+                              QualityMeasure clusterWeightMeasure) {
+        double firstClusterWeight = clusteringResult.getClusterWeights().get(firstClusterIndex);
+        double secondClusterWeight = clusteringResult.getClusterWeights().get(secondClusterIndex);
+        if (clusterWeightMeasure.isFirstMeasureBetterThanSecond(firstClusterWeight, secondClusterWeight)) {
+            return secondClusterIndex; //we prefer worse clusters
+        } else {
+            return firstClusterIndex;
         }
     }
 

@@ -11,13 +11,16 @@ public class ClusteringResult {
     private final int minTravellingTimeClusterId;
     ClustersAndTheirStatistics clustersAndTheirStatistics;
     List<Double> clustersDispersion;
+    List<Double> clusterWeights;
     List<IndividualCluster> clustersWithIndDstToCentre;
 
     public ClusteringResult(ClustersAndTheirStatistics clustersAndTheirStatistics, List<Double> clustersDispersion,
+                            List<Double> clusterWeights,
                             List<IndividualCluster> clustersWithIndDstToCentre, String clusteringResultFilePath,
                             String clusteringResultFileName, int minTravellingTimeClusterId, int maxTravellingTimeClusterId) {
         this.clustersAndTheirStatistics = clustersAndTheirStatistics;
         this.clustersDispersion = clustersDispersion;
+        this.clusterWeights = clusterWeights;
         this.clustersWithIndDstToCentre = clustersWithIndDstToCentre;
         this.clusteringResultFilePath = clusteringResultFilePath;
         this.clusteringResultFileName = clusteringResultFileName;
@@ -35,6 +38,10 @@ public class ClusteringResult {
 
     public List<Double> getClustersDispersion() {
         return clustersDispersion;
+    }
+
+    public List<Double> getClusterWeights() {
+        return clusterWeights;
     }
 
     public void setClustersDispersion(List<Double> clustersDispersion) {

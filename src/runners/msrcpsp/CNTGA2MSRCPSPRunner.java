@@ -19,6 +19,7 @@ import algorithms.quality_measure.ConvergenceMeasure;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.ONVG;
 import algorithms.quality_measure.Spacing;
+import internal_measures.*;
 import util.random.RandomInt;
 
 import java.io.BufferedWriter;
@@ -160,6 +161,7 @@ public class CNTGA2MSRCPSPRunner {
                     Spacing spacing = new Spacing();
                     CNTGA2<Schedule> geneticAlgorithm = new CNTGA2<>(
                             schedule,
+                            null,
                             populationSize,
                             generationLimit,
                             parameters,
@@ -228,8 +230,8 @@ public class CNTGA2MSRCPSPRunner {
                     NDstandardDeviation += Math.pow(num - avgND, 2);
                 }
 
-                eachRepeatSpacing
-                        eachRepeatCM
+//                eachRepeatSpacing
+//                        eachRepeatCM
                 OptionalDouble average = eachRepeatHV
                         .stream()
                         .mapToDouble(a -> a)
@@ -325,20 +327,20 @@ public class CNTGA2MSRCPSPRunner {
             output += "Profit; Travelling Time\n";
             System.out.println("Profit; Travelling Time");
         }
-        for (int i = 0; i < resultIndividuals.size(); ++i) {
-            double profit = 0;
-            double travellingTime = resultIndividuals.get(i).getProblem().getTravellingTime();
-            int[] selection = resultIndividuals.get(i).getProblem().getSelection();
-            for (int j = 0; j < selection.length; ++j) {
-                if (selection[j] > 0) {
-                    profit += resultIndividuals.get(i).getProblem().getKnapsack().getItem(j).getProfit();
-                }
-            }
-            output += travellingTime + ";" + (-1)*profit + "\n";
-            if(isVerbose) {
-                System.out.println(travellingTime + ";" + (-1)*profit);
-            }
-        }
+//        for (int i = 0; i < resultIndividuals.size(); ++i) {
+//            double profit = 0;
+//            double travellingTime = resultIndividuals.get(i).getProblem().getTravellingTime();
+//            int[] selection = resultIndividuals.get(i).getProblem().getSelection();
+//            for (int j = 0; j < selection.length; ++j) {
+//                if (selection[j] > 0) {
+//                    profit += resultIndividuals.get(i).getProblem().getKnapsack().getItem(j).getProfit();
+//                }
+//            }
+//            output += travellingTime + ";" + (-1)*profit + "\n";
+//            if(isVerbose) {
+//                System.out.println(travellingTime + ";" + (-1)*profit);
+//            }
+//        }
         return output;
     }
 }
