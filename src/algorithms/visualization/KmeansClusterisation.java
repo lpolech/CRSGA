@@ -57,8 +57,10 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         DataPoint[] dataToCluster = new DataPoint[dataLength];
         for(int i = 0; i < population.size(); i++) {
             var ind = population.get(i);
+            int indUsage = ind.getUsageCounter();
             var individualName = "ParetoFront_" + i;
             dataToCluster[i] = new DataPoint(ind.getObjectives(), ind.getObjectives(), individualName, null);
+            dataToCluster[i].setGlobalUsageCounter(indUsage);
             populationMapping.put(individualName, ind);
         }
 

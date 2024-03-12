@@ -74,9 +74,13 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
 
         var chosenFirstIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenFirstIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+        chosenFirstIndividual.getIndividual().setUsageCounter(
+                chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].getGlobalUsageCounter());
 
         var chosenSecondIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenSecondIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+        chosenSecondIndividual.getIndividual().setUsageCounter(
+                chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].getGlobalUsageCounter());
 
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
     }

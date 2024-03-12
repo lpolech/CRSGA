@@ -17,7 +17,7 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
 	protected PROBLEM problem;
 
   protected BaseEvaluator<GENE, PROBLEM> evaluator;
-	protected double evalValue;
+  protected double evalValue;
   private List<GENE> genes;
   private int hashCode;
 
@@ -29,6 +29,19 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
 	private int rank;
 	private double fitnessValue;
 	private double distance;
+
+    private int usageCounter;
+
+    public int getUsageCounter() {
+        return usageCounter;
+    }
+
+    public void recordUsage() {
+        this.usageCounter = this.usageCounter + 1;
+    }
+    public void setUsageCounter(int usageCounter) {
+        this.usageCounter = usageCounter;
+    }
 
 	public BaseIndividual(PROBLEM problem, BaseEvaluator<GENE, PROBLEM> evaluator) {
 		this.problem = (PROBLEM)problem.cloneDeep();
