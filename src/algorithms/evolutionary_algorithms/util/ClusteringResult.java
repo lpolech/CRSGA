@@ -58,6 +58,6 @@ public class ClusteringResult {
 
     public void toFile(){
         this.clustersAndTheirStatistics.toFile(this.clusteringResultFilePath, this.clusteringResultFileName,
-                this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId);
+                this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion, this.clusterWeights);
     }
 }

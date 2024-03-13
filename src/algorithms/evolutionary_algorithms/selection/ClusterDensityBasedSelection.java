@@ -91,7 +91,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure) {
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depends on the number of clusters as at the beginning there is not many clusters
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
@@ -121,11 +121,13 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                     (IndividualWithDstToItsCentre)chosenCluster.getCluster()
                             .get(chosenFirstIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+        chosenFirstIndividual.getIndividual().recordUsage();
 
         IndividualWithDstToItsCentre chosenSecondIndividual =
                 (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
                             .get(chosenSecondIndividualIndex);
             chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+        chosenSecondIndividual.getIndividual().recordUsage();
 
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
     }

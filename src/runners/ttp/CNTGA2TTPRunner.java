@@ -49,12 +49,12 @@ public class CNTGA2TTPRunner {
 //                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
-//                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatDunn2(new Euclidean()),
+                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
+//                new FlatDunn2(new Euclidean()),
 //                new FlatDunn3(new Euclidean())
             };
 
-            int[] generationLimitList = new int[] {5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] generationLimitList = new int[] {1_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {50};//{10, 20, 50, 100, 150, 200, 500, 1000};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -63,7 +63,7 @@ public class CNTGA2TTPRunner {
             int[] numberOfClusterList = new int[]{3};//{2, 3, 4, 5, 10, 20};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[]{4};//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
-            int[] tournamentSizeList = new int[]{10};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{30};
+            int[] tournamentSizeList = new int[]{90};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{30};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
             for(int wmNum = 0; wmNum < clusterWeightMeasureList.length; wmNum++) {

@@ -41,7 +41,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             List<BaseIndividual<Integer,PROBLEM>> population,
             int clusterSize,
             int clusterIterLimit,
-            double edgeClustersDispersionValMultiplier,
+            double edgeClustersWeightMultiplier,
             int generationNum,
             ParameterSet<Integer, TTP> parameters) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
@@ -101,7 +101,12 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         double maxClusteringDispersion = -1.0;
         List<Double> clustersDispersion = new ArrayList<>(clustering.getClusters().length);
 
-        double maxClusterWeight = -1.0;
+        double extremeClusterWeight;
+        if(!clusterWeightMeasure.shouldMeasureBeMaximised()) { // we want worse clustering to get better weight
+            extremeClusterWeight = (-1)*Double.MAX_VALUE;
+        } else {
+            extremeClusterWeight = Double.MAX_VALUE;
+        }
         List<Double> clusterWeights = new ArrayList<>(clustering.getClusters().length);
 
         List<IndividualCluster> individualClusters = new ArrayList<>(clustering.getClusters().length);
@@ -128,7 +133,11 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
             var clusterWeight = clustering.getClustersWeights()[i];
             clusterWeights.add(clusterWeight);
-            maxClusterWeight = Math.max(maxClusterWeight, clusterWeight);
+            if(!clusterWeightMeasure.shouldMeasureBeMaximised()) {
+                extremeClusterWeight = Math.max(extremeClusterWeight, clusterWeight);
+            } else {
+                extremeClusterWeight = Math.min(extremeClusterWeight, clusterWeight);
+            }
 
             List<IndividualWithDstToItsCentre> individualCluster = new ArrayList<>(cluster.getNumberOfPoints());
             for(var point: cluster.getPoints()) {
@@ -139,14 +148,15 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             individualClusters.add(new IndividualCluster(individualCluster));
         }
 
+        double weightsMultiplier = (!clusterWeightMeasure.shouldMeasureBeMaximised()? edgeClustersWeightMultiplier: 1/edgeClustersWeightMultiplier); // we want worse clustering to get better weight
         if(!disableCostEdgePromotion) {
-            clustersDispersion.set(minProfitClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
-            clusterWeights.set(minProfitClusterNumber, maxClusterWeight * edgeClustersDispersionValMultiplier);
+            clustersDispersion.set(minProfitClusterNumber, maxClusteringDispersion * edgeClustersWeightMultiplier);
+            clusterWeights.set(minProfitClusterNumber, extremeClusterWeight * weightsMultiplier);
         }
 
         if(!disableTravelEdgePromotion) {
-            clustersDispersion.set(minTravellingTimeClusterNumber, maxClusteringDispersion * edgeClustersDispersionValMultiplier);
-            clusterWeights.set(minTravellingTimeClusterNumber, maxClusterWeight * edgeClustersDispersionValMultiplier);
+            clustersDispersion.set(minTravellingTimeClusterNumber, maxClusteringDispersion * edgeClustersWeightMultiplier);
+            clusterWeights.set(minTravellingTimeClusterNumber, extremeClusterWeight * weightsMultiplier);
         }
 
         String clusteringResultFilePath = "clustering_res";
