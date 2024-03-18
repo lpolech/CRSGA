@@ -67,7 +67,6 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
 //        System.out.println("generation; additional population; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure");
-        HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
         int generation = 1;
         BaseIndividual<Integer, PROBLEM> best;
         List<BaseIndividual<Integer, PROBLEM>> newPopulation;
@@ -82,16 +81,12 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         BaseIndividual<Integer, PROBLEM> secondChild;
         List<List<Integer>> children;
 
-        BaseSelection<Integer, PROBLEM> selection = new DiversitySelection();
-        ((DiversitySelection<Integer>) selection).setTournamentSize(parameters.tournamentSize);
-
-        population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
+        population = parameters.initialPopulation.generate(problem, 100, parameters.evaluator, parameters);
 
         for (BaseIndividual<Integer, PROBLEM> individual : population) {
             individual.buildSolution(individual.getGenes(), parameters);
         }
 
-        best = findBestIndividual(population);
         archive.addAll(population);
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
@@ -104,6 +99,7 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                     clusterIterLimit,
                     edgeClustersDispersionVal,
                     generation, parameters);
+//            gaClusteringResults.toFile();
 
             while (newPopulation.size() < populationSize) {
                 firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure);
@@ -123,12 +119,10 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
                 newPopulation.add(firstChild);
                 newPopulation.add(secondChild);
-                best = setBestIndividual(best, firstChild, secondChild);
             }
 
-            removeDuplicatesAndDominated(newPopulation, archive);
             gaClusteringResults.toFile();
-
+            removeDuplicatesAndDominated(newPopulation, archive);
             ++generation;
         }
 
