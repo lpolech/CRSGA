@@ -76,12 +76,13 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
 
 //        BaseIndividual<Integer, PROBLEM> firstParent;
 //        BaseIndividual<Integer, PROBLEM> secondParent;
-        Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>> firstAndSecondParent;
+
         BaseIndividual<Integer, PROBLEM> firstChild;
         BaseIndividual<Integer, PROBLEM> secondChild;
         List<List<Integer>> children;
 
-        population = parameters.initialPopulation.generate(problem, 100, parameters.evaluator, parameters);
+        int cost = populationSize;
+        population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
 
         for (BaseIndividual<Integer, PROBLEM> individual : population) {
             individual.buildSolution(individual.getGenes(), parameters);
@@ -91,7 +92,8 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
 
-        while (generation < generationLimit) {
+
+        while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
             gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
                     archive,
@@ -101,25 +103,26 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
                     generation, parameters);
 //            gaClusteringResults.toFile();
 
-            while (newPopulation.size() < populationSize) {
-                firstAndSecondParent = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure);
-//                    firstParent = parameters.selection.select(population, archive, newPopulation.size(), null, null, parameters);
-//                    secondParent = parameters.selection.select(population, archive, newPopulation.size(), firstParent, null, parameters);
+//            while (newPopulation.size() < populationSize) {
+                var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure);
 
-                children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-                                                firstAndSecondParent.getKey().getGenes(), firstAndSecondParent.getValue().getGenes(), parameters);
-                children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
-                                                children.get(0), 0, newPopulation.size(), parameters));
-                children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
-                                                children.get(1), 0, newPopulation.size(), parameters));
-                firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
-                firstChild.buildSolution(firstChild.getGenes(), parameters);
-                secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
-                secondChild.buildSolution(secondChild.getGenes(), parameters);
-
-                newPopulation.add(firstChild);
-                newPopulation.add(secondChild);
-            }
+                for(var mama: pairs) {
+                    var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
+                    children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
+                            firstAndSecondParent.getKey().getGenes(), firstAndSecondParent.getValue().getGenes(), parameters);
+                    children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
+                            children.get(0), 0, newPopulation.size(), parameters));
+                    children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
+                            children.get(1), 0, newPopulation.size(), parameters));
+                    firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+                    firstChild.buildSolution(firstChild.getGenes(), parameters);
+                    secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+                    secondChild.buildSolution(secondChild.getGenes(), parameters);
+                    cost = cost + 2;
+                    newPopulation.add(firstChild);
+                    newPopulation.add(secondChild);
+                }
+//            }
 
             gaClusteringResults.toFile();
             removeDuplicatesAndDominated(newPopulation, archive);

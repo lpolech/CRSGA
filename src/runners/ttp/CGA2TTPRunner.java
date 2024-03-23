@@ -45,24 +45,24 @@ public class CNTGA2TTPRunner {
 
             QualityMeasure[] clusterWeightMeasureList = new QualityMeasure[] {
 //                new FlatCalinskiHarabasz(new Euclidean()), //this measures is sensitive to useSubtree toggle
-//                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
-//                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
-//                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
+                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
+                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
+                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
+//                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn2(new Euclidean()),
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {1_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {50};//{10, 20, 50, 100, 150, 200, 500, 1000};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[]{3};//{2, 3, 4, 5, 10, 20};
+            int NUMBER_OF_REPEATS = 10;
+            int[] generationLimitList = new int[] {50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] populationSizeList = new int[] {20};//{10, 20, 50, 100};//{50};// 100};
+            double[] TSPmutationProbabilityList = new double[] {0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[]{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            double[] edgeClustersDispersion = new double[]{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            double[] edgeClustersDispersion = new double[]{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[]{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
@@ -93,7 +93,7 @@ public class CNTGA2TTPRunner {
 //                                                            System.out.print("mama");
 //                                                            continue;
 //                                                        } else {
-                                                            System.out.print("TATA " + generationLimitVal + " " + populationSizeVal + "\n");
+//                                                            System.out.print("TATA " + generationLimitVal + " " + populationSizeVal + "\n");
                                                             var paramsMap = new HashMap<String, Object>();
                                                             paramsMap.put("clusterWeightMeasure", clusterWeightMeasureVal);
                                                             paramsMap.put("generationLimit", generationLimitVal);
