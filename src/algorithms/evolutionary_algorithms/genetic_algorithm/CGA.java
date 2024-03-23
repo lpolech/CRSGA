@@ -16,7 +16,7 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
+public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
     private final QualityMeasure clusterWeightMeasure;
     private double KNAPmutationProbability;
@@ -30,24 +30,24 @@ public class CNTGA2<PROBLEM extends BaseProblemRepresentation> extends GeneticAl
     private int clusterSize;
     private int clusterIterLimit;
 
-    public CNTGA2(PROBLEM problem,
-                  QualityMeasure clusterWeightMeasure,
-                  int populationSize,
-                  int generationLimit,
-                  ParameterSet<Integer, PROBLEM> parameters,
-                  double TSPmutationProbability,
-                  double KNAPmutationProbability,
-                  double TSPcrossoverProbability,
-                  double KNAPcrossoverProbability,
-                  String directory,
-                  int clusterSize,
-                  int clusterIterLimit,
-                  double edgeClustersDispersionVal,
-                  int tournamentSize,
-                  int maxAdditionalPopulationSize,
-                  int minAdditionalPopulationSize,
-                  double diversityThreshold,
-                  boolean enhanceDiversity) {
+    public CGA(PROBLEM problem,
+               QualityMeasure clusterWeightMeasure,
+               int populationSize,
+               int generationLimit,
+               ParameterSet<Integer, PROBLEM> parameters,
+               double TSPmutationProbability,
+               double KNAPmutationProbability,
+               double TSPcrossoverProbability,
+               double KNAPcrossoverProbability,
+               String directory,
+               int clusterSize,
+               int clusterIterLimit,
+               double edgeClustersDispersionVal,
+               int tournamentSize,
+               int maxAdditionalPopulationSize,
+               int minAdditionalPopulationSize,
+               double diversityThreshold,
+               boolean enhanceDiversity) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;

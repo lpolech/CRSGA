@@ -7,14 +7,12 @@ import algorithms.evolutionary_algorithms.genetic_algorithm.CNTGA2;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
 import algorithms.evolutionary_algorithms.selection.SelectionType;
-import algorithms.factories.*;
 import algorithms.io.TTPIO;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
 import algorithms.quality_measure.HVMany;
 import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
-import internal_measures.*;
 import util.random.RandomInt;
 
 import java.io.BufferedWriter;
@@ -25,7 +23,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CNTGA2TTPRunner {
+public class CGA2TTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CNTGA2TTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final String[] files = new String[]{
