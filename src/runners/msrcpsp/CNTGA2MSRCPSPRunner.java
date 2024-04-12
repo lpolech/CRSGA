@@ -4,7 +4,7 @@ import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.converters.ConverterType;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.CNTGA2;
+import algorithms.evolutionary_algorithms.genetic_algorithm.CGA;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
 import algorithms.evolutionary_algorithms.selection.SelectionType;
@@ -118,6 +118,7 @@ public class CNTGA2MSRCPSPRunner {
 
             int paramCounter = 0;
             int numberOfParamConfigs = cartesianProductOfParams.size();
+            System.out.println("Number of param configurations: " + numberOfParamConfigs);
             for(var params: cartesianProductOfParams) {
                 var eachRepeatHV = new ArrayList<Double>();
                 var eachRepeatCM = new ArrayList<Double>();
@@ -159,7 +160,7 @@ public class CNTGA2MSRCPSPRunner {
                     HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                     ConvergenceMeasure ed = new ConvergenceMeasure(parameters.evaluator.getPerfectPoint());
                     Spacing spacing = new Spacing();
-                    CNTGA2<Schedule> geneticAlgorithm = new CNTGA2<>(
+                    CGA<Schedule> geneticAlgorithm = new CGA<>(
                             schedule,
                             null,
                             populationSize,

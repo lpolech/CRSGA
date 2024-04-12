@@ -14,6 +14,10 @@ public class ClusteringResult {
     List<Double> clusterWeights;
     List<IndividualCluster> clustersWithIndDstToCentre;
 
+    public String getClusteringResultFilePath() {
+        return clusteringResultFilePath;
+    }
+
     public ClusteringResult(ClustersAndTheirStatistics clustersAndTheirStatistics, List<Double> clustersDispersion,
                             List<Double> clusterWeights,
                             List<IndividualCluster> clustersWithIndDstToCentre, String clusteringResultFilePath,

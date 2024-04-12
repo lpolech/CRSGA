@@ -9,6 +9,7 @@ import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.quality_measure.HVMany;
+import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
@@ -72,7 +73,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         List<BaseIndividual<Integer, PROBLEM>> newPopulation;
         List<BaseIndividual<Integer, PROBLEM>> archive = new ArrayList<>();
 
-        ClusteringResult gaClusteringResults;
+        ClusteringResult gaClusteringResults = null;
+
+        List<EvolutionHistoryElement> evolutionHistory = new ArrayList<>();
 
 //        BaseIndividual<Integer, PROBLEM> firstParent;
 //        BaseIndividual<Integer, PROBLEM> secondParent;
@@ -92,7 +95,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
 
-
+        int increment = 0;
         while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
             gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
@@ -118,17 +121,36 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
+                    evolutionHistory.add(new EvolutionHistoryElement(generation,
+                            firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
+                            firstAndSecondParent.getKey().getObjectives()[0], firstAndSecondParent.getKey().getObjectives()[1],
+                            firstAndSecondParent.getValue().getObjectives()[0], firstAndSecondParent.getValue().getObjectives()[1]));
+                    evolutionHistory.add(new EvolutionHistoryElement(generation,
+                            secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
+                            firstAndSecondParent.getKey().getObjectives()[0], firstAndSecondParent.getKey().getObjectives()[1],
+                            firstAndSecondParent.getValue().getObjectives()[0], firstAndSecondParent.getValue().getObjectives()[1]));
                     cost = cost + 2;
                     newPopulation.add(firstChild);
                     newPopulation.add(secondChild);
+
                 }
 //            }
+
+            for(var e: archive) {
+                evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 0,
+                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
+            }
 
             gaClusteringResults.toFile();
             removeDuplicatesAndDominated(newPopulation, archive);
             ++generation;
+            if(generation % 1 == 0) {
+                increment++;
+            }
         }
 
+
+        EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;

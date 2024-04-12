@@ -3,16 +3,18 @@ package runners.ttp;
 import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.CNTGA2;
+import algorithms.evolutionary_algorithms.genetic_algorithm.CGA;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
 import algorithms.evolutionary_algorithms.selection.SelectionType;
+import algorithms.factories.*;
 import algorithms.io.TTPIO;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
 import algorithms.quality_measure.HVMany;
 import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
+import internal_measures.FlatWithinBetweenIndex;
 import util.random.RandomInt;
 
 import java.io.BufferedWriter;
@@ -23,8 +25,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CGA2TTPRunner {
-    private static final Logger LOGGER = Logger.getLogger( CNTGA2TTPRunner.class.getName() );
+public class CGATTPRunner {
+    private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final String[] files = new String[]{
 //            "eil51_n50_bounded-strongly-corr_01.ttp", "eil51_n50_uncorr_01.ttp", "eil51_n50_uncorr-similar-weights_01.ttp",
@@ -43,21 +45,21 @@ public class CGA2TTPRunner {
 
             QualityMeasure[] clusterWeightMeasureList = new QualityMeasure[] {
 //                new FlatCalinskiHarabasz(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
-//                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
+//                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
+//                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
+//                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
+                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn2(new Euclidean()),
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 10;
-            int[] generationLimitList = new int[] {50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] TSPmutationProbabilityList = new double[] {0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.2};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[]{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[]{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
@@ -119,6 +121,7 @@ public class CGA2TTPRunner {
                 }
             }
 
+            System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
             Collections.shuffle(cartesianProductOfParams);
             String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
                     + "generationLimit;populationSize;TSPmutationProbability" +
@@ -183,7 +186,7 @@ public class CGA2TTPRunner {
                 for(int i = 0; i < NUMBER_OF_REPEATS; i++) {
                     ParameterSet<Integer, TTP> parameters = setParameters(ttp);
                     HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
-                    CNTGA2<TTP> geneticAlgorithm = new CNTGA2<>(
+                    CGA<TTP> geneticAlgorithm = new CGA<>(
                             ttp,
                             clusterWeightMeasure,
                             populationSize,
