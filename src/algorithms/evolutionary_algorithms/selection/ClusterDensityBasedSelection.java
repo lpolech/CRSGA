@@ -140,18 +140,32 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             }
         });
 
-        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i=i+2) { // -1 as last individual is paired already
+        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i=i+1) {
             int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
+            double chosenFirstIndividualFitness = pointsIndexWithOneObjectiveVal.get(i).getValue();
             int chosenSecondIndividualIndex;
+
             if (i == (pointsIndexWithOneObjectiveVal.size() - 1)) { // last point
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
-            } else {
+            } else if(i == 0) { //first point
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+            } else {
+                int leftNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
+                double leftNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i - 1).getValue();
+                int rightNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+                double rightNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i + 1).getValue();
+
+                double distToLeft = chosenFirstIndividualFitness - leftNeighbourFitness;
+                double distToRight = rightNeighbourFitness - chosenFirstIndividualFitness;
+                if(distToLeft < distToRight) {
+                    chosenSecondIndividualIndex = rightNeighbourIndex;
+                } else {
+                    chosenSecondIndividualIndex = leftNeighbourIndex;
+                }
+
             }
             IndividualWithDstToItsCentre chosenFirstIndividual;
             IndividualWithDstToItsCentre chosenSecondIndividual;
-
-
 
             if(chosenFirstIndividualIndex >= chosenClusterSize) {
                 chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
