@@ -16,7 +16,12 @@ public class MOTTPEvaluator<GENE extends Number> extends BaseTTPEvaluator<GENE> 
 
   @Override
   public double evaluate() {
-    return 0.0d;
+    double[] normalObjectives = this.getNormalObjectives();
+    double travelTime = normalObjectives[0];
+    double cost = normalObjectives[1];
+    double normalisedCost = 1 + cost;
+
+    return travelTime + normalisedCost;
   }
 
   @Override

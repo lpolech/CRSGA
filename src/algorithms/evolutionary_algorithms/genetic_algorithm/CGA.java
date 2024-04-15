@@ -1,21 +1,17 @@
 package algorithms.evolutionary_algorithms.genetic_algorithm;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
-import algorithms.evolutionary_algorithms.selection.BaseSelection;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
-import algorithms.evolutionary_algorithms.selection.DiversitySelection;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
-import algorithms.quality_measure.HVMany;
 import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
@@ -95,7 +91,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
 
-        int increment = 0;
         while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
             gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
@@ -107,12 +102,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //            gaClusteringResults.toFile();
 
 //            while (newPopulation.size() < populationSize) {
-                var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure);
+                var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
 
                 for(var mama: pairs) {
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
+                    BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
+                    BaseIndividual<Integer, PROBLEM> secondParent = firstAndSecondParent.getValue();
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
-                            firstAndSecondParent.getKey().getGenes(), firstAndSecondParent.getValue().getGenes(), parameters);
+                            firstParent.getGenes(), secondParent.getGenes(), parameters);
                     children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
                             children.get(0), 0, newPopulation.size(), parameters));
                     children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
@@ -123,16 +120,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
                     evolutionHistory.add(new EvolutionHistoryElement(generation,
                             firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
-                            firstAndSecondParent.getKey().getObjectives()[0], firstAndSecondParent.getKey().getObjectives()[1],
-                            firstAndSecondParent.getValue().getObjectives()[0], firstAndSecondParent.getValue().getObjectives()[1]));
+                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
                     evolutionHistory.add(new EvolutionHistoryElement(generation,
                             secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
-                            firstAndSecondParent.getKey().getObjectives()[0], firstAndSecondParent.getKey().getObjectives()[1],
-                            firstAndSecondParent.getValue().getObjectives()[0], firstAndSecondParent.getValue().getObjectives()[1]));
+                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
                     cost = cost + 2;
+
                     newPopulation.add(firstChild);
                     newPopulation.add(secondChild);
-
                 }
 //            }
 
@@ -141,12 +138,36 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
             }
 
+            for(var e: population) {
+                evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 1,
+                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
+            }
+
             gaClusteringResults.toFile();
             removeDuplicatesAndDominated(newPopulation, archive);
-            ++generation;
-            if(generation % 1 == 0) {
-                increment++;
+
+            newPopulation.addAll(population);
+            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));
+
+            // remove last duplicate elem
+            for(int i = newPopulation.size() - 1; i >= 1; i--) {
+                var currElemGenes = newPopulation.get(i).getGenes();
+                var prevElemGenes = newPopulation.get(i-1).getGenes();
+                boolean isDuplicate = true;
+                for(int j = 0; j < currElemGenes.size() && isDuplicate; j++) {
+                    if(currElemGenes.get(j) != prevElemGenes.get(j)) {
+                        isDuplicate = false;
+                        break;
+                    }
+                }
+                if(isDuplicate) {
+                    newPopulation.remove(i);
+                }
             }
+
+            population = newPopulation.subList(0, populationSize);
+
+            ++generation;
         }
 
 
