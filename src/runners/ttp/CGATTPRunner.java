@@ -124,7 +124,7 @@ public class CGATTPRunner {
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
             Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
+            String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev"
                     + ";" + "AvgAfterCrossParentDominationCounter"
                     + ";" + "AvgAfterCrossParentDominationProp"
                     + ";" + "AvgAfterCrossAndMutParentDominationCounter"
@@ -133,7 +133,7 @@ public class CGATTPRunner {
                     + ";" + "AvgAfterCrossAfterCrossAndMutDominationProp"
                     + ";" + "AvgAfterCrossAndMutAfterCrossDominationCounter"
                     + ";" + "AvgAfterCrossAndMutAfterCrossDominationProp"
-                    + "generationLimit;populationSize;TSPmutationProbability" +
+                    + ";generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
                     ";clusterIterLimit;edgeClustersProb;tournamentSize";
 

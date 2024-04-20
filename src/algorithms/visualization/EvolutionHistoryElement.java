@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EvolutionHistoryElement {
-    private static int historySize = 10_000;
+    private static int historySize = 20_000;
     private int generationNumber;
     private double x;
     private double y;
