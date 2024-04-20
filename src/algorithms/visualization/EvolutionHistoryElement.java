@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EvolutionHistoryElement {
+    private static int historySize = 10_000;
     private int generationNumber;
     private double x;
     private double y;
@@ -22,6 +23,11 @@ public class EvolutionHistoryElement {
     private double p2x;
     private double p2y;
 
+    public static void addIfNotFull(List<EvolutionHistoryElement> history, int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
+        if(history.size() < EvolutionHistoryElement.historySize) {
+            history.add(new EvolutionHistoryElement(generationNumber, x, y, mut, p1x, p1y, p2x, p2y));
+        }
+    }
     public EvolutionHistoryElement(int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
         this.generationNumber = generationNumber;
         this.x = x;

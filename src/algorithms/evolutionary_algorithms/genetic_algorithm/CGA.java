@@ -105,8 +105,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
 
                 for(var e: population) {
-                    evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 1,
-                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
+                    EvolutionHistoryElement.addIfNotFull(evolutionHistory,
+                            generation, e.getObjectives()[0], e.getObjectives()[1], 1,
+                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
                 }
 
                 for(var mama: pairs) {
@@ -123,14 +124,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
-                    evolutionHistory.add(new EvolutionHistoryElement(generation,
+                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
                                 firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
-                    evolutionHistory.add(new EvolutionHistoryElement(generation,
+                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
                                 secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
+                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
 
 //                    population.remove(firstParent);
@@ -143,8 +144,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //            }
 
             for(var e: archive) {
-                evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 0,
-                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
+                EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], 0,
+                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
             }
 
             gaClusteringResults.toFile();
