@@ -104,6 +104,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
 
+                for(var e: population) {
+                    evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 1,
+                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
+                }
+
                 for(var mama: pairs) {
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
                     BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
@@ -119,17 +124,21 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
                     evolutionHistory.add(new EvolutionHistoryElement(generation,
-                            firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
-                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
+                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
+                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
                     evolutionHistory.add(new EvolutionHistoryElement(generation,
-                            secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
-                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
+                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
+                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]));
                     cost = cost + 2;
 
-                    newPopulation.add(firstChild);
-                    newPopulation.add(secondChild);
+//                    population.remove(firstParent);
+//                    population.remove(secondParent);
+                    population.add(firstChild);
+                    population.add(secondChild);
+                    population = population.subList(Math.max(0, population.size() - populationSize), population.size());
+//                    System.out.println(population.size());
                 }
 //            }
 
@@ -138,34 +147,29 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
             }
 
-            for(var e: population) {
-                evolutionHistory.add(new EvolutionHistoryElement(generation, e.getObjectives()[0], e.getObjectives()[1], 1,
-                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]));
-            }
-
             gaClusteringResults.toFile();
-            removeDuplicatesAndDominated(newPopulation, archive);
+            removeDuplicatesAndDominated(population, archive);
 
-            newPopulation.addAll(population);
-            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));
-
-            // remove last duplicate elem
-            for(int i = newPopulation.size() - 1; i >= 1; i--) {
-                var currElemGenes = newPopulation.get(i).getGenes();
-                var prevElemGenes = newPopulation.get(i-1).getGenes();
-                boolean isDuplicate = true;
-                for(int j = 0; j < currElemGenes.size() && isDuplicate; j++) {
-                    if(currElemGenes.get(j) != prevElemGenes.get(j)) {
-                        isDuplicate = false;
-                        break;
-                    }
-                }
-                if(isDuplicate) {
-                    newPopulation.remove(i);
-                }
-            }
-
-            population = newPopulation.subList(0, populationSize);
+//            newPopulation.addAll(population);
+//            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));
+//
+//            // remove last duplicate elem
+//            for(int i = newPopulation.size() - 1; i >= 1; i--) {
+//                var currElemGenes = newPopulation.get(i).getGenes();
+//                var prevElemGenes = newPopulation.get(i-1).getGenes();
+//                boolean isDuplicate = true;
+//                for(int j = 0; j < currElemGenes.size() && isDuplicate; j++) {
+//                    if(currElemGenes.get(j) != prevElemGenes.get(j)) {
+//                        isDuplicate = false;
+//                        break;
+//                    }
+//                }
+//                if(isDuplicate) {
+//                    newPopulation.remove(i);
+//                }
+//            }
+//
+//            population = newPopulation.subList(0, populationSize);
 
             ++generation;
         }
