@@ -4,6 +4,7 @@ import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
 import algorithms.evolutionary_algorithms.genetic_algorithm.CGA;
+import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
 import algorithms.evolutionary_algorithms.selection.SelectionType;
@@ -54,7 +55,7 @@ public class CGATTPRunner {
             };
 
             int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {500};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -124,6 +125,14 @@ public class CGATTPRunner {
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
             Collections.shuffle(cartesianProductOfParams);
             String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
+                    + ";" + "AvgAfterCrossParentDominationCounter"
+                    + ";" + "AvgAfterCrossParentDominationProp"
+                    + ";" + "AvgAfterCrossAndMutParentDominationCounter"
+                    + ";" + "AvgAfterCrossAndMutParentDominationProp"
+                    + ";" + "AvgAfterCrossAfterCrossAndMutDominationCounter"
+                    + ";" + "AvgAfterCrossAfterCrossAndMutDominationProp"
+                    + ";" + "AvgAfterCrossAndMutAfterCrossDominationCounter"
+                    + ";" + "AvgAfterCrossAndMutAfterCrossDominationProp"
                     + "generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
                     ";clusterIterLimit;edgeClustersProb;tournamentSize";
@@ -148,6 +157,7 @@ public class CGATTPRunner {
                 var eachRepeatHV = new ArrayList<Double>();
                 var eachRepeatUberParetoHV = new ArrayList<Double>();
                 var eachRepeatND = new ArrayList<Integer>();
+                var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
                 paramCounter += 1;
 
                 QualityMeasure clusterWeightMeasure = (QualityMeasure) params.get("clusterWeightMeasure");
@@ -219,6 +229,8 @@ public class CGATTPRunner {
                         bestIterNumber = i;
                     }
 
+                    eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
+
                     String instanceName = files[k];
                     if(instanceName.endsWith(".ttp"))
                         instanceName = instanceName.substring(0, instanceName.lastIndexOf(".ttp"));
@@ -281,6 +293,14 @@ public class CGATTPRunner {
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS + ";" + avgHV + ";" + standardDeviation
                         + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size() + ";" +
                         eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
+                        + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossParentDominationProp(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationCounter(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationProp(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationCounter(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationProp(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationCounter(eachRepeatOptimisationResult)
+                        + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationProp(eachRepeatOptimisationResult)
                         + ";" + generationLimit
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability

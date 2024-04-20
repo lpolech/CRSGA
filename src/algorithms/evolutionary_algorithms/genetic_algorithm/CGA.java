@@ -1,6 +1,7 @@
 package algorithms.evolutionary_algorithms.genetic_algorithm;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
+import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
@@ -26,6 +27,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private int minAdditionalPopulationSize;
     private int clusterSize;
     private int clusterIterLimit;
+    private OptimisationResult optimisationResult;
+
+
+    public OptimisationResult getOptimisationResult() {
+        return optimisationResult;
+    }
 
     public CGA(PROBLEM problem,
                QualityMeasure clusterWeightMeasure,
@@ -80,6 +87,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         BaseIndividual<Integer, PROBLEM> secondChild;
         List<List<Integer>> children;
 
+        this.optimisationResult = new OptimisationResult();
+
         int cost = populationSize;
         population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
 
@@ -116,10 +125,23 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     BaseIndividual<Integer, PROBLEM> secondParent = firstAndSecondParent.getValue();
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
                             firstParent.getGenes(), secondParent.getGenes(), parameters);
+
+                    var firstChildAfterCross = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+                    firstChildAfterCross.buildSolution(firstChildAfterCross.getGenes(), parameters);
+                    var secondChildAfterCross = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+                    secondChildAfterCross.buildSolution(secondChildAfterCross.getGenes(), parameters);
+
                     children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
                             children.get(0), 0, newPopulation.size(), parameters));
                     children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
                             children.get(1), 0, newPopulation.size(), parameters));
+
+                    var firstChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+                    firstChildAfterCrossAndMut.buildSolution(firstChildAfterCrossAndMut.getGenes(), parameters);
+                    var secondChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+                    secondChildAfterCrossAndMut.buildSolution(secondChildAfterCrossAndMut.getGenes(), parameters);
+                    this.optimisationResult.addDominanceStats(firstParent, secondParent, firstChildAfterCross, secondChildAfterCross, firstChildAfterCrossAndMut, secondChildAfterCrossAndMut);
+
                     firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
