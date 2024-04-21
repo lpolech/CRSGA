@@ -13,6 +13,7 @@ import interfaces.QualityMeasure;
 import javafx.util.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
@@ -160,7 +161,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //                    population.remove(secondParent);
                     population.add(firstChild);
                     population.add(secondChild);
-                    population = population.subList(Math.max(0, population.size() - populationSize), population.size());
+//                    population = population.subList(Math.max(0, population.size() - populationSize), population.size());
 //                    System.out.println(population.size());
                 }
 //            }
@@ -172,6 +173,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             gaClusteringResults.toFile();
             removeDuplicatesAndDominated(population, archive);
+            population = getIndividualClosesToArchive(population, archive, populationSize);
 
 //            newPopulation.addAll(population);
 //            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));
@@ -202,6 +204,31 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    private List<BaseIndividual<Integer,PROBLEM>> getIndividualClosesToArchive(List<BaseIndividual<Integer,PROBLEM>> population, List<BaseIndividual<Integer,PROBLEM>> archive, int populationSize) {
+        // TODO: mozna usowac obiekty ktore sa juz w archiwuym (i.e., distance = 0)
+        List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualWithMinDst = new ArrayList<>(population.size());
+        for(var ind: population) {
+            double minDistance = Double.MAX_VALUE;
+            for(var ar: archive) {
+                double distance = Math.sqrt(Math.pow(ind.getObjectives()[0] - ar.getObjectives()[0], 2) + Math.pow(ind.getObjectives()[1] - ar.getObjectives()[1], 2));
+                if(distance < minDistance) {
+                    minDistance = distance;
+                }
+            }
+            if (!isZero(minDistance)) { // remove archive points
+                individualWithMinDst.add(new Pair<>(ind, minDistance));
+            }
+        }
+
+        individualWithMinDst.sort(Comparator.comparingDouble(Pair::getValue));
+        individualWithMinDst = individualWithMinDst.subList(0, Math.min(individualWithMinDst.size(), populationSize));
+        return individualWithMinDst.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    public boolean isZero(double val) {
+        return Math.abs(val) < 2 * Double.MIN_VALUE;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> getNondominatedFromTwoLists(
