@@ -207,24 +207,64 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     }
 
     private List<BaseIndividual<Integer,PROBLEM>> getIndividualClosesToArchive(List<BaseIndividual<Integer,PROBLEM>> population, List<BaseIndividual<Integer,PROBLEM>> archive, int populationSize) {
-        // TODO: mozna usowac obiekty ktore sa juz w archiwuym (i.e., distance = 0)
         List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualWithMinDst = new ArrayList<>(population.size());
-        for(var ind: population) {
+        List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualWithMinDstLimit = new ArrayList<>(population.size());
+        List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualsBasedOnMinArchiveDst = new ArrayList<>(archive.size());
+        List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualsBasedOnMinArchiveDstLimit = new ArrayList<>(archive.size());
+
+        for(var ar: archive) {
             double minDistance = Double.MAX_VALUE;
-            for(var ar: archive) {
+            BaseIndividual<Integer,PROBLEM> minDstInd = null;
+            for(var ind: population) {
                 double distance = Math.sqrt(Math.pow(ind.getObjectives()[0] - ar.getObjectives()[0], 2) + Math.pow(ind.getObjectives()[1] - ar.getObjectives()[1], 2));
-                if(distance < minDistance) {
+                if(!isZero(distance) && distance < minDistance) {
                     minDistance = distance;
+                    minDstInd = ind;
                 }
             }
-            if (!isZero(minDistance)) { // remove archive points
-                individualWithMinDst.add(new Pair<>(ind, minDistance));
+            if (!isZero(minDistance) && minDstInd != null) { // remove archive points
+                individualsBasedOnMinArchiveDst.add(new Pair<>(minDstInd, minDistance));
+                population.remove(minDstInd);
             }
         }
+        individualsBasedOnMinArchiveDst.sort(Comparator.comparingDouble(Pair::getValue));
+        individualsBasedOnMinArchiveDstLimit = individualsBasedOnMinArchiveDst.subList(0, Math.min(individualsBasedOnMinArchiveDst.size(), populationSize));
 
-        individualWithMinDst.sort(Comparator.comparingDouble(Pair::getValue));
-        individualWithMinDst = individualWithMinDst.subList(0, Math.min(individualWithMinDst.size(), populationSize));
-        return individualWithMinDst.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+        int slotsLeft = populationSize - individualsBasedOnMinArchiveDstLimit.size();
+
+        if(slotsLeft >= 0) {
+            for (var ind : population) {
+                double minDistance = Double.MAX_VALUE;
+                for (var ar : archive) {
+                    double distance = Math.sqrt(Math.pow(ind.getObjectives()[0] - ar.getObjectives()[0], 2) + Math.pow(ind.getObjectives()[1] - ar.getObjectives()[1], 2));
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                    }
+                }
+                if (!isZero(minDistance)) { // remove archive points
+                    individualWithMinDst.add(new Pair<>(ind, minDistance));
+                }
+            }
+            individualWithMinDst.sort(Comparator.comparingDouble(Pair::getValue));
+            individualWithMinDstLimit = individualWithMinDst.subList(0, Math.min(individualWithMinDst.size(), slotsLeft));
+        }
+
+        List<BaseIndividual<Integer,PROBLEM>> selectedArchMinDstInd = individualsBasedOnMinArchiveDstLimit.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+        List<BaseIndividual<Integer,PROBLEM>> selectedMinDstInd = individualWithMinDstLimit.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+        List<BaseIndividual<Integer,PROBLEM>> returnInd = new ArrayList<>();
+        returnInd.addAll(selectedArchMinDstInd);
+        returnInd.addAll(selectedMinDstInd);
+
+        if(returnInd.size() != populationSize) {
+            System.out.println(
+                    archive.size() + " "
+                    + population.size() + " "
+                    + individualWithMinDst.size() + " "
+                    + individualsBasedOnMinArchiveDst.size() + " "
+                    + populationSize);
+        }
+
+        return returnInd;
     }
 
     public boolean isZero(double val) {
