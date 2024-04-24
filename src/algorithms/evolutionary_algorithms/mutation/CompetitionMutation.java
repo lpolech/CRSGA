@@ -32,32 +32,32 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
     int splitPoint = parameters.geneSplitPoint;
 
     // Individual - wise reverse mutation TSP
-//    if (parameters.random.nextDouble() < TSPmutationProbability) {
-//
-//      int firstGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//      int secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//      while (firstGene == secondGene) {
-//        secondGene = parameters.random.nextInt(splitPoint - 1) + 1;
-//      }
-////      Collections.swap(genesToMutate, firstGene, secondGene);
-//      if (firstGene < secondGene) {
-//        Collections.reverse(genesToMutate.subList(firstGene, secondGene));
-//      } else {
-//        Collections.reverse(genesToMutate.subList(secondGene, firstGene));
-//      }
-//
-//    }
+    if (parameters.random.nextDouble() < TSPmutationProbability) {
+
+      int firstGene = parameters.random.nextInt(splitPoint);
+      int secondGene = parameters.random.nextInt(splitPoint);
+      while (firstGene == secondGene) {
+        secondGene = parameters.random.nextInt(splitPoint);
+      }
+//      Collections.swap(genesToMutate, firstGene, secondGene);
+      if (firstGene < secondGene) {
+        Collections.reverse(genesToMutate.subList(firstGene, secondGene));
+      } else {
+        Collections.reverse(genesToMutate.subList(secondGene, firstGene));
+      }
+
+    }
 
     // gene-wise swap bit mutation TSP
-    for(int i  = 0; i < splitPoint; i++) {
-      if (parameters.random.nextDouble() < TSPmutationProbability) {
-        int secondGene = parameters.random.nextInt(splitPoint);
-        while (i == secondGene) {
-          secondGene = parameters.random.nextInt(splitPoint);
-        }
-        Collections.swap(genesToMutate, i, secondGene);
-      }
-    }
+//    for(int i  = 0; i < splitPoint; i++) {
+//      if (parameters.random.nextDouble() < TSPmutationProbability) {
+//        int secondGene = parameters.random.nextInt(splitPoint);
+//        while (i == secondGene) {
+//          secondGene = parameters.random.nextInt(splitPoint);
+//        }
+//        Collections.swap(genesToMutate, i, secondGene);
+//      }
+//    }
 
     // gene-wise reverse mutation TSP
 //    for(int i  = 0; i < splitPoint; i++) {
