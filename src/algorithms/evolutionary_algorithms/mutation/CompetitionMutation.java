@@ -59,6 +59,16 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
 //      }
 //    }
 
+//     ind-wise swap bit mutation TSP
+//    if (parameters.random.nextDouble() < TSPmutationProbability) {
+//      int firstGene = parameters.random.nextInt(splitPoint);
+//      int secondGene = parameters.random.nextInt(splitPoint);
+//      while (firstGene == secondGene) {
+//        secondGene = parameters.random.nextInt(splitPoint);
+//      }
+//      Collections.swap(genesToMutate, firstGene, secondGene);
+//    }
+
     // gene-wise reverse mutation TSP
 //    for(int i  = 0; i < splitPoint; i++) {
 //      if (parameters.random.nextDouble() < TSPmutationProbability) {
@@ -76,17 +86,17 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
 //    }
 
     //individual-wise knapsack mutation
-//    if (parameters.random.nextDouble() < mutationProbability) {
-//      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
-//      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
-//    }
+    if (parameters.random.nextDouble() < KNAPmutationProbability) {
+      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
+      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+    }
 
     // KNAP gene-wise mutation
-    for(int i  = splitPoint; i < genesToMutate.size(); i++) {
-      if (parameters.random.nextDouble() < KNAPmutationProbability) {
-        genesToMutate.set(i, genesToMutate.get(i) ^ 1);
-      }
-    }
+//    for(int i  = splitPoint; i < genesToMutate.size(); i++) {
+//      if (parameters.random.nextDouble() < KNAPmutationProbability) {
+//        genesToMutate.set(i, genesToMutate.get(i) ^ 1);
+//      }
+//    }
 
     return genesToMutate;
   }
