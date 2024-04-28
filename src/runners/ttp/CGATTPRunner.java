@@ -64,7 +64,8 @@ public class CGATTPRunner {
             int[] numberOfClusterList = new int[]{2};//{2, 3, 4};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[]{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
-            int[] tournamentSizeList = new int[]{80};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
+            int[] tournamentSizeList = new int[]{100};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
+            int[] populationTurPropList = new int[]{30}; //{50};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
             for(int wmNum = 0; wmNum < clusterWeightMeasureList.length; wmNum++) {
@@ -89,7 +90,10 @@ public class CGATTPRunner {
                                                     double edgeClustersDispersionVal = edgeClustersDispersion[p];
                                                     for (int q = 0; q < tournamentSizeList.length; q++) {
                                                         int tournamentSize = tournamentSizeList[q];
-                                                        var cost = generationLimitVal * populationSizeVal;
+                                                        for( int r = 0; r < populationTurPropList.length; r++) {
+                                                            int populationTurProp = populationTurPropList[r];
+
+                                                            var cost = generationLimitVal * populationSizeVal;
 //                                                        if(cost < 200_000 || cost > 250_000){
 //                                                            System.out.print("mama");
 //                                                            continue;
@@ -107,9 +111,11 @@ public class CGATTPRunner {
                                                             paramsMap.put("clusterIterLimit", clusterisationAlgorithmIterVal);
                                                             paramsMap.put("edgeClustersDispersion", edgeClustersDispersionVal);
                                                             paramsMap.put("tournamentSize", tournamentSize);
+                                                            paramsMap.put("populationTurProp", populationTurProp);
 
                                                             cartesianProductOfParams.add(paramsMap);
 //                                                        }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -135,7 +141,7 @@ public class CGATTPRunner {
                     + ";" + "AvgAfterCrossAndMutAfterCrossDominationProp"
                     + ";generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
-                    ";clusterIterLimit;edgeClustersProb;tournamentSize";
+                    ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp";
 
             System.out.println(header);
             try {
@@ -173,17 +179,18 @@ public class CGATTPRunner {
                 int clusterIterLimit = (int) params.get("clusterIterLimit");
                 double edgeClustersDispVal = (double) params.get("edgeClustersDispersion");
                 int tournamentSize = (int) params.get("tournamentSize");
+                int populationTurProp = (int) params.get("populationTurProp");
 
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
 
-                String outputFilename = "." + File.separator + files[k] + "_measure-" + clusterWeightMeasure.getClass().getName()
+                String outputFilename = "." + File.separator + files[k] + "_measure-" + clusterWeightMeasure.getName()
                         + "_genLmt-" + generationLimit + "_popSiz-" + populationSize
                         + "_maxAddPopSiz-" + maxAdditionalPopulationSize + "_minAddPopSiz-" + minAdditionalPopulationSize
                         + "_TSPmutP-" + TSPmutationProbability + "_KNAPmutP-" + KNAPmutationProbability
                         + "_TSPcrP-" + TSPcrossoverProbability + "_KNAPcrP-" + KNAPcrossoverProbability
                         + "_noClus-" + numberOfClusters + "_clsIterLmt-" + clusterIterLimit + "_edgClusDispVal-"
-                        + edgeClustersDispVal + "_tourSize-" + tournamentSize;
+                        + edgeClustersDispVal + "_tourSize-" + tournamentSize + "_popTurProp-" + populationTurProp;
 
                 String bestAPFoutputFile = "bestAPF";
                 int bestIterNumber = 0;
@@ -213,6 +220,7 @@ public class CGATTPRunner {
                             tournamentSize,
                             maxAdditionalPopulationSize,
                             minAdditionalPopulationSize,
+                            populationTurProp,
                             -666, true);
 
                     var result = geneticAlgorithm.optimize();
@@ -304,7 +312,8 @@ public class CGATTPRunner {
                         + ";" + generationLimit
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
-                        + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize;
+                        + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize
+                        + ";" + populationTurProp;
                 System.out.println(runResult);
                 try {
 

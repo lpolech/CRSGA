@@ -29,6 +29,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private int clusterSize;
     private int clusterIterLimit;
     private OptimisationResult optimisationResult;
+    private int populationTurProp;
 
 
     public OptimisationResult getOptimisationResult() {
@@ -51,6 +52,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int tournamentSize,
                int maxAdditionalPopulationSize,
                int minAdditionalPopulationSize,
+               int populationTurProp,
                double diversityThreshold,
                boolean enhanceDiversity) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
@@ -60,6 +62,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.directory = directory;
         this.maxAdditionalPopulationSize = maxAdditionalPopulationSize;
         this.minAdditionalPopulationSize = minAdditionalPopulationSize;
+        this.populationTurProp = populationTurProp;
         this.clusterSize = clusterSize;
         this.edgeClustersDispersionVal = edgeClustersDispersionVal;
         this.clusterIterLimit = clusterIterLimit;
@@ -173,7 +176,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             gaClusteringResults.toFile();
             removeDuplicatesAndDominated(population, archive);
-            population = getIndividualClosesToArchive(population, archive, populationSize);
+            population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
 
 //            newPopulation.addAll(population);
 //            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));
@@ -206,7 +209,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         return pareto;
     }
 
-    private List<BaseIndividual<Integer,PROBLEM>> getIndividualClosesToArchive(List<BaseIndividual<Integer,PROBLEM>> population, List<BaseIndividual<Integer,PROBLEM>> archive, int populationSize) {
+    private List<BaseIndividual<Integer,PROBLEM>> getIndividualClosesToArchive(
+            List<BaseIndividual<Integer,PROBLEM>> population,
+            List<BaseIndividual<Integer,PROBLEM>> archive,
+            int  populationSize,
+            int turProp) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualWithMinDst = new ArrayList<>(population.size());
         List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualWithMinDstLimit = new ArrayList<>(population.size());
         List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualsBasedOnMinArchiveDst = new ArrayList<>(archive.size());
@@ -227,10 +234,33 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 population.remove(minDstInd);
             }
         }
-        individualsBasedOnMinArchiveDst.sort(Comparator.comparingDouble(Pair::getValue));
-        individualsBasedOnMinArchiveDstLimit = individualsBasedOnMinArchiveDst.subList(0, Math.min(individualsBasedOnMinArchiveDst.size(), populationSize));
 
-        int slotsLeft = populationSize - individualsBasedOnMinArchiveDstLimit.size();
+        List<Pair<BaseIndividual<Integer, PROBLEM>, Double>> individualsChosenByDynamicTur = new ArrayList<>(individualsBasedOnMinArchiveDst.size());
+
+        if(individualsBasedOnMinArchiveDst.size() < populationSize) {
+            individualsChosenByDynamicTur.addAll(individualsBasedOnMinArchiveDst);
+        } else {
+            int numberOfPointsToPick = Math.min(individualsBasedOnMinArchiveDst.size(), populationSize);
+            for (int i = 0; i < numberOfPointsToPick; i++) {
+                int chosenIndividualIndex = (int) (parameters.random.nextDouble() * individualsBasedOnMinArchiveDst.size());
+                int dynamicTurSize = Math.max(1, (int) ((turProp * individualsBasedOnMinArchiveDst.size()) / 100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
+                for (int t = 0; t < dynamicTurSize - 1; ++t) {
+                    int otherIndividualIndex = (int) (parameters.random.nextDouble() * individualsBasedOnMinArchiveDst.size());
+                    double chosenIndDst = individualsBasedOnMinArchiveDst.get(chosenIndividualIndex).getValue();
+                    double otherIndDst = individualsBasedOnMinArchiveDst.get(otherIndividualIndex).getValue();
+
+                    if (otherIndDst < chosenIndDst) {
+                        chosenIndividualIndex = otherIndividualIndex;
+                    }
+                }
+                individualsChosenByDynamicTur.add(individualsBasedOnMinArchiveDst.get(chosenIndividualIndex));
+                individualsBasedOnMinArchiveDst.remove(chosenIndividualIndex); // TODO: mozna odkomentowac zeby bylo bez zwracania
+            }
+        }
+
+//        individualsBasedOnMinArchiveDst.sort(Comparator.comparingDouble(Pair::getValue));
+//        individualsBasedOnMinArchiveDstLimit = individualsBasedOnMinArchiveDst.subList(0, Math.min(individualsBasedOnMinArchiveDst.size(), populationSize));
+        int slotsLeft = populationSize - individualsChosenByDynamicTur.size(); //individualsBasedOnMinArchiveDstLimit.size();
 
         if(slotsLeft >= 0) {
             for (var ind : population) {
@@ -245,24 +275,37 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     individualWithMinDst.add(new Pair<>(ind, minDistance));
                 }
             }
-            individualWithMinDst.sort(Comparator.comparingDouble(Pair::getValue));
-            individualWithMinDstLimit = individualWithMinDst.subList(0, Math.min(individualWithMinDst.size(), slotsLeft));
+
+            for(int i = 0; i < slotsLeft; i++) {
+                int chosenIndividualIndex = (int) (parameters.random.nextDouble() * individualWithMinDst.size());
+                int dynamicTurSize = Math.max(1, (int) ((turProp * individualWithMinDst.size()) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
+                for (int t = 0; t < dynamicTurSize - 1; ++t) {
+                    int otherIndividualIndex = (int) (parameters.random.nextDouble() * individualWithMinDst.size());
+                    double chosenIndDst = individualWithMinDst.get(chosenIndividualIndex).getValue();
+                    double otherIndDst = individualWithMinDst.get(otherIndividualIndex).getValue();
+
+                    if(otherIndDst < chosenIndDst) {
+                        chosenIndividualIndex = otherIndividualIndex;
+                    }
+                }
+                individualsChosenByDynamicTur.add(individualWithMinDst.get(chosenIndividualIndex));
+                individualWithMinDst.remove(chosenIndividualIndex); // TODO; odkomentuj dla braku zwracania
+            }
+
+//            individualWithMinDst.sort(Comparator.comparingDouble(Pair::getValue));
+//            individualWithMinDstLimit = individualWithMinDst.subList(0, Math.min(individualWithMinDst.size(), slotsLeft));
         }
 
-        List<BaseIndividual<Integer,PROBLEM>> selectedArchMinDstInd = individualsBasedOnMinArchiveDstLimit.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
-        List<BaseIndividual<Integer,PROBLEM>> selectedMinDstInd = individualWithMinDstLimit.stream().map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+//        List<BaseIndividual<Integer,PROBLEM>> selectedArchMinDstInd = individualsBasedOnMinArchiveDstLimit.stream()
+//                .map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+//        List<BaseIndividual<Integer,PROBLEM>> selectedMinDstInd = individualWithMinDstLimit.stream()
+//                .map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
         List<BaseIndividual<Integer,PROBLEM>> returnInd = new ArrayList<>();
-        returnInd.addAll(selectedArchMinDstInd);
-        returnInd.addAll(selectedMinDstInd);
-
-        if(returnInd.size() != populationSize) {
-            System.out.println(
-                    archive.size() + " "
-                    + population.size() + " "
-                    + individualWithMinDst.size() + " "
-                    + individualsBasedOnMinArchiveDst.size() + " "
-                    + populationSize);
-        }
+//        returnInd.addAll(selectedArchMinDstInd);
+//        returnInd.addAll(selectedMinDstInd);
+        List<BaseIndividual<Integer,PROBLEM>> selectedDynamicTur = individualsChosenByDynamicTur.stream()
+                .map(Pair::getKey).collect(Collectors.toCollection(LinkedList::new));
+        returnInd.addAll(selectedDynamicTur);
 
         return returnInd;
     }
