@@ -31,8 +31,8 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     List<Integer> firstChild = new ArrayList<>(firstParent);
     List<Integer> secondChild = new ArrayList<>(secondParent);
 
+    // EDGE TSP
     if (parameters.random.nextDouble() < TSPcr) {
-      // EDGE
       List<Set<Integer>> firstNeighbourhood = generateNeighbourhood(firstParent, secondParent, parameters);
       List<Set<Integer>> secondNeighbourhood = copyNeighbourhood(firstNeighbourhood);
       firstChild = getChild(firstChild, firstParent, secondParent, firstNeighbourhood, parameters);
@@ -40,20 +40,57 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     }
 
     // KNAP SinglePoint Crossover
-    int numGenes = parameters.geneSplitPoint;
-    if (parameters.random.nextDouble() < KNAPcr) {
-      int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+//    if (parameters.random.nextDouble() < KNAPcr) {
+//      int numGenes = parameters.geneSplitPoint;
+//      int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+//
+//      for (int i = numGenes; i < firstParent.size(); ++i) {
+//        if (i < point) {
+//          firstChild.set(i, firstParent.get(i));
+//          secondChild.set(i, secondParent.get(i));
+//        } else {
+//          firstChild.set(i, secondParent.get(i));
+//          secondChild.set(i, firstParent.get(i));
+//        }
+//      }
+//    }
 
-      for (int i = numGenes; i < firstParent.size(); ++i) {
-        if (i < point) {
-          firstChild.set(i, firstParent.get(i));
-          secondChild.set(i, secondParent.get(i));
-        } else {
+    // UNIFORM KNAP
+    if (parameters.random.nextDouble() < KNAPcr) {
+      double random;
+      for (int i = parameters.geneSplitPoint; i < firstParent.size(); ++i) {
+        random = parameters.random.nextDouble();
+        if (random < 0.5) {
           firstChild.set(i, secondParent.get(i));
+        }
+        random = parameters.random.nextDouble();
+        if (random < 0.5) {
           secondChild.set(i, firstParent.get(i));
         }
       }
     }
+
+    // KNAP TwoPoint Crossover
+//    if (parameters.random.nextDouble() < KNAPcr) {
+//      int numGenes = parameters.geneSplitPoint;
+//      int a = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+//      int b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+//      while(a == b) {
+//        b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+//      }
+//      int startPoint = Math.min(a, b);
+//      int endPoint = Math.max(a, b);
+//
+//      for (int i = numGenes; i < firstParent.size(); ++i) {
+//        if (i < startPoint || i > endPoint) {
+//          firstChild.set(i, firstParent.get(i));
+//          secondChild.set(i, secondParent.get(i));
+//        } else {
+//          firstChild.set(i, secondParent.get(i));
+//          secondChild.set(i, firstParent.get(i));
+//        }
+//      }
+//    }
 
     List<List<Integer>> result = new ArrayList<>();
     result.add(firstChild);

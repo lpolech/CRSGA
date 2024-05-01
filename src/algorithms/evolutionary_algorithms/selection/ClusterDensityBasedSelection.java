@@ -98,7 +98,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             List<BaseIndividual<Integer, PROBLEM>> population) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         returnPairs.addAll(addArchivePairs(clusteringResult, parameters, clusterWeightMeasure, population));
-        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
+//        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
 
         return returnPairs;
     }
