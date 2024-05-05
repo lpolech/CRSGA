@@ -44,6 +44,7 @@ public class ParameterSet<GENE extends Number, PROBLEM extends BaseProblemRepres
   public int geneSplitPoint;
   // number of the neighbour solutions to consider, used in local search
   public int neighbourhoodSize;
+  public int mutationVersion;
 
   // Random used for various purposes, i.e. mutation
   public RandomBase<GENE> random;

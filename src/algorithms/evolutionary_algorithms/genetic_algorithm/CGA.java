@@ -30,7 +30,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private int clusterIterLimit;
     private OptimisationResult optimisationResult;
     private int populationTurProp;
-
+    private int mutationVersion;
 
     public OptimisationResult getOptimisationResult() {
         return optimisationResult;
@@ -71,6 +71,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.kmeansCluster = new KmeansClusterisation(false, false);
         this.clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
         this.clusterWeightMeasure = clusterWeightMeasure;
+        this.mutationVersion = mutationVersion;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -276,7 +277,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 }
             }
 
-            for(int i = 0; i < slotsLeft; i++) {
+            for(int i = 0; i < slotsLeft && !individualWithMinDst.isEmpty(); i++) {
                 int chosenIndividualIndex = (int) (parameters.random.nextDouble() * individualWithMinDst.size());
                 int dynamicTurSize = Math.max(1, (int) ((turProp * individualWithMinDst.size()) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
                 for (int t = 0; t < dynamicTurSize - 1; ++t) {

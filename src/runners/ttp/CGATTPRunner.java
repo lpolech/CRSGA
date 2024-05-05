@@ -54,11 +54,11 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
+            int NUMBER_OF_REPEATS = 10;
             int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.4};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] KNAPmutationProbabilityList = new double[] {0.0, 0.00001, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
             double[] TSPcrossoverProbabilityList = new double[] {0.15};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPcrossoverProbabilityList = new double[] {0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[]{2};//{2, 3, 4};//{2};//{2, 3, 4, 5, 10, 20};//{3};
@@ -66,6 +66,8 @@ public class CGATTPRunner {
             double[] edgeClustersDispersion = new double[]{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[]{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
+            int[] mutationVersionList = new int[]{1};
+            int[] crossoverVersionList = new int[]{1};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
             for(int wmNum = 0; wmNum < clusterWeightMeasureList.length; wmNum++) {
@@ -92,29 +94,37 @@ public class CGATTPRunner {
                                                         int tournamentSize = tournamentSizeList[q];
                                                         for( int r = 0; r < populationTurPropList.length; r++) {
                                                             int populationTurProp = populationTurPropList[r];
+                                                            for (int ii = 0; ii < mutationVersionList.length; ii++) {
+                                                                int mutationVersion = mutationVersionList[ii];
+                                                                for (int jj = 0; jj < mutationVersionList.length; jj++) {
+                                                                    int crossoverVersion = crossoverVersionList[jj];
 
-                                                            var cost = generationLimitVal * populationSizeVal;
+                                                                    var cost = generationLimitVal * populationSizeVal;
 //                                                        if(cost < 200_000 || cost > 250_000){
 //                                                            System.out.print("mama");
 //                                                            continue;
 //                                                        } else {
 //                                                            System.out.print("TATA " + generationLimitVal + " " + populationSizeVal + "\n");
-                                                            var paramsMap = new HashMap<String, Object>();
-                                                            paramsMap.put("clusterWeightMeasure", clusterWeightMeasureVal);
-                                                            paramsMap.put("generationLimit", generationLimitVal);
-                                                            paramsMap.put("populationSize", populationSizeVal);
-                                                            paramsMap.put("TSPmutationProbability", TSPmutationProbabilityVal);
-                                                            paramsMap.put("KNAPmutationProbability", KANPmutationProbabilityVal);
-                                                            paramsMap.put("TSPcrossoverProbability", TSPcrossoverProbabilityVal);
-                                                            paramsMap.put("KNAPcrossoverProbability", KNAPcrossoverProbabilityVal);
-                                                            paramsMap.put("numberOfClusters", numberOfClusterVal);
-                                                            paramsMap.put("clusterIterLimit", clusterisationAlgorithmIterVal);
-                                                            paramsMap.put("edgeClustersDispersion", edgeClustersDispersionVal);
-                                                            paramsMap.put("tournamentSize", tournamentSize);
-                                                            paramsMap.put("populationTurProp", populationTurProp);
+                                                                    var paramsMap = new HashMap<String, Object>();
+                                                                    paramsMap.put("clusterWeightMeasure", clusterWeightMeasureVal);
+                                                                    paramsMap.put("generationLimit", generationLimitVal);
+                                                                    paramsMap.put("populationSize", populationSizeVal);
+                                                                    paramsMap.put("TSPmutationProbability", TSPmutationProbabilityVal);
+                                                                    paramsMap.put("KNAPmutationProbability", KANPmutationProbabilityVal);
+                                                                    paramsMap.put("TSPcrossoverProbability", TSPcrossoverProbabilityVal);
+                                                                    paramsMap.put("KNAPcrossoverProbability", KNAPcrossoverProbabilityVal);
+                                                                    paramsMap.put("numberOfClusters", numberOfClusterVal);
+                                                                    paramsMap.put("clusterIterLimit", clusterisationAlgorithmIterVal);
+                                                                    paramsMap.put("edgeClustersDispersion", edgeClustersDispersionVal);
+                                                                    paramsMap.put("tournamentSize", tournamentSize);
+                                                                    paramsMap.put("populationTurProp", populationTurProp);
+                                                                    paramsMap.put("mutationVersion", mutationVersion);
+                                                                    paramsMap.put("crossoverVersion", crossoverVersion);
 
-                                                            cartesianProductOfParams.add(paramsMap);
+                                                                    cartesianProductOfParams.add(paramsMap);
 //                                                        }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -129,7 +139,7 @@ public class CGATTPRunner {
             }
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
-            Collections.shuffle(cartesianProductOfParams);
+//            Collections.shuffle(cartesianProductOfParams);
             String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev"
                     + ";" + "AvgAfterCrossParentDominationCounter"
                     + ";" + "AvgAfterCrossParentDominationProp"
@@ -141,7 +151,7 @@ public class CGATTPRunner {
                     + ";" + "AvgAfterCrossAndMutAfterCrossDominationProp"
                     + ";generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
-                    ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp";
+                    ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp;mutationVersion;crossoverVersion";
 
             System.out.println(header);
             try {
@@ -180,6 +190,8 @@ public class CGATTPRunner {
                 double edgeClustersDispVal = (double) params.get("edgeClustersDispersion");
                 int tournamentSize = (int) params.get("tournamentSize");
                 int populationTurProp = (int) params.get("populationTurProp");
+                int mutationVersion = (int) params.get("mutationVersion");
+                int crossoverVersion = (int) params.get("crossoverVersion");
 
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
@@ -202,6 +214,7 @@ public class CGATTPRunner {
                 List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
                 for(int i = 0; i < NUMBER_OF_REPEATS; i++) {
                     ParameterSet<Integer, TTP> parameters = setParameters(ttp);
+                    parameters.mutationVersion = mutationVersion;
                     HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                     CGA<TTP> geneticAlgorithm = new CGA<>(
                             ttp,
@@ -221,7 +234,8 @@ public class CGATTPRunner {
                             maxAdditionalPopulationSize,
                             minAdditionalPopulationSize,
                             populationTurProp,
-                            -666, true);
+                            -666,
+                            true);
 
                     var result = geneticAlgorithm.optimize();
                     uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
@@ -313,7 +327,7 @@ public class CGATTPRunner {
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
                         + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize
-                        + ";" + populationTurProp;
+                        + ";" + populationTurProp + ";" + mutationVersion;
                 System.out.println(runResult);
                 try {
 
