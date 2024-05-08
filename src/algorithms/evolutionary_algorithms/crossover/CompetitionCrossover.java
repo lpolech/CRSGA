@@ -31,6 +31,286 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     List<Integer> firstChild = new ArrayList<>(firstParent);
     List<Integer> secondChild = new ArrayList<>(secondParent);
 
+    CrossoverResult intermediateResult = null;
+
+    if(parameters.crossoverVersion == 1) {
+      intermediateResult = indWiseEdgeCrossoverTSP(TSPcr, firstParent, secondParent, parameters, firstChild, secondChild); // BASELINE
+    } else if(parameters.crossoverVersion == 2) {
+      intermediateResult = indWiseTwoOrSinglePointPMXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, false); // TWO point as the last param is true
+    } else if(parameters.crossoverVersion == 3) {
+      intermediateResult = indWiseTwoOrSinglePointPMXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, true); // SINGLE point as the last param is true
+    } else if(parameters.crossoverVersion == 4) {
+      intermediateResult = indWiseOXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, false);
+    } else if(parameters.crossoverVersion == 5) {
+      intermediateResult = indWiseOXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, true);
+    } else if(parameters.crossoverVersion == 6) {
+      intermediateResult = indWiseCXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint);
+    }
+
+    checkTSPresult(intermediateResult.firstChild(), parameters.geneSplitPoint);
+    checkTSPresult(intermediateResult.secondChild(), parameters.geneSplitPoint);
+
+    indWiseUniformCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult); // BASELINE
+//    indWiseSinglePointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
+//    indWiseTwoPointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
+
+
+    List<List<Integer>> result = new ArrayList<>();
+    result.add(intermediateResult.firstChild());
+    result.add(intermediateResult.secondChild());
+
+    return result;
+  }
+
+  private boolean checkTSPresult(List<Integer> child, int geneSplitPoint) {
+
+    int sum = 0;
+    int count = Math.min(geneSplitPoint, child.size()); // Ensure we don't go beyond the list size
+
+    // Sum up the first 51 elements from the list
+    for (int i = 0; i < count; i++) {
+      sum += child.get(i);
+    }
+
+    // Check if the sum equals 1275
+    if (sum != 1275) {
+      System.err.println("The sum does not equal 1275.");
+      return true;
+    }
+
+    return false;
+  }
+
+    private CrossoverResult indWiseCXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint) {
+        if (parameters.random.nextDouble() > TSPcr) {
+            return new CrossoverResult(new ArrayList<>(firstParent), new ArrayList<>(secondParent));
+        }
+
+        int size = firstParent.size();
+
+        List<Integer> offspring1 = new ArrayList<>(Collections.nCopies(size, -1));
+        List<Integer> offspring2 = new ArrayList<>(Collections.nCopies(size, -1));
+
+        // Perform Cycle Crossover
+        int currentCityIndex = 0;
+        boolean cycleNotReached = true;
+        while (offspring1.contains(-1) && cycleNotReached && currentCityIndex < geneSplitPoint) {
+            if (offspring1.get(currentCityIndex) == -1) {
+                offspring1.set(currentCityIndex, firstParent.get(currentCityIndex));
+            }
+
+            int nextCity = secondParent.get(currentCityIndex);
+            currentCityIndex = firstParent.indexOf(nextCity);
+
+            cycleNotReached = !offspring1.contains(nextCity);
+        }
+
+        currentCityIndex = 0;
+        cycleNotReached = true;
+        while (offspring2.contains(-1) && cycleNotReached && currentCityIndex < geneSplitPoint) {
+          if (offspring2.get(currentCityIndex) == -1) {
+            offspring2.set(currentCityIndex, secondParent.get(currentCityIndex));
+          }
+
+          int nextCity = firstParent.get(currentCityIndex);
+          currentCityIndex = secondParent.indexOf(nextCity);
+
+          cycleNotReached = !offspring2.contains(nextCity);
+        }
+
+        // Fill in the remaining positions with cities from the second parent
+        for (int i = 0; i < geneSplitPoint; i++) {
+            if (!offspring1.contains(secondParent.get(i))) {
+                offspring1.set(i, secondParent.get(i));
+            }
+
+            if (!offspring2.contains(firstParent.get(i))) {
+                offspring2.set(i, firstParent.get(i));
+            }
+        }
+
+        // fill up the KNAP section
+        for(int i = geneSplitPoint; i < size; i++) {
+            offspring1.set(i, firstParent.get(i));
+            offspring2.set(i, secondParent.get(i));
+        }
+
+        return new CrossoverResult(offspring1, offspring2);
+    }
+
+  private CrossoverResult indWiseOXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint, boolean isSinglePoint) {
+    if (parameters.random.nextDouble() > TSPcr) {
+      return new CrossoverResult(new ArrayList<>(firstParent), new ArrayList<>(secondParent));
+    }
+
+    int size = firstParent.size();
+
+    // Determine the two crossover points
+    int point1 = parameters.random.nextInt(geneSplitPoint);
+    int point2 = parameters.random.nextInt(geneSplitPoint);
+    int start = Math.min(point1, point2);
+    int end = Math.max(point1, point2);
+    if(isSinglePoint) {
+      start = 0;
+    }
+
+    List<Integer> offspring1 = new ArrayList<>(Collections.nCopies(size, -1));
+    List<Integer> offspring2 = new ArrayList<>(Collections.nCopies(size, -1));
+
+    // Copy segment from parents to offspring
+    for (int i = start; i <= end; i++) {
+      offspring1.set(i, secondParent.get(i));
+      offspring2.set(i, firstParent.get(i));
+    }
+
+    // Fill in the remaining positions with cities from the first parent
+    for (int i = end + 1, j = end + 1; i != start; ) {
+      i %= geneSplitPoint;
+      j %= geneSplitPoint;
+      if (!offspring1.contains(firstParent.get(j))) {
+        offspring1.set(i, firstParent.get(j));
+        i += 1;
+      }
+      j += 1;
+    }
+
+    // Fill in the remaining positions with cities from the second parent
+    for (int i = end + 1, j = end + 1; i != start; ) {
+      i %= geneSplitPoint;
+      j %= geneSplitPoint;
+      if (!offspring2.contains(secondParent.get(j))) {
+        offspring2.set(i, secondParent.get(j));
+        i += 1;
+      }
+      j += 1;
+    }
+
+    // fill up the rest
+    for(int i = geneSplitPoint; i < size; i++) {
+      offspring1.set(i, firstParent.get(i));
+      offspring2.set(i, secondParent.get(i));
+    }
+
+    return new CrossoverResult(offspring1, offspring2);
+  }
+
+  private CrossoverResult indWiseTwoOrSinglePointPMXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint, boolean isSinglePoint) {
+    if (parameters.random.nextDouble() > TSPcr) {
+      return new CrossoverResult(new ArrayList<>(firstParent), new ArrayList<>(secondParent));
+    }
+
+    int size = firstParent.size();
+
+    // Determine the two crossover points
+    int point1 = parameters.random.nextInt(geneSplitPoint);
+    int point2 = parameters.random.nextInt(geneSplitPoint);
+    int end = Math.max(point1, point2);
+    int start = Math.min(point1, point2);
+    if(isSinglePoint) {
+      start = 0;
+    }
+
+    List<Integer> offspring1 = new ArrayList<>(Collections.nCopies(size, -1));
+    List<Integer> offspring2 = new ArrayList<>(Collections.nCopies(size, -1));
+
+    // Copy segment from parents to offspring
+    for (int i = start; i <= end; i++) {
+      offspring1.set(i, secondParent.get(i));
+      offspring2.set(i, firstParent.get(i));
+    }
+
+    // Fill in the remaining positions with mappings
+    for (int i = 0; i < geneSplitPoint; i++) {
+      if (i < start || i > end) {
+        int index1 = secondParent.indexOf(firstParent.get(i));
+        int index2 = firstParent.indexOf(secondParent.get(i));
+
+        while (index1 >= start && index1 <= end) { // if the city existis in the already copid sequence
+          index1 = secondParent.indexOf(firstParent.get(index1));
+        }
+
+        while (index2 >= start && index2 <= end) {
+          index2 = firstParent.indexOf(secondParent.get(index2));
+        }
+
+        offspring1.set(index1, secondParent.get(i));
+        offspring2.set(index2, firstParent.get(i));
+      }
+    }
+
+    // Fill in the remaining positions with non-mapped cities
+    for (int i = 0; i < size; i++) {
+      if (offspring1.get(i) == -1) {
+        offspring1.set(i, firstParent.get(i));
+      }
+      if (offspring2.get(i) == -1) {
+        offspring2.set(i, secondParent.get(i));
+      }
+    }
+
+    return new CrossoverResult(offspring1, offspring2);
+  }
+
+  private static void indWiseTwoPointCrossoverKNAP(double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, CrossoverResult intermediateResult) {
+    // KNAP TwoPoint Crossover
+    if (parameters.random.nextDouble() < KNAPcr) {
+      int numGenes = parameters.geneSplitPoint;
+      int a = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+      int b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+      while(a == b) {
+        b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+      }
+      int startPoint = Math.min(a, b);
+      int endPoint = Math.max(a, b);
+
+      for (int i = numGenes; i < firstParent.size(); ++i) {
+        if (i < startPoint || i > endPoint) {
+          intermediateResult.firstChild().set(i, firstParent.get(i));
+          intermediateResult.secondChild().set(i, secondParent.get(i));
+        } else {
+          intermediateResult.firstChild().set(i, secondParent.get(i));
+          intermediateResult.secondChild().set(i, firstParent.get(i));
+        }
+      }
+    }
+  }
+
+  private static void indWiseUniformCrossoverKNAP(double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, CrossoverResult intermediateResult) {
+    // UNIFORM KNAP
+    if (parameters.random.nextDouble() < KNAPcr) {
+      double random;
+      for (int i = parameters.geneSplitPoint; i < firstParent.size(); ++i) {
+        random = parameters.random.nextDouble();
+        if (random < 0.5) {
+          intermediateResult.firstChild().set(i, secondParent.get(i));
+        }
+        random = parameters.random.nextDouble();
+        if (random < 0.5) {
+          intermediateResult.secondChild().set(i, firstParent.get(i));
+        }
+      }
+    }
+  }
+
+  private static void indWiseSinglePointCrossoverKNAP(double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, CrossoverResult intermediateResult) {
+    // KNAP SinglePoint Crossover
+    if (parameters.random.nextDouble() < KNAPcr) {
+      int numGenes = parameters.geneSplitPoint;
+      int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
+
+      for (int i = numGenes; i < firstParent.size(); ++i) {
+        if (i < point) {
+          intermediateResult.firstChild().set(i, firstParent.get(i));
+          intermediateResult.secondChild().set(i, secondParent.get(i));
+        } else {
+          intermediateResult.firstChild().set(i, secondParent.get(i));
+          intermediateResult.secondChild().set(i, firstParent.get(i));
+        }
+      }
+    }
+  }
+
+  private CrossoverResult indWiseEdgeCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, List<Integer> firstChild, List<Integer> secondChild) {
     // EDGE TSP
     if (parameters.random.nextDouble() < TSPcr) {
       List<Set<Integer>> firstNeighbourhood = generateNeighbourhood(firstParent, secondParent, parameters);
@@ -38,65 +318,11 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
       firstChild = getChild(firstChild, firstParent, secondParent, firstNeighbourhood, parameters);
       secondChild = getChild(secondChild, secondParent, firstParent, secondNeighbourhood, parameters);
     }
-
-    // KNAP SinglePoint Crossover
-//    if (parameters.random.nextDouble() < KNAPcr) {
-//      int numGenes = parameters.geneSplitPoint;
-//      int point = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
-//
-//      for (int i = numGenes; i < firstParent.size(); ++i) {
-//        if (i < point) {
-//          firstChild.set(i, firstParent.get(i));
-//          secondChild.set(i, secondParent.get(i));
-//        } else {
-//          firstChild.set(i, secondParent.get(i));
-//          secondChild.set(i, firstParent.get(i));
-//        }
-//      }
-//    }
-
-    // UNIFORM KNAP
-    if (parameters.random.nextDouble() < KNAPcr) {
-      double random;
-      for (int i = parameters.geneSplitPoint; i < firstParent.size(); ++i) {
-        random = parameters.random.nextDouble();
-        if (random < 0.5) {
-          firstChild.set(i, secondParent.get(i));
-        }
-        random = parameters.random.nextDouble();
-        if (random < 0.5) {
-          secondChild.set(i, firstParent.get(i));
-        }
-      }
-    }
-
-    // KNAP TwoPoint Crossover
-//    if (parameters.random.nextDouble() < KNAPcr) {
-//      int numGenes = parameters.geneSplitPoint;
-//      int a = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
-//      int b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
-//      while(a == b) {
-//        b = parameters.random.nextInt(firstParent.size() - numGenes) + numGenes;
-//      }
-//      int startPoint = Math.min(a, b);
-//      int endPoint = Math.max(a, b);
-//
-//      for (int i = numGenes; i < firstParent.size(); ++i) {
-//        if (i < startPoint || i > endPoint) {
-//          firstChild.set(i, firstParent.get(i));
-//          secondChild.set(i, secondParent.get(i));
-//        } else {
-//          firstChild.set(i, secondParent.get(i));
-//          secondChild.set(i, firstParent.get(i));
-//        }
-//      }
-//    }
-
-    List<List<Integer>> result = new ArrayList<>();
-    result.add(firstChild);
-    result.add(secondChild);
-
+    CrossoverResult result = new CrossoverResult(firstChild, secondChild);
     return result;
+  }
+
+  private record CrossoverResult(List<Integer> firstChild, List<Integer> secondChild) {
   }
 
   private List<Integer> getChild(List<Integer> child, List<Integer> firstParent, List<Integer> secondParent,
@@ -172,4 +398,20 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     return copy;
   }
 
+  private boolean areTSPListsEqual(List<?> list1, List<?> list2, int geneSplitPoint) {
+    // If lists are of different sizes, they can't be equal
+    if (list1.size() != list2.size()) {
+      return false;
+    }
+
+    // Compare each element of the lists
+    for (int i = 0; i < geneSplitPoint; i++) {
+      if (!list1.get(i).equals(list2.get(i))) {
+        return false; // If any element differs, lists are not equal
+      }
+    }
+
+    // If all elements match, lists are equal
+    return true;
+  }
 }

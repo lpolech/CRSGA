@@ -54,12 +54,12 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 10;
-            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 30;
+            int[] generationLimitList = new int[] {250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.4};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.0, 0.00001, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.15};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPcrossoverProbabilityList = new double[] {0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[]{2};//{2, 3, 4};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
@@ -67,7 +67,7 @@ public class CGATTPRunner {
             int[] tournamentSizeList = new int[]{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{1};
-            int[] crossoverVersionList = new int[]{1};
+            int[] crossoverVersionList = new int[]{6};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
             for(int wmNum = 0; wmNum < clusterWeightMeasureList.length; wmNum++) {
@@ -96,7 +96,7 @@ public class CGATTPRunner {
                                                             int populationTurProp = populationTurPropList[r];
                                                             for (int ii = 0; ii < mutationVersionList.length; ii++) {
                                                                 int mutationVersion = mutationVersionList[ii];
-                                                                for (int jj = 0; jj < mutationVersionList.length; jj++) {
+                                                                for (int jj = 0; jj < crossoverVersionList.length; jj++) {
                                                                     int crossoverVersion = crossoverVersionList[jj];
 
                                                                     var cost = generationLimitVal * populationSizeVal;
@@ -215,6 +215,7 @@ public class CGATTPRunner {
                 for(int i = 0; i < NUMBER_OF_REPEATS; i++) {
                     ParameterSet<Integer, TTP> parameters = setParameters(ttp);
                     parameters.mutationVersion = mutationVersion;
+                    parameters.crossoverVersion = crossoverVersion;
                     HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                     CGA<TTP> geneticAlgorithm = new CGA<>(
                             ttp,
@@ -327,7 +328,7 @@ public class CGATTPRunner {
                         + ";" + populationSize + ";" + TSPmutationProbability
                         + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
                         + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize
-                        + ";" + populationTurProp + ";" + mutationVersion;
+                        + ";" + populationTurProp + ";" + mutationVersion + ";" + crossoverVersion;
                 System.out.println(runResult);
                 try {
 
