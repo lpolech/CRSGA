@@ -7,17 +7,25 @@ import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.quality_measure.HVMany;
 import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
     private final QualityMeasure clusterWeightMeasure;
+    private final HVMany hvCalculator;
+    private final String outputFilename;
+    private final int iterationNumber;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -54,7 +62,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int minAdditionalPopulationSize,
                int populationTurProp,
                double diversityThreshold,
-               boolean enhanceDiversity) {
+               boolean enhanceDiversity,
+               HVMany hv,
+               String outputFilename,
+               int iterationNumber) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -72,9 +83,21 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
         this.clusterWeightMeasure = clusterWeightMeasure;
         this.mutationVersion = mutationVersion;
+        this.hvCalculator = hv;
+        this.outputFilename = outputFilename;
+        this.iterationNumber = iterationNumber;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
+        // create empty file
+        String hvHistoryFilePath = outputFilename + File.separator + "hv_hisotry" + this.iterationNumber + ".csv";
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
+            writer.write("cost;hv\n");
+            writer.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
 //        System.out.println("generation; additional population; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure");
         int generation = 1;
         BaseIndividual<Integer, PROBLEM> best;
@@ -175,7 +198,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
             }
 
-            gaClusteringResults.toFile();
+            double archiveHv = this.hvCalculator.getMeasure(archive);
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
+                writer.write(cost + ";" + Double.toString(archiveHv) + "\n");
+                writer.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+
+//            gaClusteringResults.toFile();
             removeDuplicatesAndDominated(population, archive);
             population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
 

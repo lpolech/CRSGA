@@ -30,11 +30,15 @@ public class CGATTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final String[] files = new String[]{
-//            "eil51_n50_bounded-strongly-corr_01.ttp", "eil51_n50_uncorr_01.ttp", "eil51_n50_uncorr-similar-weights_01.ttp",
-//            "eil51_n150_bounded-strongly-corr_01.ttp", "eil51_n150_uncorr_01.ttp", "eil51_n150_uncorr-similar-weights_01.ttp",
+
+//            "eil51_n50_bounded-strongly-corr_01.ttp", "eil51_n50_uncorr-similar-weights_01.ttp",
+//            "eil51_n50_uncorr_01.ttp"//,
+//            , "eil51_n150_bounded-strongly-corr_01.ttp", "eil51_n150_uncorr_01.ttp", "eil51_n150_uncorr-similar-weights_01.ttp",
 //            "eil51_n250_bounded-strongly-corr_01.ttp", "eil51_n250_uncorr_01.ttp", "eil51_n250_uncorr-similar-weights_01.ttp",
-            "eil51_n500_bounded-strongly-corr_01.ttp"//, "eil51_n500_uncorr_01.ttp", "eil51_n500_uncorr-similar-weights_01.ttp",
-            };//"kroA100_n990_uncorr_01.ttp"};//"kroA100_n297_bounded-strongly-corr_01.ttp"};//  "eil51_n50_uncorr-similar-weights_01.ttp", "kroA100_n990_uncorr_01.ttp"
+            "eil51_n500_bounded-strongly-corr_01.ttp"
+//            , "eil51_n500_uncorr_01.ttp",
+//            "eil51_n500_uncorr-similar-weights_01.ttp"//,
+    };//"kroA100_n990_uncorr_01.ttp"};//"kroA100_n297_bounded-strongly-corr_01.ttp"};//  "eil51_n50_uncorr-similar-weights_01.ttp", "kroA100_n990_uncorr_01.ttp"
     public static void main(String[] args) {
         run(args);
     }
@@ -49,21 +53,21 @@ public class CGATTPRunner {
 //                new FlatDaviesBouldin(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn1(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn4(new Euclidean()), //this measures is sensitive to useSubtree toggle
-                new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
+                    new FlatWithinBetweenIndex(new Euclidean()), //this measures is sensitive to useSubtree toggle
 //                new FlatDunn2(new Euclidean()),
 //                new FlatDunn3(new Euclidean())
             };
 
             int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] generationLimitList = new int[] {4_000_000, 5_000_000, 6_000_000, 7_000_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.4};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[]{2};//{2, 3, 4};//{2};//{2, 3, 4, 5, 10, 20};//{3};
+            double[] TSPmutationProbabilityList = new double[] {0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[]{2};//{2, 4, 6, 8, 10, 15, 20, 25};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            double[] edgeClustersDispersion = new double[]{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            double[] edgeClustersDispersion = new double[] {4};//{0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10, 15, 20, 30, 50};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[]{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{1};
@@ -236,7 +240,10 @@ public class CGATTPRunner {
                             minAdditionalPopulationSize,
                             populationTurProp,
                             -666,
-                            true);
+                            true,
+                            hv,
+                            outputFilename,
+                            i);
 
                     var result = geneticAlgorithm.optimize();
                     uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
@@ -270,7 +277,7 @@ public class CGATTPRunner {
                         writer.close();
                     } catch(IOException e) {
                         e.printStackTrace();
-                    };
+                    }
                 }
 
 
