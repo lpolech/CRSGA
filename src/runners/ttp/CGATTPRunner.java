@@ -58,8 +58,8 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {4_000_000, 5_000_000, 6_000_000, 7_000_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -200,13 +200,12 @@ public class CGATTPRunner {
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
 
-                String outputFilename = "." + File.separator + files[k] + "_measure-" + clusterWeightMeasure.getName()
-                        + "_genLmt-" + generationLimit + "_popSiz-" + populationSize
-                        + "_maxAddPopSiz-" + maxAdditionalPopulationSize + "_minAddPopSiz-" + minAdditionalPopulationSize
-                        + "_TSPmutP-" + TSPmutationProbability + "_KNAPmutP-" + KNAPmutationProbability
-                        + "_TSPcrP-" + TSPcrossoverProbability + "_KNAPcrP-" + KNAPcrossoverProbability
-                        + "_noClus-" + numberOfClusters + "_clsIterLmt-" + clusterIterLimit + "_edgClusDispVal-"
-                        + edgeClustersDispVal + "_tourSize-" + tournamentSize + "_popTurProp-" + populationTurProp;
+                String outputFilename = "." + File.separator + removeTtpPostfixFromFileName(files[k]) + "_meas-" + clusterWeightMeasure.getName()
+                        + "_gen-" + generationLimit + "_pop-" + populationSize
+                        + "_TSPm-" + TSPmutationProbability + "_KNAPm-" + KNAPmutationProbability
+                        + "_TSPc-" + TSPcrossoverProbability + "_KNAPc-" + KNAPcrossoverProbability
+                        + "_clsN-" + numberOfClusters + "_clsI-" + clusterIterLimit + "_edgCls-"
+                        + edgeClustersDispVal + "_tur-" + tournamentSize + "_popTur-" + populationTurProp;
 
                 String bestAPFoutputFile = "bestAPF";
                 int bestIterNumber = 0;
@@ -359,6 +358,13 @@ public class CGATTPRunner {
             }
         }
         return null;
+    }
+
+    private static String removeTtpPostfixFromFileName(String fileName) {
+        if(fileName.endsWith(".ttp")) {
+            return fileName.substring(0, fileName.lastIndexOf(".ttp"));
+        }
+        return fileName;
     }
 
     private static TTP readFile(int k) {

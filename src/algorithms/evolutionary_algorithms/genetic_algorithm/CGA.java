@@ -136,7 +136,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     clusterIterLimit,
                     edgeClustersDispersionVal,
                     generation, parameters);
-//            gaClusteringResults.toFile();
+            gaClusteringResults.toFile();
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
