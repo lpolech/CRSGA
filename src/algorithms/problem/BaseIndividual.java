@@ -29,18 +29,44 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
 	private int rank;
 	private double fitnessValue;
 	private double distance;
-
-    private int usageCounter;
+    private int usageCounter = 0;
+    private int adjustedUsageCounter = 0;
+    private int exclusionGenerationCounter = 0;
 
     public int getUsageCounter() {
         return usageCounter;
     }
 
+    public int getNumberOfTimesItHasBeenExcluded() {
+        return numberOfTimesItHasBeenExcluded;
+    }
+
+    private int numberOfTimesItHasBeenExcluded = 0;
+
+    public int getExclusionGenerationCounter() {
+        return exclusionGenerationCounter;
+    }
+
+    public void excludeFromArchive(int exclusionGenerationCounter) {
+        this.exclusionGenerationCounter = exclusionGenerationCounter;
+        this.adjustedUsageCounter = 0;
+        this.numberOfTimesItHasBeenExcluded++;
+    }
+
+    public void reduceExclusionGenerationCounter() {
+        this.exclusionGenerationCounter = Math.max(exclusionGenerationCounter - 1, 0);
+    }
+
+    public int getAdjustedUsageCounter() {
+        return adjustedUsageCounter;
+    }
+
     public void recordUsage() {
+        this.adjustedUsageCounter = this.adjustedUsageCounter + 1;
         this.usageCounter = this.usageCounter + 1;
     }
-    public void setUsageCounter(int usageCounter) {
-        this.usageCounter = usageCounter;
+    public void setAdjustedUsageCounter(int adjustedUsageCounter) {
+        this.adjustedUsageCounter = adjustedUsageCounter;
     }
 
 	public BaseIndividual(PROBLEM problem, BaseEvaluator<GENE, PROBLEM> evaluator) {

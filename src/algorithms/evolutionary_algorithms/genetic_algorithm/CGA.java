@@ -17,6 +17,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final HVMany hvCalculator;
     private final String outputFilename;
     private final int iterationNumber;
+    private final int indExclusionUsageLimit;
+    private final int indExclusionGenDuration;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -65,7 +69,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                boolean enhanceDiversity,
                HVMany hv,
                String outputFilename,
-               int iterationNumber) {
+               int iterationNumber,
+               int indExclusionUsageLimit,
+               int indExclusionGenDuration) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -86,6 +92,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.hvCalculator = hv;
         this.outputFilename = outputFilename;
         this.iterationNumber = iterationNumber;
+        this.indExclusionUsageLimit = indExclusionUsageLimit;
+        this.indExclusionGenDuration = indExclusionGenDuration;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -103,6 +111,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         BaseIndividual<Integer, PROBLEM> best;
         List<BaseIndividual<Integer, PROBLEM>> newPopulation;
         List<BaseIndividual<Integer, PROBLEM>> archive = new ArrayList<>();
+        List<BaseIndividual<Integer, PROBLEM>> excludedArchive = new ArrayList<>();
 
         ClusteringResult gaClusteringResults = null;
 
@@ -130,13 +139,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
+            recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
             gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
                     archive,
                     clusterSize,
                     clusterIterLimit,
                     edgeClustersDispersionVal,
                     generation, parameters);
-            gaClusteringResults.toFile();
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
@@ -207,7 +216,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 e.printStackTrace();
             }
 
-//            gaClusteringResults.toFile();
+            writeReportingFiles(excludedArchive, gaClusteringResults);
             removeDuplicatesAndDominated(population, archive);
             population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
 
@@ -240,6 +249,83 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
+        toFileExcludedIndividuals(excludedArchive, gaClusteringResults.getClusteringResultFilePath(), gaClusteringResults.getClusteringResultFileName());
+        gaClusteringResults.toFile();
+    }
+
+    private void toFileExcludedIndividuals(List<BaseIndividual<Integer,PROBLEM>> excludedArchive, String clusteringResultFilePath, String clusteringResultFileName) {
+        try {
+            String fullPath = clusteringResultFilePath + File.separator + "excludedInd_" + clusteringResultFileName;
+            Files.createDirectories(Paths.get(clusteringResultFilePath));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
+            StringBuilder output = new StringBuilder("Usage Cnt;Adj Usage Cnt;Number of Times It Was Excluded;Curr Exclusion Cnt;Obj 0; Obj 1;Norm Obj 0;Norm Obj 1\n");
+
+            for(var ind: excludedArchive) {
+                output.append(ind.getUsageCounter() + ";");
+                output.append(ind.getAdjustedUsageCounter() + ";");
+                output.append(ind.getNumberOfTimesItHasBeenExcluded() + ";");
+                output.append(ind.getExclusionGenerationCounter() + ";");
+                for(double obj: ind.getObjectives()) {
+                    output.append(obj + ";");
+                }
+
+                for(double normObj: ind.getNormalObjectives()) {
+                    output.append(normObj + ";");
+                }
+                output.append("\n");
+            }
+            writer.write(output.toString());
+            writer.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void recordGenerationAndUpdateArchiveAndExcludedIndividuals(int indExclusionUsageLimit,
+                                                                        int indExclusionGenDuration,
+                                                                        List<BaseIndividual<Integer, PROBLEM>> archive,
+                                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
+        recordGenerationForExcludedIndividuals(archive, excludedArchive);
+        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
+    }
+
+    private void recordGenerationForExcludedIndividuals(List<BaseIndividual<Integer, PROBLEM>> archive,
+                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
+        // Use an iterator to safely remove elements from excludedArchive while iterating
+        Iterator<BaseIndividual<Integer, PROBLEM>> iterator = excludedArchive.iterator();
+
+        while (iterator.hasNext()) {
+            BaseIndividual<Integer, PROBLEM> individual = iterator.next();
+            // Decrement the exclusion generation counter
+            individual.reduceExclusionGenerationCounter();
+
+            // If the counter reaches zero, move the individual back to the main archive
+            if (individual.getExclusionGenerationCounter() == 0) {
+                List<BaseIndividual<Integer, PROBLEM>> artificialList = new ArrayList<>(1);
+                artificialList.add(individual);
+                removeDuplicatesAndDominated(artificialList, archive);
+                iterator.remove(); // Remove from excludedArchive
+            }
+        }
+    }
+
+    private void updateArchiveAndExcludedIndividuals(int indExclusionUsageLimit, int indExclusionGenDuration,
+                                                     List<BaseIndividual<Integer, PROBLEM>> archive,
+                                                     List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
+        // Step 1: Filter individuals whose usageCounter exceeds the indExclusionUsageLimit
+        List<BaseIndividual<Integer, PROBLEM>> filteredIndividuals = archive.stream()
+                .filter(individual -> individual.getAdjustedUsageCounter() > indExclusionUsageLimit)
+                .collect(Collectors.toList());
+
+        // Step 3: Update exclusion counters and move individuals to the excluded list
+        for (BaseIndividual<Integer, PROBLEM> individual : filteredIndividuals) {
+            individual.excludeFromArchive(indExclusionGenDuration);
+            archive.remove(individual);
+            excludedArchive.add(individual);
+        }
     }
 
     private List<BaseIndividual<Integer,PROBLEM>> getIndividualClosesToArchive(

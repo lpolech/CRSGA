@@ -1,5 +1,9 @@
 package algorithms.evolutionary_algorithms.util;
 
+import algorithms.evolutionary_algorithms.genetic_algorithm.GeneticAlgorithm;
+import algorithms.problem.BaseIndividual;
+import algorithms.problem.BaseProblemRepresentation;
+import algorithms.problem.TTP;
 import data.ClustersAndTheirStatistics;
 
 import java.util.List;
@@ -17,6 +21,8 @@ public class ClusteringResult {
     public String getClusteringResultFilePath() {
         return clusteringResultFilePath;
     }
+
+    public String getClusteringResultFileName() { return clusteringResultFileName; }
 
     public ClusteringResult(ClustersAndTheirStatistics clustersAndTheirStatistics, List<Double> clustersDispersion,
                             List<Double> clusterWeights,
@@ -62,6 +68,7 @@ public class ClusteringResult {
 
     public void toFile(){
         this.clustersAndTheirStatistics.toFile(this.clusteringResultFilePath, this.clusteringResultFileName,
-                this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion, this.clusterWeights);
+                this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion,
+                this.clusterWeights);
     }
 }

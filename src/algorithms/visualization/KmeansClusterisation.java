@@ -8,19 +8,11 @@ import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.problem.TTP;
-import basic_hierarchy.implementation.BasicHierarchy;
-import basic_hierarchy.interfaces.Hierarchy;
 import center.method.Centroid;
 import data.*;
 import distance.measures.L2Norm;
-import distance_measures.Euclidean;
-import interfaces.DistanceMeasure;
 import interfaces.QualityMeasure;
-import internal_measures.*;
-import javafx.util.Pair;
-import utils.Utils;
 
-import java.io.File;
 import java.util.*;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
@@ -57,7 +49,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         DataPoint[] dataToCluster = new DataPoint[dataLength];
         for(int i = 0; i < population.size(); i++) {
             var ind = population.get(i);
-            int indUsage = ind.getUsageCounter();
+            int indUsage = ind.getAdjustedUsageCounter();
             var individualName = "ParetoFront_" + i;
             dataToCluster[i] = new DataPoint(ind.getObjectives(), ind.getObjectives(), individualName, null);
             dataToCluster[i].setGlobalUsageCounter(indUsage);
@@ -152,11 +144,13 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         if(!disableCostEdgePromotion) {
             clustersDispersion.set(minProfitClusterNumber, maxClusteringDispersion * edgeClustersWeightMultiplier);
             clusterWeights.set(minProfitClusterNumber, extremeClusterWeight * weightsMultiplier);
+//            clusterWeights.set(minProfitClusterNumber, clusterWeights.get(minProfitClusterNumber) * weightsMultiplier);
         }
 
         if(!disableTravelEdgePromotion) {
             clustersDispersion.set(minTravellingTimeClusterNumber, maxClusteringDispersion * edgeClustersWeightMultiplier);
             clusterWeights.set(minTravellingTimeClusterNumber, extremeClusterWeight * weightsMultiplier);
+//            clusterWeights.set(minTravellingTimeClusterNumber, clusterWeights.get(minTravellingTimeClusterNumber) * weightsMultiplier);
         }
 
         String clusteringResultFilePath = "clustering_res";
