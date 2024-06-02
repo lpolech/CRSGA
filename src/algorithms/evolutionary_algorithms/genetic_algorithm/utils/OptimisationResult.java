@@ -55,16 +55,28 @@ public class OptimisationResult<PROBLEM extends BaseProblemRepresentation> {
 
         if(firstChildAfterCrossAndMut.dominates(firstParent)) {
             afterCrossAndMutParentDominationCounter++;
+        } else {
+            firstParent.recordUnsuccessfulUsage();
         }
+
         if(firstChildAfterCrossAndMut.dominates(secondParent)) {
             afterCrossAndMutParentDominationCounter++;
+        } else {
+            secondParent.recordUnsuccessfulUsage();
         }
+
         if(secondChildAfterCrossAndMut.dominates(firstParent)) {
             afterCrossAndMutParentDominationCounter++;
+        } else {
+            firstParent.recordUnsuccessfulUsage();
         }
+
         if(secondChildAfterCrossAndMut.dominates(secondParent)) {
             afterCrossAndMutParentDominationCounter++;
+        } else {
+            secondParent.recordUnsuccessfulUsage();
         }
+
         numberOfAfterCrossAndMutChecks += 4;
 
         if(firstChildAfterCross.dominates(firstChildAfterCrossAndMut)) {

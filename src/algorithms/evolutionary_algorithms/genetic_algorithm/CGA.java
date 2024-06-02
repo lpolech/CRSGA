@@ -252,7 +252,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     }
 
     private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
-        toFileExcludedIndividuals(excludedArchive, gaClusteringResults.getClusteringResultFilePath(), gaClusteringResults.getClusteringResultFileName());
+        if(excludedArchive.size() > 0) {
+            toFileExcludedIndividuals(excludedArchive, gaClusteringResults.getClusteringResultFilePath(), gaClusteringResults.getClusteringResultFileName());
+        }
         gaClusteringResults.toFile();
     }
 
@@ -261,11 +263,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             String fullPath = clusteringResultFilePath + File.separator + "excludedInd_" + clusteringResultFileName;
             Files.createDirectories(Paths.get(clusteringResultFilePath));
             BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
-            StringBuilder output = new StringBuilder("Usage Cnt;Adj Usage Cnt;Number of Times It Was Excluded;Curr Exclusion Cnt;Obj 0; Obj 1;Norm Obj 0;Norm Obj 1\n");
+            StringBuilder output = new StringBuilder("Usage Cnt;Adj Usage Cnt;Unsuc Usage Cnt;Adj Unsuc Usage Cnt;Number of Times It Was Excluded;Curr Exclusion Cnt;Obj 0; Obj 1;Norm Obj 0;Norm Obj 1\n");
 
             for(var ind: excludedArchive) {
                 output.append(ind.getUsageCounter() + ";");
                 output.append(ind.getAdjustedUsageCounter() + ";");
+                output.append(ind.getUnsuccessfulUsageCounter() + ";");
+                output.append(ind.getAdjusterUnsuccessfulUsageCounter() + ";");
                 output.append(ind.getNumberOfTimesItHasBeenExcluded() + ";");
                 output.append(ind.getExclusionGenerationCounter() + ";");
                 for(double obj: ind.getObjectives()) {
@@ -317,12 +321,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                                      List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
         // Step 1: Filter individuals whose usageCounter exceeds the indExclusionUsageLimit
         List<BaseIndividual<Integer, PROBLEM>> filteredIndividuals = archive.stream()
-                .filter(individual -> individual.getAdjustedUsageCounter() > indExclusionUsageLimit)
+                .filter(individual -> individual.getAdjusterUnsuccessfulUsageCounter() > indExclusionUsageLimit)
                 .collect(Collectors.toList());
 
         // Step 2: Sort the filtered individuals based on usageCounter and evalValue in descending order
         filteredIndividuals.sort(
-                Comparator.comparingInt(BaseIndividual<Integer, PROBLEM>::getUsageCounter).reversed()
+                Comparator.comparingInt(BaseIndividual<Integer, PROBLEM>::getAdjusterUnsuccessfulUsageCounter).reversed()
                         .thenComparing(Comparator.comparingDouble(BaseIndividual<Integer, PROBLEM>::getEvalValue).reversed())
         );
 

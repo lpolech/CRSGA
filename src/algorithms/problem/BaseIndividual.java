@@ -33,6 +33,18 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
     private int adjustedUsageCounter = 0;
     private int exclusionGenerationCounter = 0;
 
+    private int unsuccessfulUsageCounter = 0;
+
+    private int adjusterUnsuccessfulUsageCounter = 0;
+
+    public int getUnsuccessfulUsageCounter() {
+        return unsuccessfulUsageCounter;
+    }
+
+    public int getAdjusterUnsuccessfulUsageCounter() {
+        return adjusterUnsuccessfulUsageCounter;
+    }
+
     public int getUsageCounter() {
         return usageCounter;
     }
@@ -51,6 +63,7 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
         this.exclusionGenerationCounter = exclusionGenerationCounter;
         this.adjustedUsageCounter = 0;
         this.numberOfTimesItHasBeenExcluded++;
+        this.adjusterUnsuccessfulUsageCounter = 0;
     }
 
     public void reduceExclusionGenerationCounter() {
@@ -65,6 +78,12 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
         this.adjustedUsageCounter = this.adjustedUsageCounter + 1;
         this.usageCounter = this.usageCounter + 1;
     }
+
+    public void recordUnsuccessfulUsage() {
+        this.adjusterUnsuccessfulUsageCounter = this.adjusterUnsuccessfulUsageCounter + 1;
+        this.unsuccessfulUsageCounter = this.unsuccessfulUsageCounter + 1;
+    }
+
     public void setAdjustedUsageCounter(int adjustedUsageCounter) {
         this.adjustedUsageCounter = adjustedUsageCounter;
     }
