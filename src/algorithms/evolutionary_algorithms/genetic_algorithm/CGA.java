@@ -320,7 +320,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 .filter(individual -> individual.getAdjustedUsageCounter() > indExclusionUsageLimit)
                 .collect(Collectors.toList());
 
-        // Step 3: Update exclusion counters and move individuals to the excluded list
+        // Step 2: Sort the filtered individuals based on usageCounter and evalValue in descending order
+        filteredIndividuals.sort(
+                Comparator.comparingInt(BaseIndividual<Integer, PROBLEM>::getUsageCounter).reversed()
+                        .thenComparing(Comparator.comparingDouble(BaseIndividual<Integer, PROBLEM>::getEvalValue).reversed())
+        );
+
+        // Step 3: Make sure at least one archive element is present
+        filteredIndividuals = filteredIndividuals.subList(0, Math.min(filteredIndividuals.size(), archive.size() - 1));
+
+        // Step 4: Update exclusion counters and move individuals to the excluded list
         for (BaseIndividual<Integer, PROBLEM> individual : filteredIndividuals) {
             individual.excludeFromArchive(indExclusionGenDuration);
             archive.remove(individual);
