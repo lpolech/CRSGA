@@ -19,12 +19,12 @@ import java.util.OptionalDouble;
 
 public class CalculateMeasures {
     private static BaseEvaluator<Integer, TTP> evaluator;
-    private static final String inputDir = "D:\\Coding\\CGA\\bntga\\results";//"D:/Coding/CGA/bntga/test/";
+    private static final String inputDir = "D:\\Coding\\CGA\\1eil51_n150_bounded-strongly-corr_01_m-FWBI_g250000_p-10_Tm0.4_Km0.006_Tc0.8_Kc0.95_cN2_cI50_edgC4.0_t150_popT100_eL600_eg550";//"D:/Coding/CGA/bntga/test/";
     private static final String instanceName =
 //            "eil51_n50_bounded-strongly-corr_01_config0_run";
 //            "eil51_n50_uncorr-similar-weights_01_config0_run";
 //            "eil51_n50_uncorr_01_config0_run";
-//            "eil51_n150_bounded-strongly-corr_01_config0_run";
+            "eil51_n150_bounded-strongly-corr_01_config0_run";
 //            "eil51_n150_uncorr_01_config0_run";
 //            "eil51_n150_uncorr-similar-weights_01_config0_run";
 //            "eil51_n250_bounded-strongly-corr_01_config0_run";
@@ -32,12 +32,12 @@ public class CalculateMeasures {
 //            "eil51_n250_uncorr-similar-weights_01_config0_run";
 //            "eil51_n500_bounded-strongly-corr_01_config0_run";
 //            "eil51_n500_uncorr_01_config0_run";
-            "eil51_n500_uncorr-similar-weights_01_config0_run";
+//            "eil51_n500_uncorr-similar-weights_01_config0_run";
     private static final String instanceDefinitionFile =
 //        "D:\\Coding\\CGA\\eil51_n50_bounded-strongly-corr_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n50_uncorr-similar-weights_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n50_uncorr_01.ttp";
-//        "D:\\Coding\\CGA\\eil51_n150_bounded-strongly-corr_01.ttp";
+        "D:\\Coding\\CGA\\eil51_n150_bounded-strongly-corr_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n150_uncorr_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n150_uncorr-similar-weights_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n250_bounded-strongly-corr_01.ttp";
@@ -45,7 +45,7 @@ public class CalculateMeasures {
 //        "D:\\Coding\\CGA\\eil51_n250_uncorr-similar-weights_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n500_bounded-strongly-corr_01.ttp";
 //        "D:\\Coding\\CGA\\eil51_n500_uncorr_01.ttp";
-        "D:\\Coding\\CGA\\eil51_n500_uncorr-similar-weights_01.ttp";
+//        "D:\\Coding\\CGA\\eil51_n500_uncorr-similar-weights_01.ttp";
 
     public static void main(String[] args) {
         TTP ttp = readFile(instanceDefinitionFile);
