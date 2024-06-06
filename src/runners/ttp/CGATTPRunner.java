@@ -13,8 +13,10 @@ import algorithms.factories.*;
 import algorithms.io.TTPIO;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
+import algorithms.quality_measure.ApfDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
+import algorithms.quality_measure.Purity;
 import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
 import internal_measures.FlatWithinBetweenIndex;
@@ -30,7 +32,7 @@ public class CGATTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n50_bounded-strongly-corr_01_merged.csv")//,
+//            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n50_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>("eil51_n50_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n50_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n50_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n50_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n150_bounded-strongly-corr_01_merged.csv"),
@@ -39,7 +41,7 @@ public class CGATTPRunner {
 //            new Pair<>("eil51_n250_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n250_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n250_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n500_bounded-strongly-corr_01_merged.csv"),
+            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-03_eil51_n500_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n500_uncorr_01.ttp", "")
     );
@@ -56,6 +58,8 @@ public class CGATTPRunner {
             ParameterSet<Integer, TTP> parameters = setParameters(ttp);
             List<BaseIndividual> optimalParetoFront = readAPF(instanceWithOPF.get(k).getValue(), ttp, parameters.evaluator);
             InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(optimalParetoFront);
+            ApfDistance apfDistanceCalculator = new ApfDistance(optimalParetoFront);
+            Purity purityCalculator = new Purity(optimalParetoFront);
 
             QualityMeasure[] clusterWeightMeasureList = new QualityMeasure[] {
 //                new FlatCalinskiHarabasz(new Euclidean()), //this measures is sensitive to useSubtree toggle
@@ -67,17 +71,18 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 5;
+            int NUMBER_OF_REPEATS = 10;
             int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {10, 25, 50, 75, 100, 125, 150, 175, 200};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.005, 0.01, 0.02, 0.03, 0.04};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[]{2};//{2, 4, 6, 8, 10, 15, 20, 25};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
+            int[] populationSizeList = new int[] {10};//{10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 500};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
+            double[] TSPmutationProbabilityList = new double[] {0.3};//{0.2, 0.25, 0.3, 0.35, 0.4, 0.45};//0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.0, 0.0005, 0.0015, 0.0025, 0.0035, 0.0045};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+//            double[] KNAPmutationProbabilityList = new double[] {0.0001, 0.001, 0.002, 0.003, 0.004, 0.005};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.45};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.9, 1.0};//{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[]{2};//{2, 4, 6, 8, 10, 15, 20, 25};//{2};//{2, 4, 6, 8, 10, 15, 20, 25};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            double[] edgeClustersDispersion = new double[] {0.0, 0.1, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 7.0, 10.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
-            int[] tournamentSizeList = new int[]{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
+            double[] edgeClustersDispersion = new double[] {2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            int[] tournamentSizeList = new int[]{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{1};
             int[] crossoverVersionList = new int[]{6};
@@ -163,8 +168,9 @@ public class CGATTPRunner {
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
 //            Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;measure;no of repeats;avgHV;stdev;avgIGD;stdev" +
-                    ";avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;uber pareto IGD"
+            String header = "dataset;counter;measure;no of repeats;uber pareto IGD;uber pareto purity;uber pareto apf dst" +
+                    ";avgHV;stdev;avgIGD;stdev;avgApfDst;stdev" +
+                    ";avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev"
                     + ";" + "AvgAfterCrossParentDominationCounter"
                     + ";" + "AvgAfterCrossParentDominationProp"
                     + ";" + "AvgAfterCrossAndMutParentDominationCounter"
@@ -200,6 +206,7 @@ public class CGATTPRunner {
                 var eachRepeatND = new ArrayList<Integer>();
                 var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
                 var eachRepeatIGD = new ArrayList<Double>();
+                var eachRepeatApfDst = new ArrayList<Double>();
                 paramCounter += 1;
 
                 QualityMeasure clusterWeightMeasure = (QualityMeasure) params.get("clusterWeightMeasure");
@@ -268,6 +275,7 @@ public class CGATTPRunner {
                             true,
                             hv,
                             igdCalculator,
+                            apfDistanceCalculator,
                             outputFilename,
                             i,
                             indExclusionUsageLimit,
@@ -291,6 +299,9 @@ public class CGATTPRunner {
 
                     var igdValue = igdCalculator.getMeasure(result);
                     eachRepeatIGD.add(igdValue);
+
+                    var apfDst = apfDistanceCalculator.getMeasure(result);
+                    eachRepeatApfDst.add(apfDst);
 
                     String instanceName = instanceWithOPF.get(k).getKey();
                     if(instanceName.endsWith(".ttp"))
@@ -359,12 +370,24 @@ public class CGATTPRunner {
                 }
                 averageIGDValStdev = Math.sqrt(averageIGDValStdev/eachRepeatIGD.size());
 
+                OptionalDouble averageApfDst = eachRepeatApfDst
+                        .stream()
+                        .mapToDouble(a -> a)
+                        .average();
+                var averageApfDstVal = averageApfDst.isPresent() ? averageApfDst.getAsDouble() : -666.0;
+                double averageApfDstValStdev = 0.0;
+                for(double num: eachRepeatApfDst) {
+                    averageApfDstValStdev += Math.pow(num - averageApfDstVal, 2);
+                }
+                averageApfDstValStdev = Math.sqrt(averageApfDstValStdev/eachRepeatApfDst.size());
+
                 String runResult = instanceWithOPF.get(k).getKey() + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
-                        + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS + ";" + avgHV + ";" + standardDeviation
-                        + ";" + averageIGDVal + ";" + averageIGDValStdev
-                        + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size() + ";" +
-                        eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
-                        + ";" + igdCalculator.getMeasure(uberPareto)
+                        + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
+                        + ";" + igdCalculator.getMeasure(uberPareto) + ";" + purityCalculator.getMeasure(uberPareto)
+                        + ";" + apfDistanceCalculator.getMeasure(uberPareto) +  ";" + avgHV + ";" + standardDeviation
+                        + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageApfDstVal + ";" + averageApfDstValStdev
+                        + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size()
+                        + ";" + eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationProp(eachRepeatOptimisationResult)
                         + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationCounter(eachRepeatOptimisationResult)

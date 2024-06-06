@@ -7,6 +7,7 @@ import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.quality_measure.ApfDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
 import algorithms.visualization.EvolutionHistoryElement;
@@ -32,6 +33,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int indExclusionUsageLimit;
     private final int indExclusionGenDuration;
     private final InvertedGenerationalDistance igdCalculator;
+    private final ApfDistance apfDistanceCalculator;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -71,6 +73,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                boolean enhanceDiversity,
                HVMany hv,
                InvertedGenerationalDistance igdCalculator,
+               ApfDistance apfDistanceCalculator,
                String outputFilename,
                int iterationNumber,
                int indExclusionUsageLimit,
@@ -94,6 +97,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.mutationVersion = mutationVersion;
         this.hvCalculator = hv;
         this.igdCalculator = igdCalculator;
+        this.apfDistanceCalculator = apfDistanceCalculator;
         this.outputFilename = outputFilename;
         this.iterationNumber = iterationNumber;
         this.indExclusionUsageLimit = indExclusionUsageLimit;
@@ -105,7 +109,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         String hvHistoryFilePath = outputFilename + File.separator + "hv_hisotry" + this.iterationNumber + ".csv";
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
-            writer.write("cost;hv;igd\n");
+            writer.write("cost;hv;igd;apf dst\n");
             writer.close();
         } catch(IOException e) {
             e.printStackTrace();
@@ -213,9 +217,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             double archiveHv = this.hvCalculator.getMeasure(archive);
             double archiveIgd = this.igdCalculator.getMeasure(archive);
+            double archiveApfDst = this.apfDistanceCalculator.getMeasure(archive);
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
-                writer.write(cost + ";" + archiveHv + ";" + archiveIgd + "\n");
+                writer.write(cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveApfDst + "\n");
                 writer.close();
             } catch(IOException e) {
                 e.printStackTrace();

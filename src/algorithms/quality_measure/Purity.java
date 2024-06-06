@@ -25,9 +25,9 @@ public class Purity extends BaseMeasure {
   public <T extends BaseIndividual> double getMeasure(List<T> population) {
     double result = 0.0d;
     for (T individual : population) {
-//      if (individual.isNotDominatedBy(referencePopulation)) {
-//        ++result;
-//      }
+      if (individual.isNotDominatedBy(referencePopulation)) {
+        ++result;
+      }
       if (referencePopulation.stream().anyMatch(i -> individual.compareTo(i) == 0)) {
         ++result;
       }
