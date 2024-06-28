@@ -14,6 +14,7 @@ import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
+import util.ParameterFunctions;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,6 +35,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int indExclusionGenDuration;
     private final InvertedGenerationalDistance igdCalculator;
     private final ApfDistance apfDistanceCalculator;
+    private final double turDecayParam;
+    private final int minTournamentSize;
+    private final ParameterFunctions parameterFunction;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -77,7 +81,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                String outputFilename,
                int iterationNumber,
                int indExclusionUsageLimit,
-               int indExclusionGenDuration) {
+               int indExclusionGenDuration,
+               double turDecayParam, int minTournamentSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -102,6 +107,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.iterationNumber = iterationNumber;
         this.indExclusionUsageLimit = indExclusionUsageLimit;
         this.indExclusionGenDuration = indExclusionGenDuration;
+        this.turDecayParam = turDecayParam;
+        this.minTournamentSize = minTournamentSize;
+        this.parameterFunction = new ParameterFunctions(generationLimit,
+                ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL,
+                minTournamentSize,
+                tournamentSize,
+                turDecayParam);
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -156,7 +168,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     generation, parameters);
 
 //            while (newPopulation.size() < populationSize) {
-                var pairs = clusterDensityBasedSelection.select(gaClusteringResults, parameters, clusterWeightMeasure, population);
+                var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
+                        parameters, clusterWeightMeasure, population, parameterFunction, cost);
 
                 for(var e: population) {
                     EvolutionHistoryElement.addIfNotFull(evolutionHistory,
