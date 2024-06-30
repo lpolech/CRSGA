@@ -47,32 +47,15 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
       intermediateResult = indWiseCXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint);
     }
 
-    checkTSPresult(intermediateResult.firstChild(), parameters.geneSplitPoint);
-    checkTSPresult(intermediateResult.secondChild(), parameters.geneSplitPoint);
-
     indWiseUniformCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult); // BASELINE
 //    indWiseSinglePointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
 //    indWiseTwoPointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
-
 
     List<List<Integer>> result = new ArrayList<>();
     result.add(intermediateResult.firstChild());
     result.add(intermediateResult.secondChild());
 
     return result;
-  }
-
-  private boolean checkTSPresult(List<Integer> child, int geneSplitPoint) {
-
-    int sum = 0;
-    int count = Math.min(geneSplitPoint, child.size()); // Ensure we don't go beyond the list size
-
-    // Sum up the first 51 elements from the list
-    for (int i = 0; i < count; i++) {
-      sum += child.get(i);
-    }
-
-    return false;
   }
 
     private CrossoverResult indWiseCXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint) {
