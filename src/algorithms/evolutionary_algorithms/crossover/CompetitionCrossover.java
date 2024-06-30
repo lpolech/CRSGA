@@ -72,12 +72,6 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
       sum += child.get(i);
     }
 
-    // Check if the sum equals 1275
-    if (sum != 1275) {
-      System.err.println("The sum does not equal 1275.");
-      return true;
-    }
-
     return false;
   }
 

@@ -33,9 +33,9 @@ public class CGATTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n50_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>("eil51_n50_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr_01_merged.csv"),
+//            new Pair<>("eil51_n50_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
             new Pair<>("eil51_n150_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
@@ -43,8 +43,17 @@ public class CGATTPRunner {
 //            new Pair<>("eil51_n250_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr_01_merged.csv"),
             new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
-            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv")
-//            new Pair<>("eil51_n500_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr_01_merged.csv")
+            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>("eil51_n500_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr_01_merged.csv"),
+            new Pair<>("kroA100_n99_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+            new Pair<>("kroA100_n99_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
+            new Pair<>("kroA100_n99_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+            new Pair<>("pr76_n75_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_pr76_n75_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+            new Pair<>("pr76_n75_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_pr76_n75_uncorr_01_merged_SingleFlip.csv"),
+            new Pair<>("pr76_n75_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_pr76_n75_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+            new Pair<>("rd100_n99_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_rd100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+            new Pair<>("rd100_n99_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_rd100_n99_uncorr_01_merged_SingleFlip.csv"),
+            new Pair<>("rd100_n99_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-30_rd100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv")
     );
 
     public static void main(String[] args) {
@@ -93,8 +102,8 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {2_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24};//{10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.45};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
