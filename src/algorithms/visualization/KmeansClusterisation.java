@@ -14,6 +14,7 @@ import distance.measures.L2Norm;
 import interfaces.QualityMeasure;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
@@ -35,7 +36,10 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             int clusterIterLimit,
             double edgeClustersWeightMultiplier,
             int generationNum,
-            ParameterSet<Integer, TTP> parameters) {
+            ParameterSet<Integer, TTP> parameters,
+            int indExclusionUsageLimit,
+            int indExclusionGenDuration,
+            List<BaseIndividual<Integer, PROBLEM>> excludedPopulation) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);
@@ -65,6 +69,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
         int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
         ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
+        clustering = updateArchiveAndExcludedIndividualsBasedOnClusters(clustering, populationMapping, indExclusionUsageLimit, indExclusionGenDuration, population, excludedPopulation);
+
         clustering.calculateInternalMeasures(clusterWeightMeasure, parameters);
 
 //        clustering = clustering.addGapClusters(measure, centreMethod);
@@ -176,5 +182,45 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 //        return clustersResult;
     }
 
+    private ClustersAndTheirStatistics updateArchiveAndExcludedIndividualsBasedOnClusters(ClustersAndTheirStatistics clustering,
+                                                                    HashMap<String, BaseIndividual<Integer, PROBLEM>> populationMapping,
+                                                                    int indExclusionUsageLimit,
+                                                                    int indExclusionGenDuration,
+                                                                    List<BaseIndividual<Integer, PROBLEM>> population,
+                                                                    List<BaseIndividual<Integer, PROBLEM>> excludedPopulation) {
 
+        // Step 1: Filter clusters whose avg usageCounter exceeds the indExclusionUsageLimit
+        ArrayList<Integer> clusterIndicesToExclude = new ArrayList<>();
+        for(int i = 0; i < clustering.getClusters().length; i++) {
+            Cluster cls = clustering.getClusters()[i];
+            double avgUnsucUsageCnt = 0.0;
+            for(DataPoint point: cls.getPoints()) {
+                var ind = populationMapping.get(point.getInstanceName());
+                avgUnsucUsageCnt += ind.getAdjusterUnsuccessfulUsageCounter();
+            }
+            avgUnsucUsageCnt /= (double) cls.getNumberOfPoints();
+            if(avgUnsucUsageCnt > indExclusionUsageLimit) {
+                clusterIndicesToExclude.add(i);
+            }
+        }
+
+        ArrayList<Cluster> newClusters = new ArrayList<>();
+        for(int i = 0; i < clustering.getClusters().length; i++) {
+            Cluster cls = clustering.getClusters()[i];
+            if (!clusterIndicesToExclude.contains(i)) {
+                newClusters.add(cls); // Keep this cluster
+            } else {
+                // Remove individuals in the excluded clusters from the population
+                for (DataPoint point : cls.getPoints()) {
+                    BaseIndividual<Integer, PROBLEM> individual = populationMapping.get(point.getInstanceName());
+                    individual.excludeFromArchive(indExclusionGenDuration);
+                    population.remove(individual);
+                    excludedPopulation.add(individual);
+                }
+            }
+        }
+
+        Cluster[] newClusterClusters = newClusters.toArray(new Cluster[0]);
+        return new ClustersAndTheirStatistics(newClusterClusters, Kmeans.getMeasure().calculateClusterisationStatistic(newClusterClusters), true);
+    }
 }

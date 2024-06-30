@@ -165,7 +165,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     clusterSize,
                     clusterIterLimit,
                     edgeClustersDispersionVal,
-                    generation, parameters);
+                    generation,
+                    parameters,
+                    indExclusionUsageLimit,
+                    indExclusionGenDuration,
+                    excludedArchive);
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
@@ -316,7 +320,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                                                         List<BaseIndividual<Integer, PROBLEM>> archive,
                                                                         List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
         recordGenerationForExcludedIndividuals(archive, excludedArchive);
-        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
+//        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
     }
 
     private void recordGenerationForExcludedIndividuals(List<BaseIndividual<Integer, PROBLEM>> archive,

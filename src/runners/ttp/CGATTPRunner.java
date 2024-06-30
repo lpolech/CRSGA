@@ -33,18 +33,18 @@ public class CGATTPRunner {
     private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-//            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
+            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n50_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>("eil51_n50_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr_01_merged.csv"),
+            new Pair<>("eil51_n50_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n50_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>("eil51_n150_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr_01_merged.csv"),
+            new Pair<>("eil51_n150_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>("eil51_n250_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
+            new Pair<>("eil51_n250_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr_01_merged.csv"),
-//            new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv")
-            new Pair<>("eil51_n500_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr_01_merged.csv")
+            new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
+            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv")
+//            new Pair<>("eil51_n500_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr_01_merged.csv")
     );
 
     public static void main(String[] args) {
@@ -108,8 +108,8 @@ public class CGATTPRunner {
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{1};
             int[] crossoverVersionList = new int[]{6}; //{1, 2, 3, 4, 5, 6};//
-            int[] indExclusionUsageLimitList = new int[] {250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
-            int[] indExclusionGenDurationList = new int[] {150};//{100, 300, 500, 700, 900};//{150};//{100, 200, 300, 400, 500, 600, 750, 850, 950};//{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
+            int[] indExclusionUsageLimitList = new int[] {150};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
+            int[] indExclusionGenDurationList = new int[] {450};//{50, 150, 250, 350, 450, 550, 650, 750, 850, 950};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13.5, -14.5, -15.5};//{-6, -8, -15, -100};
 
             ArrayList<HashMap<String, Object>> cartesianProductOfParams = new ArrayList<>();
