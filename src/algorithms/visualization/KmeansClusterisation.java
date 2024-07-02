@@ -21,6 +21,22 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 
     private HashMap<String, Double> qualityMeasureValues;
 
+    public void setDisableCostEdgePromotion(boolean disableCostEdgePromotion) {
+        this.disableCostEdgePromotion = disableCostEdgePromotion;
+    }
+
+    public boolean isDisableCostEdgePromotion() {
+        return disableCostEdgePromotion;
+    }
+
+    public boolean isDisableTravelEdgePromotion() {
+        return disableTravelEdgePromotion;
+    }
+
+    public void setDisableTravelEdgePromotion(boolean disableTravelEdgePromotion) {
+        this.disableTravelEdgePromotion = disableTravelEdgePromotion;
+    }
+
     private boolean disableCostEdgePromotion;
 
     private boolean disableTravelEdgePromotion;
