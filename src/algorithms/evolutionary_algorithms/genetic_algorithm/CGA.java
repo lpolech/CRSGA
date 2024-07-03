@@ -51,7 +51,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private OptimisationResult optimisationResult;
     private int populationTurProp;
     private int mutationVersion;
-    private int edgePromotionCostToggle;
 
     public OptimisationResult getOptimisationResult() {
         return optimisationResult;
@@ -83,9 +82,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int iterationNumber,
                int indExclusionUsageLimit,
                int indExclusionGenDuration,
-               double turDecayParam,
-               int minTournamentSize,
-               int edgePromotionCostToggle) {
+               double turDecayParam, int minTournamentSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -117,7 +114,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 minTournamentSize,
                 tournamentSize,
                 turDecayParam);
-        this.edgePromotionCostToggle = edgePromotionCostToggle;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -164,7 +160,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
             recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
-
             gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
                     archive,
                     clusterSize,
@@ -222,11 +217,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
-                    // ensure all the cost increments are considered
-                    if((cost-1) % edgePromotionCostToggle == 0 || cost % edgePromotionCostToggle == 0) {
-                        kmeansCluster.setDisableCostEdgePromotion(!kmeansCluster.isDisableCostEdgePromotion());
-                        kmeansCluster.setDisableTravelEdgePromotion(!kmeansCluster.isDisableTravelEdgePromotion());
-                    }
 
 //                    population.remove(firstParent);
 //                    population.remove(secondParent);
