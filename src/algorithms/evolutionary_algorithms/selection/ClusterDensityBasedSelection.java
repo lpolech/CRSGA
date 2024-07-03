@@ -119,11 +119,11 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
 //        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
 //        System.out.println(decayTurFun);
-        int chosenClusterIndex = (int) Math.round((parameters.random.nextDouble() * numberOfClusters));
+        int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
             chosenClusterIndex = chooseCluster(chosenClusterIndex,
-                    (int) Math.round((parameters.random.nextDouble() * numberOfClusters)),
+                    (int) (parameters.random.nextDouble() * numberOfClusters),
                     clusteringResult, clusterWeightMeasure);
         }
 
