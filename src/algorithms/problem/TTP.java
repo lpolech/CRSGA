@@ -80,7 +80,7 @@ public class TTP extends BaseProblemRepresentation {
       availableItemsInCity = itemAvailabilities.get(city);
       for (int item : availableItemsInCity) {
         if (selection[item] > 0 && city == knapsack.getItem(item).getAvailability().get(selection[item] - 1)) {
-          itemWithImpact.add(new AbstractMap.SimpleEntry<>(item, getItemPtofitToTravellingTimeWeight(item, city)));
+          itemWithImpact.add(new AbstractMap.SimpleEntry<>(item, getItemProfitToTravellingTimeWeight(item, city)));
         }
       }
     }
@@ -99,7 +99,7 @@ public class TTP extends BaseProblemRepresentation {
     while (currentWeight > knapsack.getCapacity()) {
       if (selection[sortedIndices[index]] > 0) {
         selection[sortedIndices[index]] = 0;
-        genesToModify.set(path.length + sortedIndices[index], 0);
+//        genesToModify.set(path.length + sortedIndices[index], 0);
         currentWeight -= knapsack.getItem(sortedIndices[index]).getWeight();
       }
       ++index;
@@ -108,7 +108,7 @@ public class TTP extends BaseProblemRepresentation {
     return this;
   }
 
-  public double getItemPtofitToTravellingTimeWeight(int itemNum, int pathIndex) {
+  public double getItemProfitToTravellingTimeWeight(int itemNum, int pathIndex) {
     double[][] distances = distanceMatrix.getDistances();
 
     double distance = 0d;

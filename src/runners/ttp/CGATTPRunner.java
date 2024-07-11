@@ -13,15 +13,11 @@ import algorithms.factories.*;
 import algorithms.io.TTPIO;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
-import algorithms.quality_measure.ApfDistance;
-import algorithms.quality_measure.HVMany;
-import algorithms.quality_measure.InvertedGenerationalDistance;
-import algorithms.quality_measure.Purity;
+import algorithms.quality_measure.*;
 import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
 import internal_measures.FlatWithinBetweenIndex;
 import javafx.util.Pair;
-import util.ParameterFunctions;
 import util.random.RandomInt;
 
 import java.io.*;
@@ -92,6 +88,7 @@ public class CGATTPRunner {
             ParameterSet<Integer, TTP> parameters = setParameters(ttp);
             List<BaseIndividual> optimalParetoFront = readAPF(instanceWithOPF.get(k).getValue(), ttp, parameters.evaluator);
             InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(optimalParetoFront);
+            GenerationalDistance gdCalculator = new GenerationalDistance(optimalParetoFront);
             ApfDistance apfDistanceCalculator = new ApfDistance(optimalParetoFront);
             Purity purityCalculator = new Purity(optimalParetoFront);
 
@@ -106,17 +103,17 @@ public class CGATTPRunner {
             };
 
             int NUMBER_OF_REPEATS = 5;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {10};//{2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24};//{10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.45};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.6};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.7};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{1.0};//{0.9, 1.0};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] populationSizeList = new int[] {300};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
+            double[] TSPmutationProbabilityList = new double[] {0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.019};//{0.0027};//{0.0030};//, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.7};//{1.0};//{0.9, 1.0};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[] {2};//{2, 4, 6, 8, 10, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[] {2};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[] {100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
-            int[] minTournamentSizeList = new int[] {15};//{30, 40, 50, 60, 70};
+            int[] minTournamentSizeList = new int[] {100};//{30, 40, 50, 60, 70};
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{1};
             int[] crossoverVersionList = new int[]{6}; //{1, 2, 3, 4, 5, 6};//
@@ -211,8 +208,8 @@ public class CGATTPRunner {
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
 //            Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;measure;no of repeats;uber pareto IGD;uber pareto purity;uber pareto apf dst" +
-                    ";avgHV;stdev;avgIGD;stdev;avgApfDst;stdev" +
+            String header = "dataset;counter;measure;no of repeats;uber pareto IGD;uber pareto GD;uber pareto purity" +
+                    ";avgHV;stdev;avgIGD;stdev;avgGD;stdev" +
                     ";avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev"
                     + ";" + "AvgAfterCrossParentDominationCounter"
                     + ";" + "AvgAfterCrossParentDominationProp"
@@ -249,7 +246,7 @@ public class CGATTPRunner {
                 var eachRepeatND = new ArrayList<Integer>();
                 var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
                 var eachRepeatIGD = new ArrayList<Double>();
-                var eachRepeatApfDst = new ArrayList<Double>();
+                var eachRepeatGD = new ArrayList<Double>();
                 paramCounter += 1;
 
                 QualityMeasure clusterWeightMeasure = (QualityMeasure) params.get("clusterWeightMeasure");
@@ -321,6 +318,7 @@ public class CGATTPRunner {
                             true,
                             hv,
                             igdCalculator,
+                            gdCalculator,
                             apfDistanceCalculator,
                             outputFilename,
                             i,
@@ -349,8 +347,8 @@ public class CGATTPRunner {
                     var igdValue = igdCalculator.getMeasure(result);
                     eachRepeatIGD.add(igdValue);
 
-                    var apfDst = apfDistanceCalculator.getMeasure(result);
-                    eachRepeatApfDst.add(apfDst);
+                    var gdValue = gdCalculator.getMeasure(result);
+                    eachRepeatGD.add(gdValue);
 
                     String instanceName = instanceWithOPF.get(k).getKey();
                     if(instanceName.endsWith(".ttp"))
@@ -365,6 +363,11 @@ public class CGATTPRunner {
                         writer = new BufferedWriter(new FileWriter(outputFilename
                                 + File.separator + instanceName + "_" + i + "_UBER_PARETO.csv"));
                         writer.write(printResults(uberPareto, false));
+                        writer.close();
+
+                        writer = new BufferedWriter(new FileWriter(outputFilename
+                                + File.separator + instanceName + "_" + i + "_genes_UBER_PARETO.csv"));
+                        writer.write(printGenes(uberPareto, ttp));
                         writer.close();
                     } catch(IOException e) {
                         e.printStackTrace();
@@ -419,22 +422,22 @@ public class CGATTPRunner {
                 }
                 averageIGDValStdev = Math.sqrt(averageIGDValStdev/eachRepeatIGD.size());
 
-                OptionalDouble averageApfDst = eachRepeatApfDst
+                OptionalDouble averageGD = eachRepeatGD
                         .stream()
                         .mapToDouble(a -> a)
                         .average();
-                var averageApfDstVal = averageApfDst.isPresent() ? averageApfDst.getAsDouble() : -666.0;
-                double averageApfDstValStdev = 0.0;
-                for(double num: eachRepeatApfDst) {
-                    averageApfDstValStdev += Math.pow(num - averageApfDstVal, 2);
+                var averageGDVal = averageGD.isPresent() ? averageGD.getAsDouble() : -666.0;
+                double averageGDStdev = 0.0;
+                for(double num: eachRepeatGD) {
+                    averageGDStdev += Math.pow(num - averageGDVal, 2);
                 }
-                averageApfDstValStdev = Math.sqrt(averageApfDstValStdev/eachRepeatApfDst.size());
+                averageGDStdev = Math.sqrt(averageGDStdev/eachRepeatGD.size());
 
                 String runResult = instanceWithOPF.get(k).getKey() + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
-                        + ";" + igdCalculator.getMeasure(uberPareto) + ";" + purityCalculator.getMeasure(uberPareto)
-                        + ";" + apfDistanceCalculator.getMeasure(uberPareto) +  ";" + avgHV + ";" + standardDeviation
-                        + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageApfDstVal + ";" + averageApfDstValStdev
+                        + ";" + igdCalculator.getMeasure(uberPareto) + ";" + gdCalculator.getMeasure(uberPareto)
+                        + ";" + purityCalculator.getMeasure(uberPareto) +  ";" + avgHV + ";" + standardDeviation
+                        + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageGD + ";" + averageGDStdev
                         + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size()
                         + ";" + eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
@@ -558,6 +561,34 @@ public class CGATTPRunner {
             if(isVerbose) {
                 System.out.println(travellingTime + ";" + (-1)*profit);
             }
+        }
+        return output;
+    }
+
+    private static String printGenes(List<BaseIndividual<Integer, TTP>> resultIndividuals, TTP problem) {
+        String output = "types;";
+        for(int i = 0; i < problem.getSplitPoint(); i++) {
+            output += "city" + i + ";";
+        }
+        for(int i = problem.getSplitPoint(); i < problem.getNumGenes(); i++) {
+            output += "k" + (i - problem.getSplitPoint()) + ";";
+        }
+        output += "\n";
+
+        for (int i = 0; i < resultIndividuals.size(); ++i) {
+            BaseIndividual<Integer, TTP> ind = resultIndividuals.get(i);
+            output += "genotype;";
+            for(int j = 0; j < ind.getGenes().size(); j++) {
+                output += ind.getGenes().get(j) + ";";
+            }
+            output += "\nfenotype;";
+            for(int j = 0; j < ind.getProblem().getPath().length; j++) {
+                output += ind.getProblem().getPath()[j] + ";";
+            }
+            for(int j = 0; j < ind.getProblem().getSelection().length; j++) {
+                output += ind.getProblem().getSelection()[j] + ";";
+            }
+            output += "\n";
         }
         return output;
     }
