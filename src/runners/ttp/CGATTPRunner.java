@@ -37,7 +37,7 @@ public class CGATTPRunner {
 //            new Pair<>("eil51_n150_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n250_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr_01_merged.csv"),
-//            new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>("eil51_n250_uncorr-sim1ilar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
             new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n500_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-06-11_eil51_n500_uncorr_01_merged.csv"),
@@ -86,7 +86,7 @@ public class CGATTPRunner {
             if (ttp == null) return null;
 
             ParameterSet<Integer, TTP> parameters = setParameters(ttp);
-            List<BaseIndividual> optimalParetoFront = readAPF(instanceWithOPF.get(k).getValue(), ttp, parameters.evaluator);
+            List<BaseIndividual<Integer, TTP>> optimalParetoFront = readAPF(instanceWithOPF.get(k).getValue(), ttp, parameters.evaluator);
             InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(optimalParetoFront);
             GenerationalDistance gdCalculator = new GenerationalDistance(optimalParetoFront);
             ApfDistance apfDistanceCalculator = new ApfDistance(optimalParetoFront);
@@ -102,13 +102,13 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 5;
-            int[] generationLimitList = new int[] {50_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {300};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {1_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] populationSizeList = new int[] {10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.019};//{0.0027};//{0.0030};//, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] KNAPmutationProbabilityList = new double[] {0.001, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
             double[] TSPcrossoverProbabilityList = new double[] {0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.7};//{1.0};//{0.9, 1.0};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[] {2};//{2, 4, 6, 8, 10, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
             double[] edgeClustersDispersion = new double[] {2};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
@@ -357,12 +357,12 @@ public class CGATTPRunner {
                     try {
                         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                 + File.separator + instanceName + "_config0_run" + i + "_archive.csv"));
-                        writer.write(printResults(result, false));
+                        writer.write(printResultsForComparison(result, false));
                         writer.close();
 
                         writer = new BufferedWriter(new FileWriter(outputFilename
                                 + File.separator + instanceName + "_" + i + "_UBER_PARETO.csv"));
-                        writer.write(printResults(uberPareto, false));
+                        writer.write(printResultsAgainstApf(uberPareto, optimalParetoFront, false));
                         writer.close();
 
                         writer = new BufferedWriter(new FileWriter(outputFilename
@@ -437,7 +437,7 @@ public class CGATTPRunner {
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
                         + ";" + igdCalculator.getMeasure(uberPareto) + ";" + gdCalculator.getMeasure(uberPareto)
                         + ";" + purityCalculator.getMeasure(uberPareto) +  ";" + avgHV + ";" + standardDeviation
-                        + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageGD + ";" + averageGDStdev
+                        + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageGDVal + ";" + averageGDStdev
                         + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size()
                         + ";" + eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
@@ -470,7 +470,7 @@ public class CGATTPRunner {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
                             + bestAPFoutputFile + bestIterNumber + ".csv"));
-                    writer.write(printResults(bestAPF, false));
+                    writer.write(printResultsForComparison(bestAPF, false));
                     writer.close();
                 } catch(IOException e) {
                     e.printStackTrace();
@@ -480,10 +480,10 @@ public class CGATTPRunner {
         return null;
     }
 
-    private static List<BaseIndividual> readAPF(String apfPath, TTP ttp, BaseEvaluator<Integer, TTP> evaluator) {
+    private static List<BaseIndividual<Integer, TTP>> readAPF(String apfPath, TTP ttp, BaseEvaluator<Integer, TTP> evaluator) {
         File file = new File(apfPath);
         System.out.print("File;" + file.getName());
-        List<BaseIndividual> front = new ArrayList<>();
+        List<BaseIndividual<Integer, TTP>> front = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -542,7 +542,7 @@ public class CGATTPRunner {
         return parameters;
     }
 
-    private static String printResults(List<BaseIndividual<Integer, TTP>> resultIndividuals, boolean isVerbose) {
+    private static String printResultsForComparison(List<BaseIndividual<Integer, TTP>> resultIndividuals, boolean isVerbose) {
         String output = "";
         if(isVerbose) {
             output += "Profit; Travelling Time\n";
@@ -560,6 +560,55 @@ public class CGATTPRunner {
             output += travellingTime + ";" + (-1)*profit + "\n";
             if(isVerbose) {
                 System.out.println(travellingTime + ";" + (-1)*profit);
+            }
+        }
+        return output;
+    }
+
+    private static String printResultsAgainstApf(List<BaseIndividual<Integer, TTP>> resultIndividuals,
+                                                 List<BaseIndividual<Integer, TTP>> apf,
+                                                 boolean isVerbose) {
+        String output = ";run;;apf\n";
+        if(isVerbose) {
+//            output += "Profit; Travelling Time\n";
+            System.out.println("Profit; Travelling Time");
+        }
+        for (int i = 0; i < Math.max(resultIndividuals.size(), apf.size()); ++i) {
+            double runProfit = Double.NaN;
+            double runTravellingTime = Double.NaN;
+            if(resultIndividuals.size() - 1 >= i) {
+                runProfit = 0;
+                runTravellingTime = resultIndividuals.get(i).getProblem().getTravellingTime();
+                int[] selection = resultIndividuals.get(i).getProblem().getSelection();
+                for (int j = 0; j < selection.length; ++j) {
+                    if (selection[j] > 0) {
+                        runProfit += resultIndividuals.get(i).getProblem().getKnapsack().getItem(j).getProfit();
+                    }
+                }
+            }
+
+            double apfProfit = Double.NaN;
+            double apfTravellingTime = Double.NaN;
+            if(apf.size() - 1 >= i) {
+                apfTravellingTime = apf.get(i).getObjectives()[0];
+                apfProfit = (-1)*apf.get(i).getObjectives()[1];
+            }
+
+            if(!Double.isNaN(runProfit) && !Double.isNaN(runTravellingTime)) {
+                output += runTravellingTime + ";" + (-1)*runProfit + ";";
+            } else {
+                output += ";;";
+            }
+
+            if(!Double.isNaN(apfProfit) && !Double.isNaN(apfTravellingTime)) {
+                output += apfTravellingTime + ";" + (-1)*apfProfit;
+            } else {
+                output += ";;";
+            }
+            output += "\n";
+
+            if(isVerbose) {
+                System.out.println(output);
             }
         }
         return output;
