@@ -127,7 +127,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         String hvHistoryFilePath = outputFilename + File.separator + "hv_hisotry" + this.iterationNumber + ".csv";
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
-            writer.write("cost;hv;igd;gd\n");
+            writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
             writer.close();
         } catch(IOException e) {
             e.printStackTrace();
@@ -187,6 +187,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
 //                }
 
+                int noOfChildDominatingParents = 0;
                 for(var mama: pairs) {
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
                     BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
@@ -208,7 +209,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     firstChildAfterCrossAndMut.buildSolution(firstChildAfterCrossAndMut.getGenes(), parameters);
                     var secondChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChildAfterCrossAndMut.buildSolution(secondChildAfterCrossAndMut.getGenes(), parameters);
-                    this.optimisationResult.addDominanceStats(firstParent, secondParent, firstChildAfterCross, secondChildAfterCross, firstChildAfterCrossAndMut, secondChildAfterCrossAndMut);
+                    this.optimisationResult.addDominanceStats(firstParent, secondParent, firstChildAfterCross,
+                            secondChildAfterCross, firstChildAfterCrossAndMut, secondChildAfterCrossAndMut);
 
                     firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
@@ -223,6 +225,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
+
+                    if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
+                        noOfChildDominatingParents++;
+                    }
+                    if(secondChild.dominates(firstParent) || secondChild.dominates(secondParent)) {
+                        noOfChildDominatingParents++;
+                    }
 
 //                    population.remove(firstParent);
 //                    population.remove(secondParent);
@@ -242,20 +251,22 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 }
             }
 
+            writeReportingFiles(excludedArchive, gaClusteringResults);
+            int archiveChanges = removeDuplicatesAndDominated(population, archive);
+
             double archiveHv = this.hvCalculator.getMeasure(archive);
             double archiveIgd = this.igdCalculator.getMeasure(archive);
             double archiveGd = this.gdCalculator.getMeasure(archive);
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
-                writer.write(cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd + "\n");
+                writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
+                        + ";" + noOfChildDominatingParents + ";" + archiveChanges + "\n");
                 writer.close();
             } catch(IOException e) {
                 e.printStackTrace();
             }
 
-            writeReportingFiles(excludedArchive, gaClusteringResults);
-            removeDuplicatesAndDominated(population, archive);
-            population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
+//            population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
 
 //            newPopulation.addAll(population);
 //            newPopulation.sort(Comparator.comparingDouble(BaseIndividual::getEvalValue));

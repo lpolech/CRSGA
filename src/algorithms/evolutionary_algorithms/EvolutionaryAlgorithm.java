@@ -29,9 +29,10 @@ public class EvolutionaryAlgorithm<GENE extends Number, PROBLEM extends BaseProb
     return allIndividualsNoDuplicates;
   }
 
-  protected void removeDuplicatesAndDominated(
+  protected int removeDuplicatesAndDominated(
       List<BaseIndividual<GENE, PROBLEM>> population,
       List<BaseIndividual<GENE, PROBLEM>> allIndividuals) {
+    int counter = 0;
     for (BaseIndividual<GENE, PROBLEM> individual : population) {
       boolean dominated = false;
       boolean clone = false;
@@ -49,12 +50,15 @@ public class EvolutionaryAlgorithm<GENE extends Number, PROBLEM extends BaseProb
         if (individual.dominates(trial)) {
           allIndividuals.remove(trial);
           --i;
+          counter++;
         }
       }
       if (!dominated && !clone) {
         allIndividuals.add(individual);
+        counter++;
       }
     }
+    return counter;
   }
 
   // TODO: probably should be in a more generic place, it is also used by measures and now by mutation
