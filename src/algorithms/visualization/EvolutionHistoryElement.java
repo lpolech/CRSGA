@@ -9,11 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EvolutionHistoryElement {
-    private static int historySize = 150_000;
+    private static int historySize = 9_999_000; // 150_000;
     private int generationNumber;
     private double x;
     private double y;
@@ -39,6 +38,38 @@ public class EvolutionHistoryElement {
         this.p2y = p2y;
     }
 
+    private static List<EvolutionHistoryElement> optimiseMut(List<EvolutionHistoryElement> evolutionHistory) {
+        List<EvolutionHistoryElement> optimisedMut = new ArrayList<EvolutionHistoryElement>();
+
+        HashMap<Integer, HashMap<Integer, Integer>> genClsIdMapping = new HashMap();
+
+        for(var e: evolutionHistory) {
+            if(e.mut <= 0) {
+                optimisedMut.add(new EvolutionHistoryElement(e.generationNumber, e.x, e.y, e.mut, e.p1x, e.p1y, e.p2x, e.p2y));
+                continue;
+            }
+            int gen = e.generationNumber;
+
+            if(genClsIdMapping.containsKey(gen)) {
+                HashMap<Integer, Integer> idMapping = genClsIdMapping.get(gen);
+                if(idMapping.containsKey(e.mut)) {
+                    Integer mappedId = idMapping.get(e.mut);
+                    optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, mappedId, e.p1x, e.p1y, e.p2x, e.p2y));
+                } else {
+                    int currentMaxId = Collections.max(idMapping.entrySet(), Map.Entry.comparingByValue()).getValue();
+                    idMapping.put(e.mut, currentMaxId+1);
+                    optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, currentMaxId+1, e.p1x, e.p1y, e.p2x, e.p2y));
+                }
+            } else {
+                genClsIdMapping.put(gen, new HashMap<>());
+                genClsIdMapping.get(gen).put(e.mut, 1);
+                optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, 1, e.p1x, e.p1y, e.p2x, e.p2y));
+            }
+        }
+
+        return optimisedMut;
+    }
+
     public static void toFile(List<EvolutionHistoryElement> evolutionHistory, String folderName) {
         try {
             String fullPath = folderName + File.separator + "ArchHist.csv";
@@ -46,7 +77,7 @@ public class EvolutionHistoryElement {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
             StringBuilder output = new StringBuilder();
 
-            for(var e: evolutionHistory) {
+            for(var e: optimiseMut(evolutionHistory)) {
                 output.append(e.generationNumber);
                 output.append(Constans.delimiter);
                 output.append(e.x);

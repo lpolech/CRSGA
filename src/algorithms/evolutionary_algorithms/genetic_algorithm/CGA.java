@@ -4,6 +4,8 @@ import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
+import algorithms.evolutionary_algorithms.util.IndividualCluster;
+import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
@@ -179,11 +181,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
                         parameters, clusterWeightMeasure, population, parameterFunction, cost);
 
-                for(var e: population) {
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory,
-                            generation, e.getObjectives()[0], e.getObjectives()[1], 1,
-                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
-                }
+//                for(var e: population) {
+//                    EvolutionHistoryElement.addIfNotFull(evolutionHistory,
+//                            generation, e.getObjectives()[0], e.getObjectives()[1], 1,
+//                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
+//                }
 
                 for(var mama: pairs) {
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
@@ -213,11 +215,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
                     EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], 2,
+                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], 2,
+                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
@@ -231,9 +233,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 }
 //            }
 
-            for(var e: archive) {
-                EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], 0,
-                        e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
+            for(IndividualCluster cluster: gaClusteringResults.getClustersWithIndDstToCentre()) { //archive) {
+                int clusterId = cluster.getClusterId();
+                for(var clsInd: cluster.getCluster()) {
+                    var e = ((IndividualWithDstToItsCentre)clsInd).getIndividual();
+                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], clusterId,
+                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
+                }
             }
 
             double archiveHv = this.hvCalculator.getMeasure(archive);

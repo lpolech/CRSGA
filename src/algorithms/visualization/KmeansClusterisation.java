@@ -143,7 +143,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
                 double indDistToTheCentre = measure.distance(cluster, point);
                 individualCluster.add(new IndividualWithDstToItsCentre(indDistToTheCentre, ind));
             }
-            individualClusters.add(new IndividualCluster(individualCluster));
+            individualClusters.add(new IndividualCluster(individualCluster, cluster.getClusterId()));
         }
 
         double weightsMultiplier = (!clusterWeightMeasure.shouldMeasureBeMaximised()? edgeClustersWeightMultiplier: 1/edgeClustersWeightMultiplier); // we want worse clustering to get better weight
