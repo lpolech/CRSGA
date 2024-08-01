@@ -253,6 +253,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             writeReportingFiles(excludedArchive, gaClusteringResults);
             int archiveChanges = removeDuplicatesAndDominated(population, archive);
+            population = new ArrayList<>();
 
             double archiveHv = this.hvCalculator.getMeasure(archive);
             double archiveIgd = this.igdCalculator.getMeasure(archive);

@@ -274,7 +274,7 @@ public class CGATTPRunner {
                 List<BaseIndividual<Integer, TTP>> bestAPF = null;
                 double bestAPFHV = -Double.MIN_VALUE;
 
-                String outputFilename = "." + File.separator
+                String outputFilename = "." + File.separator + "out" + File.separator
                         + removeTtpPostfixFromFileName(instanceWithOPF.get(k).getKey())
                         + "_m-" + clusterWeightMeasure.getName()
                         + "_g" + generationLimit + "_p-" + populationSize

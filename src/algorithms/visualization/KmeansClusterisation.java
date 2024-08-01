@@ -159,7 +159,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 //            clusterWeights.set(minTravellingTimeClusterNumber, clusterWeights.get(minTravellingTimeClusterNumber) * weightsMultiplier);
         }
 
-        String clusteringResultFilePath = "clustering_res";
+        String clusteringResultFilePath = "./out/clustering_res";
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
         return new ClusteringResult(clustering, clustersDispersion, clusterWeights, individualClusters,
                 clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId);
