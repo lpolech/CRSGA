@@ -53,7 +53,7 @@ public class CGATTPRunner {
 //            new Pair<>("berlin52_n51_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
 //            new Pair<>("berlin52_n51_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
 //            new Pair<>("berlin52_n51_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv")
-            new Pair<>("berlin26_n25_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-31_berlin26_n25_bounded-strongly-corr_01_merged.csv")
+            new Pair<>("berlin26_n25_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-08-01_berlin26_n25_bounded-strongly-corr_01_merged.csv")
     );
 
     public static void main(String[] args) {
