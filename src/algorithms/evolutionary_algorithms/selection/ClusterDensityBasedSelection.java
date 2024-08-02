@@ -342,14 +342,14 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             if(chosenSecondIndividualIndex >= chosenClusterSize) {
                 chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
                 chosenSecondIndividual =
-                    (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
-                        .get(chosenSecondIndividualIndex);
+                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                                .get(chosenSecondIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
             } else {
                 chosenSecondIndividual =
-                    (IndividualWithDstToItsCentre)chosenCluster.getCluster()
-                    .get(chosenSecondIndividualIndex);
+                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                                .get(chosenSecondIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
             }

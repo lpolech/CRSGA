@@ -204,23 +204,27 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             }
         }
 
-        ArrayList<Cluster> newClusters = new ArrayList<>();
-        for(int i = 0; i < clustering.getClusters().length; i++) {
-            Cluster cls = clustering.getClusters()[i];
-            if (!clusterIndicesToExclude.contains(i)) {
-                newClusters.add(cls); // Keep this cluster
-            } else {
-                // Remove individuals in the excluded clusters from the population
-                for (DataPoint point : cls.getPoints()) {
-                    BaseIndividual<Integer, PROBLEM> individual = populationMapping.get(point.getInstanceName());
-                    individual.excludeFromArchive(indExclusionGenDuration);
-                    population.remove(individual);
-                    excludedPopulation.add(individual);
+        if(clusterIndicesToExclude.size() >= clustering.getClusters().length) {
+            System.err.println("Method decided to exclude ALL clusters as they exceed the exclusion thresholds. Consider tuning the exclusion parameters!");
+        } else {
+            ArrayList<Cluster> newClusters = new ArrayList<>();
+            for (int i = 0; i < clustering.getClusters().length; i++) {
+                Cluster cls = clustering.getClusters()[i];
+                if (!clusterIndicesToExclude.contains(i)) {
+                    newClusters.add(cls); // Keep this cluster
+                } else {
+                    // Remove individuals in the excluded clusters from the population
+                    for (DataPoint point : cls.getPoints()) {
+                        BaseIndividual<Integer, PROBLEM> individual = populationMapping.get(point.getInstanceName());
+                        individual.excludeFromArchive(indExclusionGenDuration);
+                        population.remove(individual);
+                        excludedPopulation.add(individual);
+                    }
                 }
             }
+            Cluster[] newClusterClusters = newClusters.toArray(new Cluster[0]);
+            return new ClustersAndTheirStatistics(newClusterClusters, Kmeans.getMeasure().calculateClusterisationStatistic(newClusterClusters), true);
         }
-
-        Cluster[] newClusterClusters = newClusters.toArray(new Cluster[0]);
-        return new ClustersAndTheirStatistics(newClusterClusters, Kmeans.getMeasure().calculateClusterisationStatistic(newClusterClusters), true);
+        return clustering;
     }
 }
