@@ -98,11 +98,23 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             QualityMeasure clusterWeightMeasure,
             List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
-            int currCost) {
+            int currCost,
+            IndividualsPairingMethod pairingMethod) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
-//        returnPairs.addAll(addArchiveCrossClustersAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
-//        returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
-        returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+
+        switch (pairingMethod) {
+            case ALL_POSSIBLE_PAIRS:
+                returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                break;
+            case CROSS_CLUSTER_ALL_POSSIBLE_PAIRS:
+                returnPairs.addAll(addArchiveCrossClustersAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                break;
+            case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR:
+                returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                break;
+            default:
+                System.err.println("UNKNOWN POINT PAIRING METHOD! PLEASE CHECK!");
+        }
 //        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
 
         return returnPairs;

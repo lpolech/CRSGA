@@ -3,14 +3,13 @@ package algorithms.evolutionary_algorithms.genetic_algorithm;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
+import algorithms.evolutionary_algorithms.selection.IndividualsPairingMethod;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
 import algorithms.evolutionary_algorithms.util.IndividualCluster;
 import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
-import algorithms.problem.TTP;
-import algorithms.quality_measure.ApfDistance;
 import algorithms.quality_measure.GenerationalDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
@@ -54,6 +53,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private OptimisationResult optimisationResult;
     private int populationTurProp;
     private int mutationVersion;
+    private IndividualsPairingMethod pairingMethod;
 
     public OptimisationResult getOptimisationResult() {
         return optimisationResult;
@@ -84,7 +84,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int iterationNumber,
                int indExclusionUsageLimit,
                int indExclusionGenDuration,
-               double turDecayParam, int minTournamentSize) {
+               double turDecayParam,
+               int minTournamentSize,
+               IndividualsPairingMethod indPairingMethod) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -115,6 +117,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 minTournamentSize,
                 tournamentSize,
                 turDecayParam);
+        this.pairingMethod = indPairingMethod;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -174,7 +177,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
-                        parameters, clusterWeightMeasure, population, parameterFunction, cost);
+                        parameters, clusterWeightMeasure, population, parameterFunction, cost, pairingMethod);
 
 //                for(var e: population) {
 //                    EvolutionHistoryElement.addIfNotFull(evolutionHistory,
