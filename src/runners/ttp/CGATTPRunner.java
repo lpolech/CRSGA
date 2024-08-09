@@ -5,6 +5,7 @@ import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
 import algorithms.evolutionary_algorithms.genetic_algorithm.CGA;
+import algorithms.evolutionary_algorithms.genetic_algorithm.GeneticAlgorithm;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
@@ -88,10 +89,6 @@ public class CGATTPRunner {
 
             ParameterSet<Integer, TTP> parameters = setParameters(ttp);
             List<BaseIndividual<Integer, TTP>> optimalParetoFront = readAPF(instanceWithOPF.get(k).getValue(), ttp, parameters.evaluator);
-            InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(optimalParetoFront);
-            GenerationalDistance gdCalculator = new GenerationalDistance(optimalParetoFront);
-            ApfDistance apfDistanceCalculator = new ApfDistance(optimalParetoFront);
-            Purity purityCalculator = new Purity(optimalParetoFront);
 
             QualityMeasure[] clusterWeightMeasureList = new QualityMeasure[] {
 //                new FlatCalinskiHarabasz(new Euclidean()), //this measures is sensitive to useSubtree toggle
@@ -103,8 +100,8 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 2;
+            int[] generationLimitList = new int[] {5_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.025};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -209,17 +206,16 @@ public class CGATTPRunner {
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
 //            Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;measure;no of repeats;uber pareto IGD;uber pareto GD;uber pareto purity" +
-                    ";avgHV;stdev;avgIGD;stdev;avgGD;stdev" +
-                    ";avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev"
-                    + ";" + "AvgAfterCrossParentDominationCounter"
-                    + ";" + "AvgAfterCrossParentDominationProp"
-                    + ";" + "AvgAfterCrossAndMutParentDominationCounter"
-                    + ";" + "AvgAfterCrossAndMutParentDominationProp"
-                    + ";" + "AvgAfterCrossAfterCrossAndMutDominationCounter"
-                    + ";" + "AvgAfterCrossAfterCrossAndMutDominationProp"
-                    + ";" + "AvgAfterCrossAndMutAfterCrossDominationCounter"
-                    + ";" + "AvgAfterCrossAndMutAfterCrossDominationProp"
+            String header = "dataset;counter;measure;no of repeats;avgIGD;stdev;avgGD;stdev;avgHV;stdev;avgND;stdev"
+                    + ";uber pareto size;uber pareto IGD;uber pareto GD;uber pareto purity;uber pareto HV"
+                    + ";AvgAfterCrossParentDominationCounter"
+                    + ";AvgAfterCrossParentDominationProp"
+                    + ";AvgAfterCrossAndMutParentDominationCounter"
+                    + ";AvgAfterCrossAndMutParentDominationProp"
+                    + ";AvgAfterCrossAfterCrossAndMutDominationCounter"
+                    + ";AvgAfterCrossAfterCrossAndMutDominationProp"
+                    + ";AvgAfterCrossAndMutAfterCrossDominationCounter"
+                    + ";AvgAfterCrossAndMutAfterCrossDominationProp"
                     + ";generationLimit;populationSize;TSPmutationProbability" +
                     ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
                     ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp;mutationVersion;crossoverVersion" +
@@ -243,9 +239,9 @@ public class CGATTPRunner {
             int numberOfParamConfigs = cartesianProductOfParams.size();
             for(var params: cartesianProductOfParams) {
                 var eachRepeatHV = new ArrayList<Double>();
-                var eachRepeatUberParetoHV = new ArrayList<Double>();
                 var eachRepeatND = new ArrayList<Integer>();
                 var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
+                var eachRepeatResult = new ArrayList<List<BaseIndividual<Integer, TTP>>>();
                 var eachRepeatIGD = new ArrayList<Double>();
                 var eachRepeatGD = new ArrayList<Double>();
                 paramCounter += 1;
@@ -293,6 +289,7 @@ public class CGATTPRunner {
                 }
 
                 List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
+                List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
                 for(int i = 0; i < NUMBER_OF_REPEATS; i++) {
                     parameters.mutationVersion = mutationVersion;
                     parameters.crossoverVersion = crossoverVersion;
@@ -318,9 +315,7 @@ public class CGATTPRunner {
                             -666,
                             true,
                             hv,
-                            igdCalculator,
-                            gdCalculator,
-                            apfDistanceCalculator,
+                            optimalParetoFront,
                             outputFilename,
                             i,
                             indExclusionUsageLimit,
@@ -330,9 +325,9 @@ public class CGATTPRunner {
                     );
 
                     var result = geneticAlgorithm.optimize();
-                    uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
+                    geneticAlgorithm.removeDuplicatesAndDominated(result, uberPareto);
+//                    uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
                     //            printResults(result);
-                    eachRepeatUberParetoHV.add(hv.getMeasure(uberPareto));
                     var hvValue = hv.getMeasure(result);
                     eachRepeatHV.add(hvValue);
                     eachRepeatND.add(result.size());
@@ -344,11 +339,21 @@ public class CGATTPRunner {
                     }
 
                     eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
+                    eachRepeatResult.add(result);
 
-                    var igdValue = igdCalculator.getMeasure(result);
+                    List<BaseIndividual<Integer, TTP>> optimalParetoWithResult = new ArrayList<>(optimalParetoFront);
+                    geneticAlgorithm.removeDuplicatesAndDominated(result, optimalParetoWithResult);
+//                    var optimalParetoWithResult = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, result);
+                    if(i >= NUMBER_OF_REPEATS - 1) {
+                        optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
+                        geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
+//                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
+                    }
+
+                    var igdValue = new InvertedGenerationalDistance(optimalParetoWithResult).getMeasure(result);
                     eachRepeatIGD.add(igdValue);
 
-                    var gdValue = gdCalculator.getMeasure(result);
+                    var gdValue = new GenerationalDistance(optimalParetoWithResult).getMeasure(result);
                     eachRepeatGD.add(gdValue);
 
                     String instanceName = instanceWithOPF.get(k).getKey();
@@ -375,7 +380,6 @@ public class CGATTPRunner {
                     }
                 }
 
-
                 OptionalDouble NDaverage = eachRepeatND
                         .stream()
                         .mapToDouble(a -> a)
@@ -401,17 +405,6 @@ public class CGATTPRunner {
 
                 standardDeviation = Math.sqrt(standardDeviation/eachRepeatHV.size());
 
-                OptionalDouble averageUberHv = eachRepeatUberParetoHV
-                        .stream()
-                        .mapToDouble(a -> a)
-                        .average();
-                var uberParetoHV = averageUberHv.isPresent() ? averageUberHv.getAsDouble() : -666.0;
-                double uberParetostdev = 0.0;
-                for(double num: eachRepeatUberParetoHV) {
-                    uberParetostdev += Math.pow(num - uberParetoHV, 2);
-                }
-                uberParetostdev = Math.sqrt(uberParetostdev/eachRepeatUberParetoHV.size());
-
                 OptionalDouble averageIGD = eachRepeatIGD
                         .stream()
                         .mapToDouble(a -> a)
@@ -436,11 +429,13 @@ public class CGATTPRunner {
 
                 String runResult = instanceWithOPF.get(k).getKey() + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
-                        + ";" + igdCalculator.getMeasure(uberPareto) + ";" + gdCalculator.getMeasure(uberPareto)
-                        + ";" + purityCalculator.getMeasure(uberPareto) +  ";" + avgHV + ";" + standardDeviation
                         + ";" + averageIGDVal + ";" + averageIGDValStdev + ";" + averageGDVal + ";" + averageGDStdev
+                        +  ";" + avgHV + ";" + standardDeviation
                         + ";" + avgND + ";" + NDstandardDeviation + ";" + uberPareto.size()
-                        + ";" + eachRepeatUberParetoHV.get(eachRepeatUberParetoHV.size()-1) + ";" + uberParetoHV + ";" + uberParetostdev
+                        + ";" + new InvertedGenerationalDistance(optimalApfWithUberPareto).getMeasure(uberPareto)
+                        + ";" + new GenerationalDistance(optimalApfWithUberPareto).getMeasure(uberPareto)
+                        + ";" + new Purity(optimalApfWithUberPareto).getMeasure(uberPareto)
+                        + ";" + new HVMany(parameters.evaluator.getNadirPoint()).getMeasure(uberPareto)
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
                         + ";" + OptimisationResult.getAvgAfterCrossParentDominationProp(eachRepeatOptimisationResult)
                         + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationCounter(eachRepeatOptimisationResult)

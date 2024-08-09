@@ -9,6 +9,7 @@ import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.problem.TTP;
 import algorithms.quality_measure.ApfDistance;
 import algorithms.quality_measure.GenerationalDistance;
 import algorithms.quality_measure.HVMany;
@@ -36,12 +37,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int iterationNumber;
     private final int indExclusionUsageLimit;
     private final int indExclusionGenDuration;
-    private final InvertedGenerationalDistance igdCalculator;
-    private final ApfDistance apfDistanceCalculator;
     private final double turDecayParam;
     private final int minTournamentSize;
     private final ParameterFunctions parameterFunction;
-    private final GenerationalDistance gdCalculator;
+    private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -80,9 +79,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                double diversityThreshold,
                boolean enhanceDiversity,
                HVMany hv,
-               InvertedGenerationalDistance igdCalculator,
-               GenerationalDistance gdCalculator,
-               ApfDistance apfDistanceCalculator,
+               List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
                String outputFilename,
                int iterationNumber,
                int indExclusionUsageLimit,
@@ -106,9 +103,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.clusterWeightMeasure = clusterWeightMeasure;
         this.mutationVersion = mutationVersion;
         this.hvCalculator = hv;
-        this.igdCalculator = igdCalculator;
-        this.gdCalculator = gdCalculator;
-        this.apfDistanceCalculator = apfDistanceCalculator;
+        this.optimalParetoFront = optimalParetoFront;
         this.outputFilename = outputFilename;
         this.iterationNumber = iterationNumber;
         this.indExclusionUsageLimit = indExclusionUsageLimit;
@@ -255,9 +250,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             int archiveChanges = removeDuplicatesAndDominated(population, archive);
             population = new ArrayList<>();
 
+//            var optimalParetoFrontWithArchive = this.getNondominatedFromTwoLists(archive, this.optimalParetoFront);
+            List<BaseIndividual<Integer, PROBLEM>> optimalParetoFrontWithArchive = new ArrayList<>(this.optimalParetoFront);
+            removeDuplicatesAndDominated(archive, optimalParetoFrontWithArchive);
             double archiveHv = this.hvCalculator.getMeasure(archive);
-            double archiveIgd = this.igdCalculator.getMeasure(archive);
-            double archiveGd = this.gdCalculator.getMeasure(archive);
+            double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
+            double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
                 writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd

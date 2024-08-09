@@ -29,9 +29,9 @@ public class EvolutionaryAlgorithm<GENE extends Number, PROBLEM extends BaseProb
     return allIndividualsNoDuplicates;
   }
 
-  protected int removeDuplicatesAndDominated(
-      List<BaseIndividual<GENE, PROBLEM>> population,
-      List<BaseIndividual<GENE, PROBLEM>> allIndividuals) {
+  public int removeDuplicatesAndDominated(
+          List<BaseIndividual<GENE, PROBLEM>> population,
+          List<BaseIndividual<GENE, PROBLEM>> allIndividuals) {
     int counter = 0;
     for (BaseIndividual<GENE, PROBLEM> individual : population) {
       boolean dominated = false;
