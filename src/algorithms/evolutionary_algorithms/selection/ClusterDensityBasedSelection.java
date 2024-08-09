@@ -101,8 +101,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
 //        returnPairs.addAll(addArchiveCrossClustersAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
-        returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
-//        returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+//        returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+        returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
 //        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
 
         return returnPairs;
@@ -117,9 +117,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        double decayTurFun = turDecayFunction.getVal(currCost);
-        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
-//        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
+//        double decayTurFun = turDecayFunction.getVal(currCost);
+//        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
 //        System.out.println(decayTurFun);
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
@@ -176,9 +176,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        double decayTurFun = turDecayFunction.getVal(currCost);
-        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
-//        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
+//        double decayTurFun = turDecayFunction.getVal(currCost);
+//        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
 //        System.out.println(decayTurFun);
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
@@ -252,9 +252,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        double decayTurFun = turDecayFunction.getVal(currCost);
-        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
-//        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
+//        double decayTurFun = turDecayFunction.getVal(currCost);
+//        int dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0));
 //        System.out.println(decayTurFun);
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
