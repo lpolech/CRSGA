@@ -48,7 +48,7 @@ public class EvolutionaryAlgorithm<GENE extends Number, PROBLEM extends BaseProb
           continue;
         }
         if (individual.dominates(trial)) {
-          allIndividuals.remove(trial);
+          allIndividuals.remove(i);
           --i;
           counter++;
         }

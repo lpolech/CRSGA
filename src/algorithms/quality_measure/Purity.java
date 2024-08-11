@@ -27,8 +27,7 @@ public class Purity extends BaseMeasure {
     for (T individual : population) {
       if (individual.isNotDominatedBy(referencePopulation)) {
         ++result;
-      }
-      if (referencePopulation.stream().anyMatch(i -> individual.compareTo(i) == 0)) {
+      } else if (referencePopulation.stream().anyMatch(i -> individual.compareTo(i) == 0)) {
         ++result;
       }
     }

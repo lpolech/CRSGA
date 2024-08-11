@@ -4,6 +4,7 @@ import algorithms.evaluation.BaseEvaluator;
 import algorithms.evolutionary_algorithms.ParameterSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -105,7 +106,7 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
   public BaseIndividual(PROBLEM problem, List<GENE> genes, BaseEvaluator<GENE, PROBLEM> evaluator) {
     this(problem, evaluator);
     this.genes = new ArrayList<>(genes);
-		setHashCode();
+    setHashCode();
   }
 
   /**
@@ -263,7 +264,11 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
   }
 
   public void setHashCode() {
-    this.hashCode = genes.hashCode();
+        if(this.getGenes().isEmpty()) {
+            this.hashCode = Arrays.hashCode(objectives);
+        } else {
+            this.hashCode = genes.hashCode();
+        }
   }
 
   public int getNumOfDominatingSolutions() {
