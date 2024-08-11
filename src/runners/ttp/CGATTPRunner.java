@@ -104,7 +104,7 @@ public class CGATTPRunner {
             };
 
             int NUMBER_OF_REPEATS = 1;
-            int[] generationLimitList = new int[] {2_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] generationLimitList = new int[] {1_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.017};//{0.016, 0.017, 0.018, 0.019, 0.021, 0.022, 0.023, 0.024};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -333,7 +333,39 @@ public class CGATTPRunner {
                     geneticAlgorithm.removeDuplicatesAndDominated(result, uberPareto);
 //                    uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
                     //            printResults(result);
-                    var hvValue = hv.getMeasure(result);
+
+                    eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
+                    eachRepeatResult.add(result);
+                }
+
+                optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
+                geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
+
+                Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>
+                        , ArrayList<List<BaseIndividual<Integer, TTP>>>> normalisedApfAndResults
+                        = normaliseParetoFrontsByMinMax(optimalApfWithUberPareto, uberPareto, eachRepeatResult, ttp,
+                        parameters.evaluator);
+                List<BaseIndividual<Integer, TTP>> normalisedOptimalPftWithUberPareto = normalisedApfAndResults.getKey().getKey();
+                List<BaseIndividual<Integer, TTP>> normalisedUberPareto = normalisedApfAndResults.getKey().getValue();
+                ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedResults = normalisedApfAndResults.getValue();
+
+//                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
+                InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(normalisedOptimalPftWithUberPareto);
+                GenerationalDistance gdCalculator = new GenerationalDistance(normalisedOptimalPftWithUberPareto);
+                Purity purityCalculator = new Purity(normalisedOptimalPftWithUberPareto);
+
+                BaseIndividual<Integer, TTP> normalisedHvNadirPoint = new BaseIndividual<>(ttp, new ArrayList<>(), parameters.evaluator);
+                normalisedHvNadirPoint.setObjectives(new double[]{1.0, 1.0});
+                normalisedHvNadirPoint.setNormalObjectives(new double[]{1.0, 1.0});
+                normalisedHvNadirPoint.setHashCode();
+                HVMany hvCalculator = new HVMany(normalisedHvNadirPoint);
+
+                String instanceName = instanceWithOPF.get(k).getKey();
+                for(int i = 0; i < normalisedResults.size(); i++) {
+                    var normRes = normalisedResults.get(i);
+                    var result = eachRepeatResult.get(i);
+
+                    var hvValue = hvCalculator.getMeasure(normRes);
                     eachRepeatHV.add(hvValue);
                     eachRepeatND.add(result.size());
 
@@ -343,30 +375,15 @@ public class CGATTPRunner {
                         bestIterNumber = i;
                     }
 
-                    eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
-                    eachRepeatResult.add(result);
-                }
-
-                optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
-                geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
-
-//                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
-                InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(optimalApfWithUberPareto);
-                GenerationalDistance gdCalculator = new GenerationalDistance(optimalApfWithUberPareto);
-                Purity purityCalculator = new Purity(optimalApfWithUberPareto);
-
-                for(int i = 0; i < eachRepeatResult.size(); i++) {
-                    var result = eachRepeatResult.get(i);
-                    var igdValue = igdCalculator.getMeasure(result);
+                    var igdValue = igdCalculator.getMeasure(normRes);
                     eachRepeatIGD.add(igdValue);
 
-                    var gdValue = gdCalculator.getMeasure(result);
+                    var gdValue = gdCalculator.getMeasure(normRes);
                     eachRepeatGD.add(gdValue);
 
-                    var purityValue = purityCalculator.getMeasure(result);
+                    var purityValue = purityCalculator.getMeasure(normRes);
                     eachRepeatPurity.add(purityValue);
 
-                    String instanceName = instanceWithOPF.get(k).getKey();
                     if(instanceName.endsWith(".ttp"))
                         instanceName = instanceName.substring(0, instanceName.lastIndexOf(".ttp"));
 
@@ -375,19 +392,28 @@ public class CGATTPRunner {
                                 + File.separator + instanceName + "_config0_run" + i + "_archive.csv"));
                         writer.write(printResultsForComparison(result, false));
                         writer.close();
-
-                        writer = new BufferedWriter(new FileWriter(outputFilename
-                                + File.separator + instanceName + "_" + i + "_UBER_PARETO.csv"));
-                        writer.write(printResultsAgainstApf(uberPareto, optimalParetoFront, false));
-                        writer.close();
-
-                        writer = new BufferedWriter(new FileWriter(outputFilename
-                                + File.separator + instanceName + "_" + i + "_genes_UBER_PARETO.csv"));
-                        writer.write(printGenes(uberPareto, ttp));
-                        writer.close();
                     } catch(IOException e) {
                         e.printStackTrace();
                     }
+                }
+
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
+                            + File.separator + instanceName + "_UBER_PARETO.csv"));
+                    writer.write(printResultsAgainstApf(uberPareto, optimalParetoFront, false));
+                    writer.close();
+
+                    writer = new BufferedWriter(new FileWriter(outputFilename
+                            + File.separator + instanceName + "_mama.csv"));
+                    writer.write(printResultsAgainstApf(uberPareto, optimalApfWithUberPareto, false));
+                    writer.close();
+
+                    writer = new BufferedWriter(new FileWriter(outputFilename
+                            + File.separator + instanceName + "_genes_UBER_PARETO.csv"));
+                    writer.write(printGenes(uberPareto, ttp));
+                    writer.close();
+                } catch(IOException e) {
+                    e.printStackTrace();
                 }
 
                 OptionalDouble NDaverage = eachRepeatND
@@ -452,11 +478,12 @@ public class CGATTPRunner {
                 String runResult = instanceWithOPF.get(k).getKey() + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
                         + ";" + averageIGDVal + ";" + averageIGDValStdev
-                        + ";" + purityCalculator.getMeasure(uberPareto)
-                        + ";" + igdCalculator.getMeasure(uberPareto)
-                        + ";" + gdCalculator.getMeasure(uberPareto)
-                        + ";" + new HVMany(parameters.evaluator.getNadirPoint()).getMeasure(uberPareto)
-                        + ";" + uberPareto.size()
+                        + ";" + purityCalculator.getMeasure(normalisedUberPareto)
+                        + ";" + igdCalculator.getMeasure(normalisedUberPareto)
+                        + ";" + gdCalculator.getMeasure(normalisedUberPareto)
+//                        + ";" + new HVMany(parameters.evaluator.getNadirPoint()).getMeasure(normalisedUberPareto)
+                        + ";" + hvCalculator.getMeasure(normalisedUberPareto)
+                        + ";" + normalisedUberPareto.size()
                         + ";" + averagePurityVal + ";" + averagePurityStdev
                         + ";" + averageGDVal + ";" + averageGDStdev
                         + ";" + avgHV + ";" + standardDeviation
@@ -499,6 +526,114 @@ public class CGATTPRunner {
             }
         }
         return null;
+    }
+
+    private static Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>, ArrayList<List<BaseIndividual<Integer, TTP>>>>
+    normaliseParetoFrontsByMinMax(List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto,
+                                  List<BaseIndividual<Integer, TTP>> uberPareto,
+                                  ArrayList<List<BaseIndividual<Integer, TTP>>> eachRepeatResult,
+                                  TTP ttp,
+                                  BaseEvaluator<Integer, TTP> evaluator) {
+        List<BaseIndividual<Integer, TTP>> normalisedOptimalApfWithUberPareto = new ArrayList<>();
+        List<BaseIndividual<Integer, TTP>> normalisedUberPareto = new ArrayList<>();
+        ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedEachRepeatResult = new ArrayList<>();
+
+        int noOfDims = optimalApfWithUberPareto.get(0).getObjectives().length;
+
+        // Initialize Min and Max values
+        List<Double> minValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
+        List<Double> maxValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
+        List<Double> minNormValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
+        List<Double> maxNormValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
+        for (int v = 0; v < noOfDims; ++v) {
+            maxValues.set(v, (-1)*Double.MAX_VALUE);
+            minValues.set(v, Double.MAX_VALUE);
+            maxNormValues.set(v, (-1)*Double.MAX_VALUE);
+            minNormValues.set(v, Double.MAX_VALUE);
+        }
+
+        getMinMax(optimalApfWithUberPareto, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
+        getMinMax(uberPareto, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
+
+        for(var res: eachRepeatResult) {
+            getMinMax(res, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
+        }
+
+        normalisedOptimalApfWithUberPareto = normaliseByMinMax(optimalApfWithUberPareto,
+                minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator);
+        normalisedUberPareto = normaliseByMinMax(uberPareto,
+                minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator);
+
+        for(var res: eachRepeatResult) {
+            normalisedEachRepeatResult.add(normaliseByMinMax(res,
+                    minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator));
+        }
+
+        return new Pair<>(new Pair<>(normalisedOptimalApfWithUberPareto, normalisedUberPareto), normalisedEachRepeatResult);
+    }
+
+    private static void getMinMax(List<BaseIndividual<Integer, TTP>> front, int noOfDims, List<Double> minValues, List<Double> maxValues, List<Double> minNormValues, List<Double> maxNormValues) {
+        for (int i = 0; i < front.size(); ++i) {
+            BaseIndividual<Integer, TTP> sol = front.get(i);
+            for (int v = 0; v < noOfDims; ++v) {
+                double evalValue = sol.getObjectives()[v];
+                minValues.set(v, Math.min(minValues.get(v), evalValue));
+                maxValues.set(v, Math.max(maxValues.get(v), evalValue));
+
+                double evalNormValue = sol.getNormalObjectives()[v];
+                minNormValues.set(v, Math.min(minNormValues.get(v), evalNormValue));
+                maxNormValues.set(v, Math.max(maxNormValues.get(v), evalNormValue));
+            }
+        }
+    }
+
+    public static List<BaseIndividual<Integer, TTP>> normaliseByMinMax(List<BaseIndividual<Integer, TTP>> front,
+                                                                       List<Double> minValues,
+                                                                       List<Double> maxValues,
+                                                                       List<Double> minNormValues,
+                                                                       List<Double> maxNormValues,
+                                                                       TTP ttp,
+                                                                       BaseEvaluator<Integer, TTP> evaluator) {
+        if (front.size() <= 0) {
+            System.err.println("Front is empty!");
+        }
+
+        int minValSize = minValues.size();
+        int maxValSize = maxValues.size();
+        int objDims = front.get(0).getObjectives().length;
+        int normObjDims = front.get(0).getNormalObjectives().length;
+
+        if (minValSize != maxValSize || minValSize != objDims || minValSize != normObjDims) {
+            System.err.println("Objective dimensions do not stack up!");
+        }
+
+        List<BaseIndividual<Integer, TTP>> normalisedFront = new ArrayList<>(front.size());
+        List<Double> diffVec = new ArrayList<>(Collections.nCopies(objDims, 0.0));
+        List<Double> diffNormVec = new ArrayList<>(Collections.nCopies(objDims, 0.0));
+        for (int v = 0; v < objDims; ++v) {
+            diffVec.set(v, maxValues.get(v) - minValues.get(v));
+            diffNormVec.set(v, maxNormValues.get(v) - minNormValues.get(v));
+        }
+
+        for(int i = 0; i < front.size(); ++i) {
+            BaseIndividual<Integer, TTP> sol = front.get(i);
+            List<Double> normObj = new ArrayList<>(Collections.nCopies(objDims, 0.0));
+            List<Double> normNormObj = new ArrayList<>(Collections.nCopies(objDims, 0.0));
+
+            for (int v = 0; v < objDims; ++v) {
+                normObj.set(v, (sol.getObjectives()[v] - minValues.get(v)) / diffVec.get(v));
+                normNormObj.set(v, (sol.getNormalObjectives()[v] - minNormValues.get(v)) / diffNormVec.get(v));
+            }
+
+            BaseIndividual<Integer, TTP> normIndividual = new BaseIndividual<>(ttp, new ArrayList<>(), evaluator);
+            normIndividual.setObjectives(normObj.stream().mapToDouble(d -> d).toArray());
+            normIndividual.setNormalObjectives(normNormObj.stream().mapToDouble(d -> d).toArray());
+            normIndividual.setHashCode();
+
+            normalisedFront.add(normIndividual);
+        }
+
+        return normalisedFront;
     }
 
     private static List<BaseIndividual<Integer, TTP>> readAPF(String apfPath, TTP ttp, BaseEvaluator<Integer, TTP> evaluator) {
