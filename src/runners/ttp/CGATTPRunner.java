@@ -57,7 +57,7 @@ public class CGATTPRunner {
 //            new Pair<>("berlin52_n51_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
 //            new Pair<>("berlin52_n51_uncorr_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
 //            new Pair<>("berlin52_n51_uncorr-similar-weights_01.ttp", "D:\\Coding\\CGA\\apf\\24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv")
-            new Pair<>("berlin26_n25_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\berlin26_n25_bounded-strongly-corr_01_config0_run0_archive.csv")//24-08-02_berlin26_n25_bounded-strongly-corr_01_merged.csv")
+            new Pair<>("berlin26_n25_bounded-strongly-corr_01.ttp", "D:\\Coding\\CGA\\apf\\24-08-02_berlin26_n25_bounded-strongly-corr_01_merged.csv")
     );
 
     public static void main(String[] args) {
@@ -103,8 +103,8 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 1;
-            int[] generationLimitList = new int[] {1_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 10;
+            int[] generationLimitList = new int[] {250_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.017};//{0.016, 0.017, 0.018, 0.019, 0.021, 0.022, 0.023, 0.024};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -207,7 +207,7 @@ public class CGATTPRunner {
 
             System.out.println("Number of param configurations: " + cartesianProductOfParams.size());
 //            Collections.shuffle(cartesianProductOfParams);
-            String header = "dataset;counter;measure;no of repeats;avgIGD;stdev;uber pareto purity;uber pareto IGD;uber pareto GD"
+            String header = "dataset;counter;measure;no of repeats;avgIGD;stdev;uber pareto purity;mnd;tpfs;uber pareto IGD;uber pareto GD"
                     + ";uber pareto HV;uber pareto size;avgPurity;stdev;avgGD;stdev;avgHV;stdev;avgPFS;stdev"
                     + ";AvgAfterCrossParentDominationCounter"
                     + ";AvgAfterCrossParentDominationProp"
@@ -340,6 +340,8 @@ public class CGATTPRunner {
 
                 optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
                 geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
+
+                int mnd = geneticAlgorithm.getNumberOfNotDominated(uberPareto, optimalApfWithUberPareto);
 
                 Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>
                         , ArrayList<List<BaseIndividual<Integer, TTP>>>> normalisedApfAndResults
@@ -479,6 +481,7 @@ public class CGATTPRunner {
                         + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
                         + ";" + averageIGDVal + ";" + averageIGDValStdev
                         + ";" + purityCalculator.getMeasure(normalisedUberPareto)
+                        + ";" + mnd + ";" + optimalApfWithUberPareto.size()
                         + ";" + igdCalculator.getMeasure(normalisedUberPareto)
                         + ";" + gdCalculator.getMeasure(normalisedUberPareto)
 //                        + ";" + new HVMany(parameters.evaluator.getNadirPoint()).getMeasure(normalisedUberPareto)
@@ -585,6 +588,10 @@ public class CGATTPRunner {
                 maxNormValues.set(v, Math.max(maxNormValues.get(v), evalNormValue));
             }
         }
+    }
+
+    public static double roundNumberToTwoDecimalPlaces(double number) {
+        return Math.round(number * 100.0) / 100.0;
     }
 
     public static List<BaseIndividual<Integer, TTP>> normaliseByMinMax(List<BaseIndividual<Integer, TTP>> front,

@@ -557,4 +557,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         return best;
     }
+
+    public int getNumberOfNotDominated(List<BaseIndividual<Integer, PROBLEM>> front, List<BaseIndividual<Integer, PROBLEM>> apf) {
+        int mnd = 0;
+        for (BaseIndividual<Integer, PROBLEM> individual : front) {
+            if (individual.isNotDominatedBy(apf)) {
+                mnd++;
+            }
+        }
+        return mnd;
+    }
 }
