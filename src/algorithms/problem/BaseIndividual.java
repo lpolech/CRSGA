@@ -116,7 +116,7 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
    */
   public BaseIndividual<GENE, PROBLEM> buildSolution(List<GENE> genes, ParameterSet<GENE, PROBLEM> parameters) {
     problem.buildSolution(genes, parameters);
-//    problem.fixGenes((List<Number>)genes);
+    problem.fixGenes((List<Number>)genes);
     setObjectives();
     setNormalObjectives();
     setEvalValue(evaluate()); // TODO: maybe skip for multi-objective?

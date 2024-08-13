@@ -5,8 +5,7 @@ import algorithms.problem.mkp.Knapsack;
 import algorithms.problem.mtsp.City;
 import algorithms.problem.mtsp.DistanceMatrix;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -65,7 +64,6 @@ public class TTP extends BaseProblemRepresentation {
 //    for (int i = 0; i < sortedPathGenes.length; ++i) {
 //      path[i] = sortedPathGenes[i];
 //    }
-    List<Number> genesToModify = (List<Number>)genes;
     for (int i = 0; i < parameters.geneSplitPoint; ++i) {
       path[i] = (Integer)genes.get(i);
     }
@@ -73,33 +71,15 @@ public class TTP extends BaseProblemRepresentation {
       selection[i] = genes.get(path.length + i).intValue();
     }
     // TODO: create a constraint preserver
-    List<Map.Entry<Integer, Double>> itemWithImpact = new ArrayList<>();
-    List<Integer> availableItemsInCity;
-    for (int i = 0; i < path.length - 1; ++i) {
-      int city = path[i];
-      availableItemsInCity = itemAvailabilities.get(city);
-      for (int item : availableItemsInCity) {
-        if (selection[item] > 0 && city == knapsack.getItem(item).getAvailability().get(selection[item] - 1)) {
-          itemWithImpact.add(new AbstractMap.SimpleEntry<>(item, getItemProfitToTravellingTimeWeight(item, city)));
-        }
-      }
-    }
-    itemWithImpact.sort(Map.Entry.comparingByValue());
-    List<Integer> sortedKeys = itemWithImpact.stream()
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toList());
-
-    int[] sortedIndices = sortedKeys.stream().mapToInt(e -> e).toArray();
-//    IntStream.range(0, selection.length)
-//        .boxed().sorted((i, j) -> Integer.compare(knapsack.getItem(i).getProfit() / knapsack.getItem(i).getWeight(),
-//                                                  knapsack.getItem(j).getProfit() / knapsack.getItem(j).getWeight()) )
-//        .mapToInt(ele -> ele).toArray();
+    int[] sortedIndices = IntStream.range(0, selection.length)
+            .boxed().sorted((i, j) -> Integer.compare(knapsack.getItem(i).getProfit() / knapsack.getItem(i).getWeight(),
+                    knapsack.getItem(j).getProfit() / knapsack.getItem(j).getWeight()) )
+            .mapToInt(ele -> ele).toArray();
     double currentWeight = getCurrentWeight();
     int index = 0;
     while (currentWeight > knapsack.getCapacity()) {
       if (selection[sortedIndices[index]] > 0) {
         selection[sortedIndices[index]] = 0;
-//        genesToModify.set(path.length + sortedIndices[index], 0);
         currentWeight -= knapsack.getItem(sortedIndices[index]).getWeight();
       }
       ++index;
@@ -108,31 +88,12 @@ public class TTP extends BaseProblemRepresentation {
     return this;
   }
 
-  public double getItemProfitToTravellingTimeWeight(int itemNum, int pathIndex) {
-    double[][] distances = distanceMatrix.getDistances();
-
-    double distance = 0d;
-    double itemWeight = knapsack.getItem(itemNum).getWeight();;
-    double itemVelocity = maxSpeed - (itemWeight * ( (maxSpeed - minSpeed)  / knapsack.getCapacity() ));
-    itemVelocity = Math.max(itemVelocity, minSpeed);
-
-    for (int i = pathIndex; i < path.length - 1; ++i) {
-      distance += distances[path[i]][path[i+1]];
-    }
-
-    //Traveling distance between last and first city
-    distance += distances[path[path.length - 1]][path[0]];
-    double time = distance / itemVelocity;
-    double itemProfit = knapsack.getItem(itemNum).getProfit();
-    return itemProfit / time;
-  }
-
   @Override
   public void fixGenes(List<Number> genes) {
     int[] sortedIndices = IntStream.range(0, selection.length)
-        .boxed().sorted((i, j) -> Integer.compare(knapsack.getItem(i).getProfit() / knapsack.getItem(i).getWeight(),
-            knapsack.getItem(j).getProfit() / knapsack.getItem(j).getWeight()) )
-        .mapToInt(ele -> ele).toArray();
+            .boxed().sorted((i, j) -> Integer.compare(knapsack.getItem(i).getProfit() / knapsack.getItem(i).getWeight(),
+                    knapsack.getItem(j).getProfit() / knapsack.getItem(j).getWeight()) )
+            .mapToInt(ele -> ele).toArray();
 
     double currentWeight = 0d;
     for (int i = 0; i < selection.length; ++i) {
@@ -286,8 +247,8 @@ public class TTP extends BaseProblemRepresentation {
     long hash = 0xCBF29CE484222325L;
     long prime = 0x100000001B3L;
     int[] sortedIndices = IntStream.range(0, path.length)
-        .boxed().sorted((i, j) -> Integer.compare(path[i], path[j]) )
-        .mapToInt(ele -> ele).toArray();
+            .boxed().sorted((i, j) -> Integer.compare(path[i], path[j]) )
+            .mapToInt(ele -> ele).toArray();
     for(int p : sortedIndices)
     {
       hash ^= Integer.hashCode(p);
