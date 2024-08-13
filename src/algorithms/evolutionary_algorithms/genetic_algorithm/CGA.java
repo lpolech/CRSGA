@@ -112,11 +112,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.indExclusionGenDuration = indExclusionGenDuration;
         this.turDecayParam = turDecayParam;
         this.minTournamentSize = minTournamentSize;
-        this.parameterFunction = new ParameterFunctions(generationLimit,
-                ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL,
-                minTournamentSize,
-                tournamentSize,
-                turDecayParam);
+
+        if(minTournamentSize > 0) {
+            this.parameterFunction = new ParameterFunctions(generationLimit,
+                    ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL,
+                    minTournamentSize,
+                    tournamentSize,
+                    turDecayParam);
+        } else {
+            this.parameterFunction = null;
+        }
         this.pairingMethod = indPairingMethod;
     }
 
