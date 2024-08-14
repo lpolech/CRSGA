@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class EvolutionHistoryElement {
-    private static int historySize = 9_999_000; // 150_000;
+    private static int historySize = 150_000; // needs to be limited due to HEAP SPACE for the output string builder
     private int generationNumber;
     private double x;
     private double y;
