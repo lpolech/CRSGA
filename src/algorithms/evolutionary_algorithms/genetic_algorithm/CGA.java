@@ -40,6 +40,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int minTournamentSize;
     private final ParameterFunctions parameterFunction;
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
+    private final boolean saveResultFiles;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -81,6 +82,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                HVMany hv,
                List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
                String outputFilename,
+               boolean saveResultFiles,
                int iterationNumber,
                int indExclusionUsageLimit,
                int indExclusionGenDuration,
@@ -107,6 +109,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.hvCalculator = hv;
         this.optimalParetoFront = optimalParetoFront;
         this.outputFilename = outputFilename;
+        this.saveResultFiles = saveResultFiles;
         this.iterationNumber = iterationNumber;
         this.indExclusionUsageLimit = indExclusionUsageLimit;
         this.indExclusionGenDuration = indExclusionGenDuration;
@@ -128,12 +131,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
         // create empty file
         String hvHistoryFilePath = outputFilename + File.separator + "hv_hisotry" + this.iterationNumber + ".csv";
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
-            writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
-            writer.close();
-        } catch(IOException e) {
-            e.printStackTrace();
+        if(saveResultFiles) {
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
+                writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 //        System.out.println("generation; additional population; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure");
         int generation = 1;
@@ -178,7 +183,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     parameters,
                     indExclusionUsageLimit,
                     indExclusionGenDuration,
-                    excludedArchive);
+                    excludedArchive,
+                    saveResultFiles);
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
@@ -264,13 +270,15 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             double archiveHv = this.hvCalculator.getMeasure(archive);
             double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
             double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
-                writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
-                        + ";" + noOfChildDominatingParents + ";" + archiveChanges + "\n");
-                writer.close();
-            } catch(IOException e) {
-                e.printStackTrace();
+            if(saveResultFiles) {
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
+                    writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
+                            + ";" + noOfChildDominatingParents + ";" + archiveChanges + "\n");
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
 //            population = getIndividualClosesToArchive(population, archive, populationSize, populationTurProp);
@@ -299,15 +307,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             ++generation;
         }
 
-
-        EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
+        if(saveResultFiles) {
+            EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
+        }
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
     }
 
     private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
-        if(excludedArchive.size() > 0) {
+        if(excludedArchive.size() > 0 && saveResultFiles) {
             toFileExcludedIndividuals(excludedArchive, gaClusteringResults.getClusteringResultFilePath(), gaClusteringResults.getClusteringResultFileName());
         }
         gaClusteringResults.toFile();

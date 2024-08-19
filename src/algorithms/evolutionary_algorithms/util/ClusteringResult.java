@@ -13,6 +13,7 @@ public class ClusteringResult {
     private final String clusteringResultFileName;
     private final int maxTravellingTimeClusterId;
     private final int minTravellingTimeClusterId;
+    private final boolean saveResultFiles;
     ClustersAndTheirStatistics clustersAndTheirStatistics;
     List<Double> clustersDispersion;
     List<Double> clusterWeights;
@@ -27,7 +28,8 @@ public class ClusteringResult {
     public ClusteringResult(ClustersAndTheirStatistics clustersAndTheirStatistics, List<Double> clustersDispersion,
                             List<Double> clusterWeights,
                             List<IndividualCluster> clustersWithIndDstToCentre, String clusteringResultFilePath,
-                            String clusteringResultFileName, int minTravellingTimeClusterId, int maxTravellingTimeClusterId) {
+                            String clusteringResultFileName, int minTravellingTimeClusterId, int maxTravellingTimeClusterId,
+                            boolean saveResultFiles) {
         this.clustersAndTheirStatistics = clustersAndTheirStatistics;
         this.clustersDispersion = clustersDispersion;
         this.clusterWeights = clusterWeights;
@@ -36,6 +38,7 @@ public class ClusteringResult {
         this.clusteringResultFileName = clusteringResultFileName;
         this.minTravellingTimeClusterId = minTravellingTimeClusterId;
         this.maxTravellingTimeClusterId = maxTravellingTimeClusterId;
+        this.saveResultFiles = saveResultFiles;
     }
 
     public ClustersAndTheirStatistics getClustersAndTheirStatistics() {
@@ -67,8 +70,10 @@ public class ClusteringResult {
     }
 
     public void toFile(){
-        this.clustersAndTheirStatistics.toFile(this.clusteringResultFilePath, this.clusteringResultFileName,
-                this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion,
-                this.clusterWeights);
+        if(saveResultFiles) {
+            this.clustersAndTheirStatistics.toFile(this.clusteringResultFilePath, this.clusteringResultFileName,
+                    this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion,
+                    this.clusterWeights);
+        }
     }
 }

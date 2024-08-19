@@ -102,8 +102,8 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 5;
-            int[] generationLimitList = new int[] {250_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 2;
+            int[] generationLimitList = new int[] {2_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//, 50, 100, 150, 250, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.45};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.0027};//{0.05, 0.0501, 0.0502, 0.0503, 0.0504, 0.0505, 0.0506, 0.0507, 0.0508, 0.0509, 0.051, 0.0511, 0.0512, 0.0513, 0.0514, 0.0515, 0.0516, 0.0517, 0.0518, 0.0519, 0.052, 0.0521, 0.0522, 0.0523, 0.0524, 0.0525, 0.0526, 0.0527, 0.0528, 0.0529, 0.053, 0.0531, 0.0532, 0.0533, 0.0534, 0.0535, 0.0536, 0.0537, 0.0538, 0.0539, 0.054, 0.0541, 0.0542, 0.0543, 0.0544, 0.0545, 0.0546, 0.0547, 0.0548, 0.0549, 0.055, 0.0551, 0.0552, 0.0553, 0.0554, 0.0555, 0.0556, 0.0557, 0.0558, 0.0559, 0.056, 0.0561, 0.0562, 0.0563, 0.0564, 0.0565, 0.0566, 0.0567, 0.0568, 0.0569, 0.057, 0.0571, 0.0572, 0.0573, 0.0574, 0.0575, 0.0576, 0.0577, 0.0578, 0.0579, 0.058, 0.0581, 0.0582, 0.0583, 0.0584, 0.0585, 0.0586, 0.0587, 0.0588, 0.0589, 0.059, 0.0591, 0.0592, 0.0593, 0.0594, 0.0595, 0.0596, 0.0597, 0.0598, 0.0599};
@@ -122,6 +122,7 @@ public class CGATTPRunner {
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13  .5, -14.5, -15.5};//{-6, -8, -15, -100};
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{DISTANT_IMMEDIATE_NEIGHBOUR_PAIR};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
             boolean shuffleParams = true;
+            boolean saveResultFiles = false;
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList);
@@ -246,9 +247,11 @@ public class CGATTPRunner {
 
                                                                                         String bestAPFoutputFile = "bestAPF";
                                                                                         int bestIterNumber = 0;
-                                                                                        File theDir = new File(outputFilename);
-                                                                                        if (!theDir.exists()){
-                                                                                            theDir.mkdirs();
+                                                                                        if(saveResultFiles) {
+                                                                                            File theDir = new File(outputFilename);
+                                                                                            if (!theDir.exists()) {
+                                                                                                theDir.mkdirs();
+                                                                                            }
                                                                                         }
 
                                                                                         List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
@@ -281,6 +284,7 @@ public class CGATTPRunner {
                                                                                                     hv,
                                                                                                     optimalParetoFront,
                                                                                                     outputFilename,
+                                                                                                    saveResultFiles,
                                                                                                     xx,
                                                                                                     indExclusionUsageLimit,
                                                                                                     indExclusionGenDuration,
@@ -349,33 +353,38 @@ public class CGATTPRunner {
                                                                                             if(instanceName.endsWith(".ttp"))
                                                                                                 instanceName = instanceName.substring(0, instanceName.lastIndexOf(".ttp"));
 
-                                                                                            try {
-                                                                                                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                        + File.separator + instanceName + "_config0_run" + yy + "_archive.csv"));
-                                                                                                writer.write(printResultsForComparison(result, false));
-                                                                                                writer.close();
-                                                                                            } catch(IOException e) {
-                                                                                                e.printStackTrace();
+                                                                                            if(saveResultFiles) {
+                                                                                                try {
+                                                                                                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                            + File.separator + instanceName + "_config0_run" + yy + "_archive.csv"));
+                                                                                                    writer.write(printResultsForComparison(result, false));
+                                                                                                    writer.close();
+                                                                                                } catch (
+                                                                                                        IOException e) {
+                                                                                                    e.printStackTrace();
+                                                                                                }
                                                                                             }
                                                                                         }
 
-                                                                                        try {
-                                                                                            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                    + File.separator + instanceName + "_UBER_PARETO.csv"));
-                                                                                            writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
-                                                                                            writer.close();
+                                                                                        if(saveResultFiles) {
+                                                                                            try {
+                                                                                                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                        + File.separator + instanceName + "_UBER_PARETO.csv"));
+                                                                                                writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
+                                                                                                writer.close();
 
-                                                                                            writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                    + File.separator + instanceName + "_apf.csv"));
-                                                                                            writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
-                                                                                            writer.close();
+                                                                                                writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                        + File.separator + instanceName + "_apf.csv"));
+                                                                                                writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
+                                                                                                writer.close();
 
-                                                                                            writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                    + File.separator + instanceName + "_genes_UBER_PARETO.csv"));
-                                                                                            writer.write(printGenes(uberPareto, ttp));
-                                                                                            writer.close();
-                                                                                        } catch(IOException e) {
-                                                                                            e.printStackTrace();
+                                                                                                writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                        + File.separator + instanceName + "_genes_UBER_PARETO.csv"));
+                                                                                                writer.write(printGenes(uberPareto, ttp));
+                                                                                                writer.close();
+                                                                                            } catch (IOException e) {
+                                                                                                e.printStackTrace();
+                                                                                            }
                                                                                         }
 
                                                                                         OptionalDouble NDaverage = eachRepeatND
@@ -468,7 +477,6 @@ public class CGATTPRunner {
                                                                                                 + ";" + turDecayParam + ";" + minTournamentSize + ";" + indPairingMethod;
                                                                                         System.out.println(runResult);
                                                                                         try {
-
                                                                                             FileWriter fw = new FileWriter(baseDir + "result.csv", true);
                                                                                             BufferedWriter bw = new BufferedWriter(fw);
                                                                                             bw.write(runResult);
@@ -478,13 +486,15 @@ public class CGATTPRunner {
                                                                                             e.printStackTrace();
                                                                                         }
 
-                                                                                        try {
-                                                                                            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
-                                                                                                    + bestAPFoutputFile + bestIterNumber + ".csv"));
-                                                                                            writer.write(printResultsForComparison(bestAPF, false));
-                                                                                            writer.close();
-                                                                                        } catch(IOException e) {
-                                                                                            e.printStackTrace();
+                                                                                        if(saveResultFiles) {
+                                                                                            try {
+                                                                                                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
+                                                                                                        + bestAPFoutputFile + bestIterNumber + ".csv"));
+                                                                                                writer.write(printResultsForComparison(bestAPF, false));
+                                                                                                writer.close();
+                                                                                            } catch (IOException e) {
+                                                                                                e.printStackTrace();
+                                                                                            }
                                                                                         }
                                                                                     }
                                                                                 }

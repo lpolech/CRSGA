@@ -13,6 +13,7 @@ import data.*;
 import distance.measures.L2Norm;
 import interfaces.QualityMeasure;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             ParameterSet<Integer, TTP> parameters,
             int indExclusionUsageLimit,
             int indExclusionGenDuration,
-            List<BaseIndividual<Integer, PROBLEM>> excludedPopulation) {
+            List<BaseIndividual<Integer, PROBLEM>> excludedPopulation,
+            boolean saveResultFiles) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);
@@ -159,10 +161,11 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 //            clusterWeights.set(minTravellingTimeClusterNumber, clusterWeights.get(minTravellingTimeClusterNumber) * weightsMultiplier);
         }
 
-        String clusteringResultFilePath = "./out/clustering_res";
+        String clusteringResultFilePath = "." + File.separator + "out" + File.separator + "clustering_res";
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
         return new ClusteringResult(clustering, clustersDispersion, clusterWeights, individualClusters,
-                clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId);
+                clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId,
+                saveResultFiles);
 
 //        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersResult = new ArrayList();
 //        for (int j = 0; i < population.size(); i += clusterSize) {
