@@ -41,6 +41,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final ParameterFunctions parameterFunction;
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
     private final boolean saveResultFiles;
+    private final boolean enableLinkedLearning;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -88,7 +89,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int indExclusionGenDuration,
                double turDecayParam,
                int minTournamentSize,
-               IndividualsPairingMethod indPairingMethod) {
+               IndividualsPairingMethod indPairingMethod,
+               boolean enableLinkedLearning) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -126,6 +128,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             this.parameterFunction = null;
         }
         this.pairingMethod = indPairingMethod;
+        this.enableLinkedLearning = enableLinkedLearning;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -185,6 +188,17 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     indExclusionGenDuration,
                     excludedArchive,
                     saveResultFiles);
+
+            if(enableLinkedLearning) { // TODO: add specific criteria on which clusters to run LL and which ones progress to normal work
+                for(IndividualCluster cls: gaClusteringResults.getClustersWithIndDstToCentre()) {
+                    List<BaseIndividual> clusterIndividuals = new ArrayList<>();
+                    for(Object tata: cls.getCluster()) {
+                        IndividualWithDstToItsCentre ind = (IndividualWithDstToItsCentre)tata;
+                        clusterIndividuals.add(ind.getIndividual());
+                    }
+                    
+                }
+            }
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,

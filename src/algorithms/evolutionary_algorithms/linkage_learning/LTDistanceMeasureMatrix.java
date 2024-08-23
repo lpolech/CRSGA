@@ -28,7 +28,7 @@ public class LTDistanceMeasureMatrix {
         for(int i = 0; i < noOfGenes; i++) {
             for(int j = 0; j < noOfGenes; j++) {
                 if(i > j) {
-                    matrix[i][j] = LTDistance.getDistance(population, i, j);
+                    matrix[i][j] = LTDistance.getDistanceForSingleton(population, i, j);
                 }
             }
         }

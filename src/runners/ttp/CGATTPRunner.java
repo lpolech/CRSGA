@@ -123,6 +123,7 @@ public class CGATTPRunner {
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{DISTANT_IMMEDIATE_NEIGHBOUR_PAIR};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
             boolean shuffleParams = true;
             boolean saveResultFiles = false;
+            boolean enableLinkedLearning = true;
             String summaryOutputFileName = "result.csv";
 
             if(shuffleParams) {
@@ -291,7 +292,8 @@ public class CGATTPRunner {
                                                                                                     indExclusionGenDuration,
                                                                                                     turDecayParam,
                                                                                                     minTournamentSize,
-                                                                                                    indPairingMethod
+                                                                                                    indPairingMethod,
+                                                                                                    enableLinkedLearning
                                                                                             );
 
                                                                                             var result = geneticAlgorithm.optimize();
