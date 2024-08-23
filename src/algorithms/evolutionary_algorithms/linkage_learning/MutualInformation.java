@@ -1,6 +1,6 @@
 package algorithms.evolutionary_algorithms.linkage_learning;
 
-import algorithms.problem.BaseIndividual;s
+import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import algorithms.problem.TTP;
 import java.util.List;
 
 public class DependencyStructureMatrix {
-    double[][] matrix;
+    double[][] matrix; //symmetric matrix, only upper right part has values
     int noOfGenes;
 
     public void calculate(List<BaseIndividual<Integer, TTP>> population) {
@@ -24,5 +24,22 @@ public class DependencyStructureMatrix {
                 }
             }
         }
+    }
+
+    public void toFile(String fileName, String path) {
+        MatrixUtils.toFile(this.toString(), this.matrix, "DSM", fileName, path);
+    }
+
+    public String toString() {
+        StringBuilder toStringVal = new StringBuilder();
+
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                toStringVal.append(matrix[i][j] + ";");
+            }
+            toStringVal.append("\n");
+        }
+
+        return toStringVal.toString();
     }
 }
