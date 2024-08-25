@@ -144,7 +144,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         if(saveResultFiles) {
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
-                writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
+                writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt;successful LL;TSP oper dominates initial source;source not dominate source after mask"
+                        + ";source after mask dominates source; LL popul size;no of masks\n");
                 writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -196,14 +197,22 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     excludedArchive,
                     saveResultFiles);
 
-            boolean successfulLL = false; // Preference is to use the optimal mixing over the standars operators but not always the clusters are big enough
+            int noOfSuccessfullLL = 0;
+            int noOfTSPOperationsDominatesInitialSource = 0;
+            int noOfSourceNotDominateSourceAfterMask = 0;
+            int noOfSourceAfterMaskDominatesSource = 0;
+            int LLPopulationSize = 0;
+            int numberOfMasks = 0;
+            boolean successfullLL = false; // Preference is to use the optimal mixing over the standars operators but not always the clusters are big enough
             if(enableLinkedLearning) { // TODO: add specific criteria on which clusters to run LL and which ones progress to normal work
                 List<BaseIndividual<Integer, PROBLEM>> selectedPopulation =
                         clusterDensityBasedSelection.selectPopulationForLL(gaClusteringResults,
                         parameters, clusterWeightMeasure, parameterFunction, cost, clusterSizeForLL);
-                successfulLL = !selectedPopulation.isEmpty();
+                LLPopulationSize = selectedPopulation.size();
+                successfullLL = !selectedPopulation.isEmpty();
 
-                if(successfulLL) {
+                if(successfullLL) {
+                    noOfSuccessfullLL++;
                     LinkageTree lt = new LinkageTree(selectedPopulation);
                     if(saveResultFiles) {
                         lt.toFile("lt" + this.iterationNumber + ".csv", outputFilename);
@@ -218,10 +227,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         while(i == randomIndividualPointer) {
                             randomIndividualPointer = rand.nextInt(0, selectedPopulation.size());
                         }
-                        BaseIndividual<Integer, PROBLEM> crossoverDonor = selectedPopulation.get(randomIndividualPointer);
+                        BaseIndividual<Integer, PROBLEM> TSPDonor = selectedPopulation.get(randomIndividualPointer);
 
                         children = parameters.crossover.crossover(crossoverProbability, 0.0, // TODO: regular corssover we might consider if it makes sense to do it at all or maybe do it once before the optimal mixing. KNAP cross is DIABLES
-                                initialSource.getGenes(), crossoverDonor.getGenes(), parameters);// in this approach, crossover tries to strengthen the gene dependencies from the Linkage tree
+                                initialSource.getGenes(), TSPDonor.getGenes(), parameters);// in this approach, crossover tries to strengthen the gene dependencies from the Linkage tree
                         children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
                                 children.get(0), 0, newPopulation.size(), parameters));
                         children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
@@ -241,10 +250,15 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         potentialSources.add(secondChildAfterTSPOperations);
                         List<BaseIndividual<Integer, PROBLEM>> nonDominatedSources = getNondominated(potentialSources);
 
+                        if(firstChildAfterTSPOperations.dominates(initialSource) || secondChildAfterTSPOperations.dominates(initialSource)) {
+                            noOfTSPOperationsDominatesInitialSource++;
+                        }
+
                         BaseIndividual<Integer, PROBLEM> source = nonDominatedSources.get(new Random().nextInt(nonDominatedSources.size())); // get random non dominated TODO: we could report stats when there is multiple non dominated
                         List<Integer> sourceGenesCopy = new ArrayList<>(source.getGenes());
 
                         List<LTMask> masks =  lt.getShuffledMasks(); //TODO: we could consider order based on the length
+                        numberOfMasks = masks.size();
                         for(int k = 0; k < masks.size(); k++) {
                             randomIndividualPointer = i; // random donor per mask
                             while(i == randomIndividualPointer) {
@@ -261,25 +275,28 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 cost += 1;
 
                                 if (!source.dominates(sourceAfterMask)) {
+                                    noOfSourceNotDominateSourceAfterMask++;
                                     source = sourceAfterMask;
                                     if(sourceAfterMask.dominates(source)) {
-                                        int mama = 7;
-                                        System.out.println(mama);
+                                        noOfSourceAfterMaskDominatesSource++;
                                     }
                                 }
                             }
                         }
                         EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
                                 source.getObjectives()[0], source.getObjectives()[1], -2,
-                                crossoverDonor.getObjectives()[0], crossoverDonor.getObjectives()[1],
+                                TSPDonor.getObjectives()[0], TSPDonor.getObjectives()[1],
                                 initialSource.getObjectives()[0], initialSource.getObjectives()[1]);
                         population.add(source);
                     }
                 }
             }
 
+            this.optimisationResult.addLLRelatedStats(noOfSuccessfullLL, noOfTSPOperationsDominatesInitialSource,
+                noOfSourceNotDominateSourceAfterMask, noOfSourceAfterMaskDominatesSource, LLPopulationSize, numberOfMasks);
+
             int noOfChildDominatingParents = 0;
-            if(!successfulLL) {
+            if(!successfullLL) {
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
                         parameters, clusterWeightMeasure, population, parameterFunction, cost, pairingMethod);
@@ -368,7 +385,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
                     writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
-                            + ";" + noOfChildDominatingParents + ";" + archiveChanges + "\n");
+                            + ";" + noOfChildDominatingParents + ";" + archiveChanges + ";" + noOfSuccessfullLL
+                            + ";" + noOfTSPOperationsDominatesInitialSource + ";" + noOfSourceNotDominateSourceAfterMask
+                            + ";" + noOfSourceAfterMaskDominatesSource + ";" + LLPopulationSize + ";" + numberOfMasks + "\n");
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();

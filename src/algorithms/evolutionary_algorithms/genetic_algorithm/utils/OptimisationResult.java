@@ -14,6 +14,18 @@ public class OptimisationResult<PROBLEM extends BaseProblemRepresentation> {
     private int numberOfAfterCrossAfterCrossAndMutChecks = 0;
     private int afterCrossAndMutAfterCrossDominationCounter = 0;
     private int numberOfAfterCrossAndMutAfterCrossChecks = 0;
+    private int noOfSuccessfullLL = 0;
+    private int countNoOfSuccessfullLL = 0;
+    private int noOfTSPOperationsDominatesInitialSource = 0;
+    private int countNoOfTSPOperationsDominatesInitialSource = 0;
+    private int noOfSourceNotDominateSourceAfterMask = 0;
+    private int countNoOfSourceNotDominateSourceAfterMask = 0;
+    private int noOfSourceAfterMaskDominatesSource = 0;
+    private int countNoOfSourceAfterMaskDominatesSource = 0;
+    private int LLPopulationSize = 0;
+    private int countLLPopulationSize = 0;
+    private int numberOfMasks = 0;
+    private int countNumberOfMasks = 0;
 
     public double getAfterCrossParentDominationProp() {
         return afterCrossParentDominationCounter/(double)numberOfAfterCrossChecks;
@@ -223,4 +235,118 @@ public class OptimisationResult<PROBLEM extends BaseProblemRepresentation> {
     public void setNumberOfAfterCrossAndMutAfterCrossChecks(int numberOfAfterCrossAndMutAfterCrossChecks) {
         this.numberOfAfterCrossAndMutAfterCrossChecks = numberOfAfterCrossAndMutAfterCrossChecks;
     }
+
+    public void addLLRelatedStats(int noOfSuccessfullLL, int noOfTSPOperationsDominatesInitialSource,
+                                  int noOfSourceNotDominateSourceAfterMask, int noOfSourceAfterMaskDominatesSource,
+                                  int llPopulationSize, int numberOfMasks) {
+        this.noOfSuccessfullLL += noOfSuccessfullLL;
+        this.countNoOfSuccessfullLL++;
+        this.noOfTSPOperationsDominatesInitialSource += noOfTSPOperationsDominatesInitialSource;
+        this.countNoOfTSPOperationsDominatesInitialSource++;
+        this.noOfSourceNotDominateSourceAfterMask += noOfSourceNotDominateSourceAfterMask;
+        this.countNoOfSourceNotDominateSourceAfterMask++;
+        this.noOfSourceAfterMaskDominatesSource += noOfSourceAfterMaskDominatesSource;
+        this.countNoOfSourceAfterMaskDominatesSource++;
+        this.LLPopulationSize += llPopulationSize;
+        this.countLLPopulationSize++;
+        this.numberOfMasks += numberOfMasks;
+        this.countNumberOfMasks++;
+    }
+
+    public int getNoOfSuccessfullLL() {
+        return noOfSuccessfullLL;
+    }
+
+    public double getNoOfSuccessfullLLProp() {
+        return noOfSuccessfullLL/(double)countNoOfSuccessfullLL;
+    }
+
+    public int getNoOfTSPOperationsDominatesInitialSource() {
+        return noOfTSPOperationsDominatesInitialSource;
+    }
+
+    public double getNoOfTSPOperationsDominatesInitialSourceProp() {
+        return noOfTSPOperationsDominatesInitialSource/(double)countNoOfTSPOperationsDominatesInitialSource;
+    }
+
+    public int getNoOfSourceNotDominateSourceAfterMask() {
+        return noOfSourceNotDominateSourceAfterMask;
+    }
+
+    public double getNoOfSourceNotDominateSourceAfterMaskProp() {
+        return noOfSourceNotDominateSourceAfterMask/(double)countNoOfSourceNotDominateSourceAfterMask;
+    }
+
+    public int getNoOfSourceAfterMaskDominatesSource() {
+        return noOfSourceAfterMaskDominatesSource;
+    }
+
+    public double getNoOfSourceAfterMaskDominatesSourceProp() {
+        return noOfSourceAfterMaskDominatesSource/(double)countNoOfSourceAfterMaskDominatesSource;
+    }
+
+    public int getLLPopulationSize() {
+        return LLPopulationSize;
+    }
+
+    public double getLLPopulationSizeProp() {
+        return LLPopulationSize/(double)countLLPopulationSize;
+    }
+
+    public int getNumberOfMasks() {
+        return numberOfMasks;
+    }
+
+    public double getNumberOfMasksProp() {
+        return numberOfMasks/(double)countNumberOfMasks;
+    }
+
+    public static double getAvgNoOfSuccessfullLLPerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getNoOfSuccessfullLLProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
+    public static double getAvgNoOfTSPOperationsDominatesInitialSourcePerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getNoOfTSPOperationsDominatesInitialSourceProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
+    public static double getAvgNoOfSourceNotDominateSourceAfterMaskPerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getNoOfSourceNotDominateSourceAfterMaskProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
+    public static double getAvgNoOfSourceAfterMaskDominatesSourcePerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getNoOfSourceAfterMaskDominatesSourceProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
+    public static double getAvgLLPopulationSizePerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getLLPopulationSizeProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
+    public static double getAvgNumberOfMasksPerGen(List<OptimisationResult> listOfResults) {
+        double sum = 0;
+        for(var e: listOfResults) {
+            sum += e.getNumberOfMasksProp();
+        }
+        return sum/(double)listOfResults.size();
+    }
+
 }
