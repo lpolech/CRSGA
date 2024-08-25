@@ -116,14 +116,11 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             int acceptedClustersIndex = (int) (parameters.random.nextDouble() * numberOfAcceptedClusters);
             for (int i = 0; i < dynamicTurSize - 1; ++i) {
                 int otherClusterIndex = (int) (parameters.random.nextDouble() * numberOfAcceptedClusters);
-                acceptedClustersIndex = chooseCluster(
-                        pairsOfAcceptedClusters.get(orderedAcceptedClusters.get(acceptedClustersIndex)),
-                        pairsOfAcceptedClusters.get(orderedAcceptedClusters.get(otherClusterIndex)),
+                int acceptedClusterKey = chooseCluster(
+                        orderedAcceptedClusters.get(acceptedClustersIndex),
+                        orderedAcceptedClusters.get(otherClusterIndex),
                         clusteringResult, clusterWeightMeasure);
-            }
-
-            if(acceptedClustersIndex >= orderedAcceptedClusters.size()) {
-                System.out.println("mama");
+                acceptedClustersIndex = orderedAcceptedClusters.indexOf(acceptedClusterKey);
             }
 
             int chosenClusterIndex = orderedAcceptedClusters.get(acceptedClustersIndex);

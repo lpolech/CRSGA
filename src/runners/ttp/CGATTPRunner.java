@@ -102,7 +102,7 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
+            int NUMBER_OF_REPEATS = 5;
             int[] generationLimitList = new int[] {5_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//, 50, 100, 150, 250, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.45};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
@@ -227,7 +227,7 @@ public class CGATTPRunner {
                                                                                     int minTournamentSize = minTournamentSizeList[nn];
                                                                                     for (int oo = 0; oo < individualsPairingMethodsList.length; oo++) {
                                                                                         IndividualsPairingMethod indPairingMethod = individualsPairingMethodsList[oo];
-                                                                                        for (int pp = 0; pp < individualsPairingMethodsList.length; pp++) {
+                                                                                        for (int pp = 0; pp < clusterSizeForLLList.length; pp++) {
                                                                                             int clusterSizeForLL = clusterSizeForLLList[pp];
 
                                                                                             var eachRepeatHV = new ArrayList<Double>();
