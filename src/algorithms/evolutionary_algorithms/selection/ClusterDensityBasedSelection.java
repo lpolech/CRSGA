@@ -2,17 +2,16 @@ package algorithms.evolutionary_algorithms.selection;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
+import algorithms.evolutionary_algorithms.util.IndividualCluster;
 import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import data.Cluster;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
     public ClusterDensityBasedSelection(int tournamentSize) {
@@ -89,6 +88,97 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].getGlobalUsageCounter());
 
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
+    }
+
+    public List<BaseIndividual<Integer, PROBLEM>> selectPopulationForLL(
+            ClusteringResult clusteringResult,
+            ParameterSet<GENE, BaseProblemRepresentation> parameters,
+            QualityMeasure clusterWeightMeasure,
+            ParameterFunctions turDecayFunction,
+            int currCost,
+            int clusterSizeForLL) {
+        List<BaseIndividual<Integer, PROBLEM>> selectedPopulation = new ArrayList<>();
+
+        Map<Integer, Integer> pairsOfAcceptedClusters = getRelevantClusters(clusteringResult, clusterSizeForLL);
+
+        if(!pairsOfAcceptedClusters.isEmpty()) {
+            List<Integer> orderedAcceptedClusters = new ArrayList<>(pairsOfAcceptedClusters.keySet());
+
+            int numberOfAcceptedClusters = orderedAcceptedClusters.size();
+            int dynamicTurSize = -666;
+            if (turDecayFunction != null) {
+                double decayTurFun = turDecayFunction.getVal(currCost);
+                dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfAcceptedClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+            } else {
+                dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfAcceptedClusters) / 100.0));
+            }
+
+            int acceptedClustersIndex = (int) (parameters.random.nextDouble() * numberOfAcceptedClusters);
+            for (int i = 0; i < dynamicTurSize - 1; ++i) {
+                int otherClusterIndex = (int) (parameters.random.nextDouble() * numberOfAcceptedClusters);
+                acceptedClustersIndex = chooseCluster(
+                        pairsOfAcceptedClusters.get(orderedAcceptedClusters.get(acceptedClustersIndex)),
+                        pairsOfAcceptedClusters.get(orderedAcceptedClusters.get(otherClusterIndex)),
+                        clusteringResult, clusterWeightMeasure);
+            }
+
+            if(acceptedClustersIndex >= orderedAcceptedClusters.size()) {
+                System.out.println("mama");
+            }
+
+            int chosenClusterIndex = orderedAcceptedClusters.get(acceptedClustersIndex);
+            int chosenClusterNeighbourIndex = pairsOfAcceptedClusters.get(chosenClusterIndex);
+
+            List<IndividualWithDstToItsCentre> chosenClusterIndividuals = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterIndex).getCluster();
+            Cluster chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
+            chosenClusteringCluster.getCenter().recordUsage(); //TODO: we could consider different counter just for LL
+            for (var ind : chosenClusterIndividuals) {
+                selectedPopulation.add(ind.getIndividual());
+            }
+
+            List<IndividualWithDstToItsCentre> chosenClusterNeighbourIndividuals = null;
+            Cluster chosenClusteringNeighbourCluster = null;
+
+            if (chosenClusterNeighbourIndex >= 0) {
+                chosenClusterNeighbourIndividuals = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex).getCluster();
+                chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
+                chosenClusteringNeighbourCluster.getCenter().recordUsage(); //TODO: we could consider different counter just for LL
+                for (var ind : chosenClusterNeighbourIndividuals) {
+                    selectedPopulation.add(ind.getIndividual());
+                }
+            }
+        }
+
+        return selectedPopulation;
+    }
+
+    private static Map<Integer, Integer> getRelevantClusters(ClusteringResult clusteringResult, int clusterSizeForLL) {
+        Map<Integer, Integer> pairsOfAcceptedClusters = new HashMap<>();
+
+        for(int chosenClusterIndex = 0; chosenClusterIndex < clusteringResult.getClustersDispersion().size(); chosenClusterIndex++) {
+            var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
+            int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
+
+            // TODO: we consider pairs of clusters but we could use single clusters instead
+            int chosenClusterNeighbourIndex = -1;
+            Cluster chosenClusteringNeighbourCluster = null;
+            int chosenClusterNeighbourSize = 0;
+            if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
+                chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
+                        .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+                chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
+                chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
+            }
+
+            if(chosenClusterSize + chosenClusterNeighbourSize > clusterSizeForLL) {
+                if (!(pairsOfAcceptedClusters.containsKey(chosenClusterIndex) && pairsOfAcceptedClusters.get(chosenClusterIndex) == chosenClusterNeighbourIndex)
+                        && !(pairsOfAcceptedClusters.containsKey(chosenClusterNeighbourIndex) && pairsOfAcceptedClusters.get(chosenClusterNeighbourIndex) == chosenClusterIndex)) {
+                    pairsOfAcceptedClusters.put(chosenClusterIndex, chosenClusterNeighbourIndex);
+                }
+            }
+        }
+
+        return pairsOfAcceptedClusters;
     }
 
     /* Individuals from 2 neighbourhood clusters, dynamic tournament cluster selection based on clustering measures */

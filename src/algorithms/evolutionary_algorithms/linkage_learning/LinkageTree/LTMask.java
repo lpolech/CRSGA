@@ -18,4 +18,18 @@ public class LTMask {
     public List<Integer> getMask() {
         return mask;
     }
+
+    public int getMaskSize() {
+        return mask.size();
+    }
+
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+        output.append("Node ID;" + this.clusterId + ";no of masks;" + mask.size() + ";mask");
+        for(Integer val: mask) {
+            output.append(";" + val);
+        }
+
+        return output.toString();
+    }
 }

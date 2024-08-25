@@ -1,14 +1,16 @@
 package algorithms.evolutionary_algorithms.linkage_learning;
 
 import algorithms.problem.BaseIndividual;
+import algorithms.problem.BaseProblemRepresentation;
 import algorithms.problem.TTP;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LTDistanceMeasureMatrix {
-    double[][] matrix; //symmetric matrix, only upper right part has values
+public class LTDistanceMeasureMatrix<PROBLEM extends BaseProblemRepresentation> {
+    double[][] matrix = new double[0][0]; //symmetric matrix, only upper right part has values
     int noOfGenes;
+    LTDistance distance = new LTDistance();
 
     public double getMatrixElement(int gi, int gj) {
         if(gi > gj) {
@@ -17,9 +19,9 @@ public class LTDistanceMeasureMatrix {
         System.err.println("LTDistanceMeasureMatrix, asking for genes from the other half of the matrix, " + gi + ", " + gj);
         return -666.0;
     }
-    public void calculate(List<BaseIndividual<Integer, TTP>> population) {
+    public void calculate(List<BaseIndividual<Integer, PROBLEM>> population) {
         if(!population.isEmpty()) {
-            noOfGenes = population.getFirst().getProblem().getSplitPoint();
+            noOfGenes = ((TTP)population.get(0).getProblem()).getSelection().length;
         } else {
             System.err.println("MutualInformation: population size is " + population.size());
         }
@@ -28,7 +30,7 @@ public class LTDistanceMeasureMatrix {
         for(int i = 0; i < noOfGenes; i++) {
             for(int j = 0; j < noOfGenes; j++) {
                 if(i > j) {
-                    matrix[i][j] = LTDistance.getDistanceForSingleton(population, i, j);
+                    matrix[i][j] = distance.getDistanceForSingleton(population, i, j);
                 }
             }
         }
@@ -51,7 +53,7 @@ public class LTDistanceMeasureMatrix {
         return toStringVal.toString();
     }
 
-    public List<Integer> getGeneIndexes() {
+    public List<Integer> getGeneIndices() {
         List<Integer> returnList = new ArrayList<>(this.matrix.length);
         for(int i = 0; i < this.matrix.length; i++) {
             returnList.add(i);

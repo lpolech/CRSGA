@@ -2,6 +2,9 @@ package algorithms.evolutionary_algorithms.genetic_algorithm;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
+import algorithms.evolutionary_algorithms.linkage_learning.LinkageTree.LTMask;
+import algorithms.evolutionary_algorithms.linkage_learning.LinkageTree.LinkageTree;
+import algorithms.evolutionary_algorithms.linkage_learning.OptimalMixing;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
 import algorithms.evolutionary_algorithms.selection.IndividualsPairingMethod;
 import algorithms.evolutionary_algorithms.util.ClusteringResult;
@@ -15,6 +18,7 @@ import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
 import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
+import data.Cluster;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
@@ -42,6 +46,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
     private final boolean saveResultFiles;
     private final boolean enableLinkedLearning;
+    private final int clusterSizeForLL;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -90,7 +95,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                double turDecayParam,
                int minTournamentSize,
                IndividualsPairingMethod indPairingMethod,
-               boolean enableLinkedLearning) {
+               boolean enableLinkedLearning,
+               int clusterSizeForLL) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -117,6 +123,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.indExclusionGenDuration = indExclusionGenDuration;
         this.turDecayParam = turDecayParam;
         this.minTournamentSize = minTournamentSize;
+        this.clusterSizeForLL = clusterSizeForLL;
 
         if(minTournamentSize > 0) {
             this.parameterFunction = new ParameterFunctions(generationLimit,
@@ -189,17 +196,90 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     excludedArchive,
                     saveResultFiles);
 
+            boolean successfulLL = false; // Preference is to use the optimal mixing over the standars operators but not always the clusters are big enough
             if(enableLinkedLearning) { // TODO: add specific criteria on which clusters to run LL and which ones progress to normal work
-                for(IndividualCluster cls: gaClusteringResults.getClustersWithIndDstToCentre()) {
-                    List<BaseIndividual> clusterIndividuals = new ArrayList<>();
-                    for(Object tata: cls.getCluster()) {
-                        IndividualWithDstToItsCentre ind = (IndividualWithDstToItsCentre)tata;
-                        clusterIndividuals.add(ind.getIndividual());
+                List<BaseIndividual<Integer, PROBLEM>> selectedPopulation =
+                        clusterDensityBasedSelection.selectPopulationForLL(gaClusteringResults,
+                        parameters, clusterWeightMeasure, parameterFunction, cost, clusterSizeForLL);
+                successfulLL = !selectedPopulation.isEmpty();
+
+                if(successfulLL) {
+                    LinkageTree lt = new LinkageTree(selectedPopulation);
+                    if(saveResultFiles) {
+                        lt.toFile("lt" + this.iterationNumber + ".csv", outputFilename);
                     }
-                    
+                    Random rand = new Random();
+                    // OptimalMixing, TSP using normal cross and mut
+                    for(int i = 0; i < selectedPopulation.size(); i++) { // each individual is the source
+                        BaseIndividual<Integer, PROBLEM> initialSource = selectedPopulation.get(i);
+
+                        // find random donor for crossover
+                        int randomIndividualPointer = i;
+                        while(i == randomIndividualPointer) {
+                            randomIndividualPointer = rand.nextInt(0, selectedPopulation.size());
+                        }
+                        BaseIndividual<Integer, PROBLEM> crossoverDonor = selectedPopulation.get(randomIndividualPointer);
+
+                        children = parameters.crossover.crossover(crossoverProbability, 0.0, // TODO: regular corssover we might consider if it makes sense to do it at all or maybe do it once before the optimal mixing. KNAP cross is DIABLES
+                                initialSource.getGenes(), crossoverDonor.getGenes(), parameters);// in this approach, crossover tries to strengthen the gene dependencies from the Linkage tree
+                        children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
+                                children.get(0), 0, newPopulation.size(), parameters));
+                        children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
+                                children.get(1), 0, newPopulation.size(), parameters));
+
+                        var firstChildAfterTSPOperations = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+                        firstChildAfterTSPOperations.buildSolution(firstChildAfterTSPOperations.getGenes(), parameters);
+                        var secondChildAfterTSPOperations = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+                        secondChildAfterTSPOperations.buildSolution(secondChildAfterTSPOperations.getGenes(), parameters);
+                        cost += 2;
+
+                        //TODO: we can choose one random child, both, or even pre cross one - good for experimentation
+                        // currently we'll take the best out of the three
+                        List<BaseIndividual<Integer, PROBLEM>> potentialSources = new ArrayList<>();
+                        potentialSources.add(initialSource);
+                        potentialSources.add(firstChildAfterTSPOperations);
+                        potentialSources.add(secondChildAfterTSPOperations);
+                        List<BaseIndividual<Integer, PROBLEM>> nonDominatedSources = getNondominated(potentialSources);
+
+                        BaseIndividual<Integer, PROBLEM> source = nonDominatedSources.get(new Random().nextInt(nonDominatedSources.size())); // get random non dominated TODO: we could report stats when there is multiple non dominated
+                        List<Integer> sourceGenesCopy = new ArrayList<>(source.getGenes());
+
+                        List<LTMask> masks =  lt.getShuffledMasks(); //TODO: we could consider order based on the length
+                        for(int k = 0; k < masks.size(); k++) {
+                            randomIndividualPointer = i; // random donor per mask
+                            while(i == randomIndividualPointer) {
+                                randomIndividualPointer = rand.nextInt(0, selectedPopulation.size());
+                            }
+                            BaseIndividual<Integer, PROBLEM> donor = selectedPopulation.get(randomIndividualPointer);
+
+                            LTMask mask = masks.get(k);
+                            boolean sourceGenotypeChanged = OptimalMixing.crossover(mask, donor, sourceGenesCopy);
+
+                            if(sourceGenotypeChanged) {
+                                var sourceAfterMask = new BaseIndividual<>(problem, sourceGenesCopy, parameters.evaluator);
+                                sourceAfterMask.buildSolution(firstChildAfterTSPOperations.getGenes(), parameters);
+                                cost += 1;
+
+                                if (!source.dominates(sourceAfterMask)) {
+                                    source = sourceAfterMask;
+                                    if(sourceAfterMask.dominates(source)) {
+                                        int mama = 7;
+                                        System.out.println(mama);
+                                    }
+                                }
+                            }
+                        }
+                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                                source.getObjectives()[0], source.getObjectives()[1], -2,
+                                crossoverDonor.getObjectives()[0], crossoverDonor.getObjectives()[1],
+                                initialSource.getObjectives()[0], initialSource.getObjectives()[1]);
+                        population.add(source);
+                    }
                 }
             }
 
+            int noOfChildDominatingParents = 0;
+            if(!successfulLL) {
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
                         parameters, clusterWeightMeasure, population, parameterFunction, cost, pairingMethod);
@@ -210,9 +290,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
 //                }
 
-                int noOfChildDominatingParents = 0;
-                for(var mama: pairs) {
-                    var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
+                for (var mama : pairs) {
+                    var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>) mama;
                     BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
                     BaseIndividual<Integer, PROBLEM> secondParent = firstAndSecondParent.getValue();
                     children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
@@ -240,19 +319,19 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
                     EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
-                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                            firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
+                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
-                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                            secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
+                            firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                            secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
 
-                    if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
+                    if (firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
                         noOfChildDominatingParents++;
                     }
-                    if(secondChild.dominates(firstParent) || secondChild.dominates(secondParent)) {
+                    if (secondChild.dominates(firstParent) || secondChild.dominates(secondParent)) {
                         noOfChildDominatingParents++;
                     }
 
@@ -263,6 +342,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //                    population = population.subList(Math.max(0, population.size() - populationSize), population.size());
 //                    System.out.println(population.size());
                 }
+            }
 //            }
 
             for(IndividualCluster cluster: gaClusteringResults.getClustersWithIndDstToCentre()) { //archive) {

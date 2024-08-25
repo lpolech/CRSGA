@@ -3,18 +3,18 @@ package algorithms.evolutionary_algorithms.linkage_learning;
 import algorithms.evolutionary_algorithms.linkage_learning.LinkageTree.LTNode;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LTHierarchicalClustering {
     public static Pair<LTNode, List<LTNode>> buildTree(LTDistanceMeasureMatrix distanceMatrix) {
         List<LTNode> leaves = new ArrayList<>();
+        LTDistance distance = new LTDistance();
 
         List<LTNode> nodesToCombine = new ArrayList<>();
-        for(int index: distanceMatrix.getGeneIndexes()) {
-            LTNode nodeToAdd = new LTNode(new ArrayList<>(List.of(index)), null, null);
+        List<Integer> geneIndices = distanceMatrix.getGeneIndices();
+        for(int i = 0; i < geneIndices.size(); i++) {
+            Integer val = geneIndices.get(i);
+            LTNode nodeToAdd = new LTNode(new ArrayList<>(List.of(val)), null, null);
             nodesToCombine.add(nodeToAdd);
             leaves.add(nodeToAdd);
         }
@@ -24,19 +24,22 @@ public class LTHierarchicalClustering {
         while(nodesToCombine.size() > 1) {
             double minDst = Double.MAX_VALUE;
             Pair<LTNode, LTNode> minDstNodes = null;
-            for(var firstNode: nodesToCombine) {
+            for(int i = 0; i < nodesToCombine.size(); i++) {
+                LTNode firstNode = nodesToCombine.get(i);
                 long firstNodeId = firstNode.getId();
-                for(var secondNode: nodesToCombine) {
+                for(int j = i + 1; j < nodesToCombine.size(); j++) {
+                    LTNode secondNode = nodesToCombine.get(j);
                     long secondNodeId = secondNode.getId();
-                    double nodesDistance = -666.0;
-                    if(nodesIdWithDistance.containsKey(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)))) { // TODO: check if such pair creation is good for looking in hash map
+
+                    double nodesDistance = -123.0;
+                    if (nodesIdWithDistance.containsKey(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)))) { // TODO: check if such pair creation is good for looking in hash map
                         nodesDistance = nodesIdWithDistance.get(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)));
                     } else {
-                        nodesDistance = LTDistance.getDistance(firstNode, secondNode, distanceMatrix);
+                        nodesDistance = distance.getDistance(firstNode, secondNode, distanceMatrix);
                         nodesIdWithDistance.put(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)), nodesDistance);
                     }
 
-                    if(nodesDistance < minDst) {
+                    if (nodesDistance < minDst) {
                         minDst = nodesDistance;
                         minDstNodes = new Pair<>(firstNode, secondNode);
                     }
@@ -54,7 +57,8 @@ public class LTHierarchicalClustering {
             long firstNodeId = minDstNodes.getKey().getId();
             long secondNodeId = minDstNodes.getValue().getId();
 
-            for(var nodesDst: nodesIdWithDistance.entrySet()) {
+            for(Iterator<Map.Entry<Pair<Long, Long>, Double>> it = nodesIdWithDistance.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<Pair<Long, Long>, Double> nodesDst = it.next();
                 long firstMeasuredId = nodesDst.getKey().getKey();
                 long secondMeasuredId = nodesDst.getKey().getValue();
 
@@ -62,7 +66,7 @@ public class LTHierarchicalClustering {
                     || firstNodeId == secondMeasuredId
                     || secondNodeId == firstMeasuredId
                     || secondNodeId == secondMeasuredId) {
-                    nodesIdWithDistance.remove(nodesDst.getKey());
+                    it.remove();
                 }
             }
 
@@ -70,7 +74,7 @@ public class LTHierarchicalClustering {
             nodesToCombine.remove(minDstNodes.getValue());
         }
 
-        return new Pair<>(nodesToCombine.getFirst(), leaves); // TODO: check if leaves are updated after the tree building alg finished
+        return new Pair<>(nodesToCombine.get(0), leaves); // TODO: check if leaves are updated after the tree building alg finished
     }
 
     private static LTNode merge(LTNode firstNode, LTNode secondNode) {
@@ -97,8 +101,8 @@ public class LTHierarchicalClustering {
                     if(l1.getGeneIndexes().size() > 1 || l2.getGeneIndexes().size() > 1) {
                         System.err.println("LTHierarchicalClustering.addLeaveDistances I got internal nodes! Sizes - l1: " + l1.getGeneIndexes().size() + " l2: " + l2.getGeneIndexes().size());
                     } else {
-                        int minIndex = Math.min(l1.getGeneIndexes().getFirst(), l2.getGeneIndexes().getFirst());
-                        int maxIndex = Math.max(l1.getGeneIndexes().getFirst(), l2.getGeneIndexes().getFirst());
+                        int minIndex = Math.min(l1.getGeneIndexes().get(0), l2.getGeneIndexes().get(0));
+                        int maxIndex = Math.max(l1.getGeneIndexes().get(0), l2.getGeneIndexes().get(0));
                         double distance = distanceMatrix.getMatrixElement(maxIndex, minIndex);
                         leavesDistances.put(new Pair<>(l1.getId(), l2.getId()), distance);
                     }
