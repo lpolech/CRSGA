@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class EvolutionHistoryElement {
-    private static int historySize = 150_000; // needs to be limited due to HEAP SPACE for the output string builder
     private int generationNumber;
     private double x;
     private double y;
@@ -22,11 +21,6 @@ public class EvolutionHistoryElement {
     private double p2x;
     private double p2y;
 
-    public static void addIfNotFull(List<EvolutionHistoryElement> history, int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
-        if(history.size() < EvolutionHistoryElement.historySize) {
-            history.add(new EvolutionHistoryElement(generationNumber, x, y, mut, p1x, p1y, p2x, p2y));
-        }
-    }
     public EvolutionHistoryElement(int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
         this.generationNumber = generationNumber;
         this.x = x;
@@ -36,71 +30,6 @@ public class EvolutionHistoryElement {
         this.p1y = p1y;
         this.p2x = p2x;
         this.p2y = p2y;
-    }
-
-    private static List<EvolutionHistoryElement> optimiseMut(List<EvolutionHistoryElement> evolutionHistory) {
-        List<EvolutionHistoryElement> optimisedMut = new ArrayList<EvolutionHistoryElement>();
-
-        HashMap<Integer, HashMap<Integer, Integer>> genClsIdMapping = new HashMap();
-
-        for(var e: evolutionHistory) {
-            if(e.mut <= 0) {
-                optimisedMut.add(new EvolutionHistoryElement(e.generationNumber, e.x, e.y, e.mut, e.p1x, e.p1y, e.p2x, e.p2y));
-                continue;
-            }
-            int gen = e.generationNumber;
-
-            if(genClsIdMapping.containsKey(gen)) {
-                HashMap<Integer, Integer> idMapping = genClsIdMapping.get(gen);
-                if(idMapping.containsKey(e.mut)) {
-                    Integer mappedId = idMapping.get(e.mut);
-                    optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, mappedId, e.p1x, e.p1y, e.p2x, e.p2y));
-                } else {
-                    int currentMaxId = Collections.max(idMapping.entrySet(), Map.Entry.comparingByValue()).getValue();
-                    idMapping.put(e.mut, currentMaxId+1);
-                    optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, currentMaxId+1, e.p1x, e.p1y, e.p2x, e.p2y));
-                }
-            } else {
-                genClsIdMapping.put(gen, new HashMap<>());
-                genClsIdMapping.get(gen).put(e.mut, 1);
-                optimisedMut.add(new EvolutionHistoryElement(gen, e.x, e.y, 1, e.p1x, e.p1y, e.p2x, e.p2y));
-            }
-        }
-
-        return optimisedMut;
-    }
-
-    public static void toFile(List<EvolutionHistoryElement> evolutionHistory, String folderName) {
-        try {
-            String fullPath = folderName + File.separator + "ArchHist.csv";
-            Files.createDirectories(Paths.get(folderName));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
-            StringBuilder output = new StringBuilder();
-
-            for(var e: optimiseMut(evolutionHistory)) {
-                output.append(e.generationNumber);
-                output.append(Constans.delimiter);
-                output.append(e.x);
-                output.append(Constans.delimiter);
-                output.append(e.y);
-                output.append(Constans.delimiter);
-                output.append(e.mut);
-                output.append(Constans.delimiter);
-                output.append(e.p1x);
-                output.append(Constans.delimiter);
-                output.append(e.p1y);
-                output.append(Constans.delimiter);
-                output.append(e.p2x);
-                output.append(Constans.delimiter);
-                output.append(e.p2y);
-                output.append("\n");
-            }
-
-            writer.write(output.toString());
-            writer.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public int getGenerationNumber() {

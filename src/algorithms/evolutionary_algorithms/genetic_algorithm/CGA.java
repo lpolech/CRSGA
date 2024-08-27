@@ -16,6 +16,7 @@ import algorithms.problem.BaseProblemRepresentation;
 import algorithms.quality_measure.GenerationalDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
+import algorithms.visualization.EvolutionHistory;
 import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import data.Cluster;
@@ -160,7 +161,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         ClusteringResult gaClusteringResults = null;
 
-        List<EvolutionHistoryElement> evolutionHistory = new ArrayList<>();
+        EvolutionHistory evolutionHistory = new EvolutionHistory();
 
 //        BaseIndividual<Integer, PROBLEM> firstParent;
 //        BaseIndividual<Integer, PROBLEM> secondParent;
@@ -196,6 +197,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     indExclusionGenDuration,
                     excludedArchive,
                     saveResultFiles);
+
+            evolutionHistory.setFolderName(gaClusteringResults.getClusteringResultFilePath());
 
             int noOfSuccessfullLL = 0;
             int noOfTSPOperationsDominatesInitialSource = 0;
@@ -283,7 +286,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 }
                             }
                         }
-                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                        evolutionHistory.addIfNotFull(generation,
                                 source.getObjectives()[0], source.getObjectives()[1], -3,
                                 TSPDonor.getObjectives()[0], TSPDonor.getObjectives()[1],
                                 initialSource.getObjectives()[0], initialSource.getObjectives()[1]);
@@ -335,11 +338,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                    evolutionHistory.addIfNotFull(generation,
                             firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
                             firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                             secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                    evolutionHistory.addIfNotFull(generation,
                             secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
                             firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                             secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
@@ -366,7 +369,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 int clusterId = cluster.getClusterId();
                 for(var clsInd: cluster.getCluster()) {
                     var e = ((IndividualWithDstToItsCentre)clsInd).getIndividual();
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], clusterId,
+                    evolutionHistory.addIfNotFull(generation, e.getObjectives()[0], e.getObjectives()[1], clusterId,
                             e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
                 }
             }
@@ -421,7 +424,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         }
 
         if(saveResultFiles) {
-            EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
+            evolutionHistory.toFile();
         }
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
