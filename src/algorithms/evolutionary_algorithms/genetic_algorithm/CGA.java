@@ -215,7 +215,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     noOfSuccessfullLL++;
                     LinkageTree lt = new LinkageTree(selectedPopulation);
                     if(saveResultFiles) {
-                        lt.toFile("lt" + this.iterationNumber + ".csv", outputFilename);
+                        lt.toFile("lt" + generation + ".csv", outputFilename); // TODO: file are being ovberriten, should save them into the clustring_result directory
                     }
                     Random rand = new Random();
                     // OptimalMixing, TSP using normal cross and mut
@@ -229,18 +229,18 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         }
                         BaseIndividual<Integer, PROBLEM> TSPDonor = selectedPopulation.get(randomIndividualPointer);
 
-                        children = parameters.crossover.crossover(crossoverProbability, 0.0, // TODO: regular corssover we might consider if it makes sense to do it at all or maybe do it once before the optimal mixing. KNAP cross is DIABLES
+                        children = parameters.crossover.crossover(0.0, 0.0, // TODO: regular corssover we might consider if it makes sense to do it at all or maybe do it once before the optimal mixing. KNAP cross is DIABLES
                                 initialSource.getGenes(), TSPDonor.getGenes(), parameters);// in this approach, crossover tries to strengthen the gene dependencies from the Linkage tree
-                        children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
+                        children.set(0, parameters.mutation.mutate(newPopulation, 0.0, 0.0,
                                 children.get(0), 0, newPopulation.size(), parameters));
-                        children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, 0.0,
+                        children.set(1, parameters.mutation.mutate(newPopulation, 0.0, 0.0,
                                 children.get(1), 0, newPopulation.size(), parameters));
 
                         var firstChildAfterTSPOperations = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
                         firstChildAfterTSPOperations.buildSolution(firstChildAfterTSPOperations.getGenes(), parameters);
                         var secondChildAfterTSPOperations = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                         secondChildAfterTSPOperations.buildSolution(secondChildAfterTSPOperations.getGenes(), parameters);
-                        cost += 2;
+//                        cost += 2;
 
                         //TODO: we can choose one random child, both, or even pre cross one - good for experimentation
                         // currently we'll take the best out of the three
@@ -259,7 +259,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
                         List<LTMask> masks =  lt.getShuffledMasks(); //TODO: we could consider order based on the length
                         numberOfMasks = masks.size();
-                        for(int k = 0; k < masks.size(); k++) {
+                        for(int k = 0; k < 1/*masks.size()*/; k++) {
                             randomIndividualPointer = i; // random donor per mask
                             while(i == randomIndividualPointer) {
                                 randomIndividualPointer = rand.nextInt(0, selectedPopulation.size());
@@ -271,20 +271,20 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
                             if(sourceGenotypeChanged) {
                                 var sourceAfterMask = new BaseIndividual<>(problem, sourceGenesCopy, parameters.evaluator);
-                                sourceAfterMask.buildSolution(firstChildAfterTSPOperations.getGenes(), parameters);
+                                sourceAfterMask.buildSolution(sourceAfterMask.getGenes(), parameters);
                                 cost += 1;
 
                                 if (!source.dominates(sourceAfterMask)) {
                                     noOfSourceNotDominateSourceAfterMask++;
-                                    source = sourceAfterMask;
                                     if(sourceAfterMask.dominates(source)) {
                                         noOfSourceAfterMaskDominatesSource++;
                                     }
+                                    source = sourceAfterMask;
                                 }
                             }
                         }
                         EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                source.getObjectives()[0], source.getObjectives()[1], -2,
+                                source.getObjectives()[0], source.getObjectives()[1], -3,
                                 TSPDonor.getObjectives()[0], TSPDonor.getObjectives()[1],
                                 initialSource.getObjectives()[0], initialSource.getObjectives()[1]);
                         population.add(source);

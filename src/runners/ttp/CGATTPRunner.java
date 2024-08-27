@@ -35,13 +35,13 @@ public class CGATTPRunner {
 //            new Pair<>("eil51_n50_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n50_uncorr-similar-weights_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n50_uncorr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n50_uncorr_01_merged.csv"),
-            new Pair<>("eil51_n150_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv")//,
+//            new Pair<>("eil51_n150_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>("eil51_n150_uncorr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n150_uncorr-similar-weights_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n250_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
 //            new Pair<>("eil51_n250_uncorr-similar-weights_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
+            new Pair<>("eil51_n500_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>("eil51_n500_uncorr-similar-weights_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
 //            new Pair<>("eil51_n500_uncorr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-11_eil51_n500_uncorr_01_merged.csv"),
 //            new Pair<>("kroA100_n99_bounded-strongly-corr_01.ttp", "." + File.separator + "apf" + File.separator + "24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
@@ -125,7 +125,7 @@ public class CGATTPRunner {
             boolean enableLinkedLearning = true;
             boolean shuffleParams = true;
             boolean saveResultFiles = true;
-            String summaryOutputFileName = "result.csv";
+            String summaryOutputFileName = "24-08-26_no_tsp_donor_another_fixed_result.csv";
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList);

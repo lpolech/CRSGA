@@ -16,9 +16,10 @@ public class OptimalMixing {
         boolean sourceGenotypeChanged = false;
         for(Integer geneNum: mask.getMask()) {
             int geneIndex = splitPoint + geneNum;
-            Integer gene = donor.getGenes().get(geneIndex);
-            sourceGenotypeChanged = (gene != sourceGenesCopy.get(geneIndex));
-            sourceGenesCopy.set(geneIndex, gene);
+            Integer donorGene = donor.getGenes().get(geneIndex);
+            Integer sourceGene = sourceGenesCopy.get(geneIndex);
+            sourceGenotypeChanged = (donorGene != sourceGene);
+            sourceGenesCopy.set(geneIndex, donorGene);
         }
         return sourceGenotypeChanged;
     }
