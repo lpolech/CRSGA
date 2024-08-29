@@ -17,9 +17,7 @@ import algorithms.quality_measure.GenerationalDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
 import algorithms.visualization.EvolutionHistory;
-import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
-import data.Cluster;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
@@ -48,6 +46,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final boolean saveResultFiles;
     private final boolean enableLinkedLearning;
     private final int clusterSizeForLL;
+    private final int costLLIncrementValue;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -97,7 +96,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int minTournamentSize,
                IndividualsPairingMethod indPairingMethod,
                boolean enableLinkedLearning,
-               int clusterSizeForLL) {
+               int clusterSizeForLL,
+               int costLLIncrementValue) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -125,6 +125,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.turDecayParam = turDecayParam;
         this.minTournamentSize = minTournamentSize;
         this.clusterSizeForLL = clusterSizeForLL;
+        this.costLLIncrementValue = costLLIncrementValue;
 
         if(minTournamentSize > 0) {
             this.parameterFunction = new ParameterFunctions(generationLimit,
@@ -183,6 +184,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
 
+        int noOfSuccessfullLL = 0;
+        int noOfTSPOperationsDominatesInitialSource = 0;
+        int noOfSourceNotDominateSourceAfterMask = 0;
+        int noOfSourceAfterMaskDominatesSource = 0;
+        int LLPopulationSize = 0;
+        int numberOfMasks = 0;
+
+        int costSinceTheLastLL = 0;
         while (cost < generationLimit) {
             newPopulation = new ArrayList<>();
             recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
@@ -200,14 +209,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             evolutionHistory.setFolderName(gaClusteringResults.getClusteringResultFilePath());
 
-            int noOfSuccessfullLL = 0;
-            int noOfTSPOperationsDominatesInitialSource = 0;
-            int noOfSourceNotDominateSourceAfterMask = 0;
-            int noOfSourceAfterMaskDominatesSource = 0;
-            int LLPopulationSize = 0;
-            int numberOfMasks = 0;
             boolean successfullLL = false; // Preference is to use the optimal mixing over the standars operators but not always the clusters are big enough
-            if(enableLinkedLearning) { // TODO: add specific criteria on which clusters to run LL and which ones progress to normal work
+            if(enableLinkedLearning && costSinceTheLastLL > costLLIncrementValue) { // TODO: add specific criteria on which clusters to run LL and which ones progress to normal work
                 List<BaseIndividual<Integer, PROBLEM>> selectedPopulation =
                         clusterDensityBasedSelection.selectPopulationForLL(gaClusteringResults,
                         parameters, clusterWeightMeasure, parameterFunction, cost, clusterSizeForLL);
@@ -215,10 +218,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 successfullLL = !selectedPopulation.isEmpty();
 
                 if(successfullLL) {
+                    costSinceTheLastLL = 0;
                     noOfSuccessfullLL++;
                     LinkageTree lt = new LinkageTree(selectedPopulation);
                     if(saveResultFiles) {
-                        lt.toFile("lt" + generation + ".csv", outputFilename); // TODO: file are being ovberriten, should save them into the clustring_result directory
+                        lt.toFile("lt" + cost + ".csv", outputFilename); // TODO: file are being ovberriten, should save them into the clustring_result directory
                     }
                     Random rand = new Random();
                     // OptimalMixing, TSP using normal cross and mut
@@ -244,6 +248,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                         var secondChildAfterTSPOperations = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                         secondChildAfterTSPOperations.buildSolution(secondChildAfterTSPOperations.getGenes(), parameters);
 //                        cost += 2;
+//                        costSinceTheLastLL += 2;
 
                         //TODO: we can choose one random child, both, or even pre cross one - good for experimentation
                         // currently we'll take the best out of the three
@@ -276,6 +281,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 var sourceAfterMask = new BaseIndividual<>(problem, sourceGenesCopy, parameters.evaluator);
                                 sourceAfterMask.buildSolution(sourceAfterMask.getGenes(), parameters);
                                 cost += 1;
+                                costSinceTheLastLL += 1;
 
                                 if (!source.dominates(sourceAfterMask)) {
                                     noOfSourceNotDominateSourceAfterMask++;
@@ -347,6 +353,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                             firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                             secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
+                    costSinceTheLastLL += 2;
 
                     if (firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
                         noOfChildDominatingParents++;

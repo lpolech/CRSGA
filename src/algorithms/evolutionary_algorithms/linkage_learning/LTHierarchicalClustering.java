@@ -19,7 +19,7 @@ public class LTHierarchicalClustering {
             leaves.add(nodeToAdd);
         }
 
-        Map<Pair<Long, Long>, Double> nodesIdWithDistance = addLeaveDistances(nodesToCombine, distanceMatrix);
+        Map<String, Double> nodesIdWithDistance = addLeaveDistances(nodesToCombine, distanceMatrix);
 
         while(nodesToCombine.size() > 1) {
             double minDst = Double.MAX_VALUE;
@@ -31,12 +31,10 @@ public class LTHierarchicalClustering {
                     LTNode secondNode = nodesToCombine.get(j);
                     long secondNodeId = secondNode.getId();
 
-                    double nodesDistance = -123.0;
-                    if (nodesIdWithDistance.containsKey(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)))) { // TODO: check if such pair creation is good for looking in hash map
-                        nodesDistance = nodesIdWithDistance.get(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)));
-                    } else {
+                    Double nodesDistance = nodesIdWithDistance.get(getNodePairIdString(firstNodeId, secondNodeId));
+                    if (nodesDistance == null) { // TODO: check if such pair creation is good for looking in hash map
                         nodesDistance = distance.getDistance(firstNode, secondNode, distanceMatrix);
-                        nodesIdWithDistance.put(new Pair<>(Math.max(firstNodeId, secondNodeId), Math.min(firstNodeId, secondNodeId)), nodesDistance);
+                        nodesIdWithDistance.put(getNodePairIdString(firstNodeId, secondNodeId), nodesDistance);
                     }
 
                     if (nodesDistance < minDst) {
@@ -53,28 +51,40 @@ public class LTHierarchicalClustering {
             LTNode mergedNodes = merge(minDstNodes.getKey(), minDstNodes.getValue());
             nodesToCombine.add(mergedNodes);
 
-            // remove distances relating to now combined nodes
-            long firstNodeId = minDstNodes.getKey().getId();
-            long secondNodeId = minDstNodes.getValue().getId();
-
-            for(Iterator<Map.Entry<Pair<Long, Long>, Double>> it = nodesIdWithDistance.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<Pair<Long, Long>, Double> nodesDst = it.next();
-                long firstMeasuredId = nodesDst.getKey().getKey();
-                long secondMeasuredId = nodesDst.getKey().getValue();
-
-                if(firstNodeId == firstMeasuredId
-                    || firstNodeId == secondMeasuredId
-                    || secondNodeId == firstMeasuredId
-                    || secondNodeId == secondMeasuredId) {
-                    it.remove();
-                }
-            }
+//            removeNotNeededDistances(minDstNodes, nodesIdWithDistance);
 
             nodesToCombine.remove(minDstNodes.getKey());
             nodesToCombine.remove(minDstNodes.getValue());
         }
 
         return new Pair<>(nodesToCombine.get(0), leaves); // TODO: check if leaves are updated after the tree building alg finished
+    }
+
+    private static void removeNotNeededDistances(Pair<LTNode, LTNode> minDstNodes, Map<String, Double> nodesIdWithDistance) {
+        // remove distances relating to now combined nodes
+        long firstNodeId = minDstNodes.getKey().getId();
+        long secondNodeId = minDstNodes.getValue().getId();
+
+        for(Iterator<Map.Entry<String, Double>> it = nodesIdWithDistance.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<String, Double> nodesDst = it.next();
+            String nodeKey = nodesDst.getKey();
+            int separatorIndex = nodeKey.indexOf(";");
+            String firstMeasuredIdStr = nodeKey.substring(0, separatorIndex);
+            String secondMeasuredIdStr = nodeKey.substring(separatorIndex + 1);
+
+            long firstMeasuredId = Long.valueOf(firstMeasuredIdStr);
+            long secondMeasuredId = Long.valueOf(secondMeasuredIdStr);
+            if(firstNodeId == firstMeasuredId
+                || firstNodeId == secondMeasuredId
+                || secondNodeId == firstMeasuredId
+                || secondNodeId == secondMeasuredId) {
+                it.remove();
+            }
+        }
+    }
+
+    private static String getNodePairIdString(long firstNodeId, long secondNodeId) {
+        return Math.max(firstNodeId, secondNodeId) + ";" + Math.min(firstNodeId, secondNodeId);
     }
 
     private static LTNode merge(LTNode firstNode, LTNode secondNode) {
@@ -93,8 +103,8 @@ public class LTHierarchicalClustering {
         return newNode;
     }
 
-    private static Map<Pair<Long, Long>, Double> addLeaveDistances(List<LTNode> leaves, LTDistanceMeasureMatrix distanceMatrix) {
-        Map<Pair<Long, Long>, Double> leavesDistances = new HashMap<>();
+    private static Map<String, Double> addLeaveDistances(List<LTNode> leaves, LTDistanceMeasureMatrix distanceMatrix) {
+        Map<String, Double> leavesDistances = new HashMap<>();
         for(LTNode l1: leaves) {
             for(LTNode l2: leaves) {
                 if(l1.getId() > l2.getId()) { // Symmetrical measure
@@ -104,7 +114,7 @@ public class LTHierarchicalClustering {
                         int minIndex = Math.min(l1.getGeneIndexes().get(0), l2.getGeneIndexes().get(0));
                         int maxIndex = Math.max(l1.getGeneIndexes().get(0), l2.getGeneIndexes().get(0));
                         double distance = distanceMatrix.getMatrixElement(maxIndex, minIndex);
-                        leavesDistances.put(new Pair<>(l1.getId(), l2.getId()), distance);
+                        leavesDistances.put(getNodePairIdString(minIndex, maxIndex), distance);
                     }
                 }
             }
