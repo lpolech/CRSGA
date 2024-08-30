@@ -32,31 +32,31 @@ public class CGATTPRunner {
     private static final String problemPath = "." + File.separator + "problems" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator;
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr_01_merged.csv"),
-            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "pr76_n75_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_pr76_n75_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "pr76_n75_uncorr_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "pr76_n75_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "rd100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_rd100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "rd100_n99_uncorr_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "rd100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "berlin52_n51_bounded-strongly-corr_01.ttp", apfsPath + "24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "berlin52_n51_uncorr_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "berlin52_n51_uncorr-similar-weights_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv")
+//            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
+            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
+//            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr_01_merged.csv"),
+//            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "pr76_n75_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_pr76_n75_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "pr76_n75_uncorr_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "pr76_n75_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "rd100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_rd100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "rd100_n99_uncorr_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "rd100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "berlin52_n51_bounded-strongly-corr_01.ttp", apfsPath + "24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "berlin52_n51_uncorr_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "berlin52_n51_uncorr-similar-weights_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv"),
+//            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv")
     );
 
     public static void main(String[] args) {
@@ -102,17 +102,17 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 1;
-            int[] generationLimitList = new int[] {100};//{250_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {10};//, 50, 100, 150, 250, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.1};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {0.1};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {0.1};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[] {10};//{2, 3, 4, 5, 10};//{11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
+            int NUMBER_OF_REPEATS = 10;
+            int[] generationLimitList = new int[] {250_000};//{250_000};//{250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] populationSizeList = new int[] {10, 50, 100, 150, 200, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
+            double[] TSPmutationProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[] {2, 3, 4, 5, 10};//{11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            double[] edgeClustersDispersion = new double[] {5.0};//{0.5, 1.0, 2.0, 3.0, 5.0, 10.0};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
-            int[] tournamentSizeList = new int[] {40}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
+            double[] edgeClustersDispersion = new double[] {0.5, 1.0, 2.0, 3.0, 5.0, 10.0};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            int[] tournamentSizeList = new int[] {10}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
             int[] mutationVersionList = new int[]{2};
             int[] crossoverVersionList = new int[]{6}; //{1, 2, 3, 4, 5, 6};//
@@ -122,8 +122,8 @@ public class CGATTPRunner {
             /*if negative, no decay will be applied!*/ int[] minTournamentSizeList = new int[] {-666};//{-666};//{15};//{30, 40, 50, 60, 70};
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
             boolean shuffleParams = false;
-            boolean saveResultFiles = true;
-            String summaryOutputFileName = "test24-08-25_interim_server_res_best_result.csv";
+            boolean saveResultFiles = false;
+            String summaryOutputFileName = "24-08-30_ind_wise_mut_result.csv";
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList);
@@ -248,12 +248,12 @@ public class CGATTPRunner {
 
                                                                                         String bestAPFoutputFile = "bestAPF";
                                                                                         int bestIterNumber = 0;
-                                                                                        if(saveResultFiles) {
+//                                                                                        if(saveResultFiles) {
                                                                                             File theDir = new File(outputFilename);
                                                                                             if (!theDir.exists()) {
                                                                                                 theDir.mkdirs();
                                                                                             }
-                                                                                        }
+//                                                                                        }
 
                                                                                         List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
                                                                                         List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
@@ -355,7 +355,7 @@ public class CGATTPRunner {
 //                                                                                            if(instanceName.endsWith(".ttp"))
 //                                                                                                instanceName = instanceName.substring(0, instanceName.lastIndexOf(".ttp"));
 
-                                                                                            if(saveResultFiles) {
+//                                                                                            if(saveResultFiles) {
                                                                                                 try {
                                                                                                     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                             + File.separator + instanceName + "_config0_run" + yy + "_archive.csv"));
@@ -365,7 +365,7 @@ public class CGATTPRunner {
                                                                                                         IOException e) {
                                                                                                     e.printStackTrace();
                                                                                                 }
-                                                                                            }
+//                                                                                            }
                                                                                         }
 
                                                                                         if(saveResultFiles) {
