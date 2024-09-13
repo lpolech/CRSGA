@@ -50,43 +50,57 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
     if(parameters.mutationVersion == 1) {
       geneWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint); // BASELINE
     } else if(parameters.mutationVersion == 2) {
-    indWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 1);
     } else if(parameters.mutationVersion == 3) {
-    indWiseReverseMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseReverseMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 4) {
-    indWiseReverseFixedLengthMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 30);
+      indWiseReverseFixedLengthMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 30);
     } else if(parameters.mutationVersion == 5) {
-    geneWiseReverseMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      geneWiseReverseMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 6) {
-    indWiseDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 7) {
-    indWiseInversionDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseInversionDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 8) {
-    indWiseScrambleDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseScrambleDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 9) {
-    indWiseScrambleMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseScrambleMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 10) {
-    indWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 11) {
-    geneWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      geneWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 12) {
-    geneWiseBitSwapMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      geneWiseBitSwapMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 13) {
-    indWiseBitSwapMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseBitSwapMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 14) {
-    indWiseBitFlipSeqMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseBitFlipSeqMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 15) {
-    indWiseBitFlipSeqFixedLengthMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 40);
+      indWiseBitFlipSeqFixedLengthMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 40);
     } else if(parameters.mutationVersion == 16) {
-    indWiseBitFlipSeqDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseBitFlipSeqDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 17) {
-    indWiseInversionDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseInversionDisplacementMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 18) {
-    indWiseBitFlipInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      indWiseBitFlipInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 19) {
-    geneWiseBitFlipInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      geneWiseBitFlipInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
     } else if(parameters.mutationVersion == 20) {
-    geneWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+      geneWiseInsertionMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint);
+    } else if(parameters.mutationVersion == 21) {
+      indWiseBitFlipMutationDynKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 2);
+    } else if(parameters.mutationVersion == 22) {
+      indWiseBitFlipMutationDynKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 3);
+    } else if(parameters.mutationVersion == 23) {
+      indWiseBitFlipMutationDynKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 4);
+    }  else if(parameters.mutationVersion == 24) {
+      indWiseBitFlipMutationDynKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 5);
+    } else if(parameters.mutationVersion == 25) {
+      indWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 2);
+    } else if(parameters.mutationVersion == 26) {
+      indWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 3);
+    } else if(parameters.mutationVersion == 27) {
+      indWiseBitFlipMutationKNAP(KNAPmutationProbability, genesToMutate, parameters, splitPoint, 4);
     }
     return genesToMutate;
   }
@@ -276,11 +290,28 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
     }
   }
 
-  private static void indWiseBitFlipMutationKNAP(double KNAPmutationProbability, List<Integer> genesToMutate, ParameterSet<Integer, BaseProblemRepresentation> parameters, int splitPoint) {
+  private static void indWiseBitFlipMutationKNAP(double KNAPmutationProbability, List<Integer> genesToMutate, ParameterSet<Integer, BaseProblemRepresentation> parameters, int splitPoint, int numberOfSwaps) {
     //      individual-wise knapsack mutation
     if (parameters.random.nextDouble() < KNAPmutationProbability) {
-      int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
-      genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+      for(int i = 0; i < numberOfSwaps; i++) {
+        int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
+        genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+//        System.out.println(i + ", " + random);
+      }
+//      System.out.println("");
+    }
+  }
+  private static void indWiseBitFlipMutationDynKNAP(double KNAPmutationProbability, List<Integer> genesToMutate, ParameterSet<Integer, BaseProblemRepresentation> parameters, int splitPoint, int numberOfPotentialSwaps) {
+    //      individual-wise knapsack mutation
+    if (parameters.random.nextDouble() < KNAPmutationProbability) {
+      int numberOdGeneFlips = parameters.random.next(numberOfPotentialSwaps) + 1; // min 1 swap
+
+      for (int i = 0; i < numberOdGeneFlips; i++) {
+        int random = parameters.random.next(genesToMutate.size() - splitPoint) + splitPoint;
+        genesToMutate.set(random, genesToMutate.get(random) ^ 1);
+//        System.out.println(i + ", " + random);
+      }
+//      System.out.println("");
     }
   }
 
