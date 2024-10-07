@@ -19,6 +19,7 @@ import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
 import internal_measures.FlatWithinBetweenIndex;
 import javafx.util.Pair;
+import util.FILE_OUTPUT_LEVEL;
 import util.random.RandomInt;
 
 import java.io.*;
@@ -32,18 +33,12 @@ public class CGATTPRunner {
     private static final String problemPath = "." + File.separator + "problems" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator;
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-//            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv")//,
 //            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr_01_merged.csv")//,
+//            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
-//            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr_01_merged.csv"),
 //            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
@@ -56,7 +51,13 @@ public class CGATTPRunner {
 //            new Pair<>(problemPath + "berlin52_n51_bounded-strongly-corr_01.ttp", apfsPath + "24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "berlin52_n51_uncorr_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "berlin52_n51_uncorr-similar-weights_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv")
+//            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
+            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv")//,
+//            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
+//            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr_01_merged.csv")
     );
 
     public static void main(String[] args) {
@@ -106,25 +107,27 @@ public class CGATTPRunner {
             int NUMBER_OF_REPEATS = 5;
             int[] generationLimitList = new int[] {250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {10};//{10, 50, 100, 150, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
-            double[] TSPmutationProbabilityList = new double[] {0.25};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPmutationProbabilityList = new double[] {1.0};//{1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
-            double[] TSPcrossoverProbabilityList = new double[] {0.6};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            double[] KNAPcrossoverProbabilityList = new double[] {1.0};//{1.0, 0.8, 0.6, 0.4, 0.2};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-            int[] numberOfClusterList = new int[] {2};//{2, 3, 4, 5, 10};//{11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
+            double[] TSPmutationProbabilityList = new double[] {0.5};//{0.0, 0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.05, 0.07, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPmutationProbabilityList = new double[] {0.6};//{1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
+            double[] TSPcrossoverProbabilityList = new double[] {1.0};//{0.75};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.75};//{0.3, 0.35};//{0.35, 0.4};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            double[] KNAPcrossoverProbabilityList = new double[] {1.0};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{1.0};//{1.0, 0.8, 0.6, 0.4, 0.2};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+            int[] numberOfClusterList = new int[] {2};//{2, 3, 5, 10};//{3}; //{11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            double[] edgeClustersDispersion = new double[] {/*0.5, 1.0, */2.0/*, 3.0, 5.0, 10.0*/};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
-            int[] tournamentSizeList = new int[] {40}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
+            double[] edgeClustersDispersion = new double[] {3};//{3, 3.5};//{3.0, 2.5, 3.5};//{/*0.5, 1.0, */2.0/*, 3.0, 5.0, 10.0*/};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
+            int[] tournamentSizeList = new int[] {40};//{10, 20, 30, 40, 50}; //{15};//{10, 5, 15}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
-            int[] mutationVersionList = new int[]{21, 25};
-            int[] crossoverVersionList = new int[]{6}; //{1, 2, 3, 4, 5, 6};//
+            int[] KNAPmutationVersionList = new int[] {2}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};//{2};//{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};//{2}; // {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
+            int[] KNAPcrossoverVersionList = new int[] {1};//{1, 2, 3}; // {1}; // {1, 2, 3};
+            int[] TSPmutationVersionList = new int[] {1};// {3 9 10};//{1, 2, 4, 5, 6, 7, 8, 11};//{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}; // // {1};
+            int[] TSPcrossoverVersionList = new int[] {1};//{1, 2, 3, 4, 5, 6}; //{6};
             int[] indExclusionUsageLimitList = new int[] {250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
             int[] indExclusionGenDurationList = new int[] {250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13  .5, -14.5, -15.5};//{-6, -8, -15, -100};
             /*if negative, no decay will be applied!*/ int[] minTournamentSizeList = new int[] {-666};//{-666};//{15};//{30, 40, 50, 60, 70};
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
             boolean shuffleParams = false;
-            boolean saveResultFiles = false;
-            String summaryOutputFileName = "24-09-13_ind_wise_mut_2_or_1-2dyn.csv";
+            FILE_OUTPUT_LEVEL saveResultFiles = FILE_OUTPUT_LEVEL.ALL;//FILE_OUTPUT_LEVEL.NONE FILE_OUTPUT_LEVEL.ALL FILE_OUTPUT_LEVEL.MINIMAL;
+            String summaryOutputFileName = "24-09-25_operator_check_best_params.csv";
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList);
@@ -139,8 +142,10 @@ public class CGATTPRunner {
                 tournamentSizeList = shuffleIntArray(tournamentSizeList);
                 minTournamentSizeList = shuffleIntArray(minTournamentSizeList);
                 populationTurPropList = shuffleIntArray(populationTurPropList);
-                mutationVersionList = shuffleIntArray(mutationVersionList);
-                crossoverVersionList = shuffleIntArray(crossoverVersionList);
+                KNAPmutationVersionList = shuffleIntArray(KNAPmutationVersionList);
+                KNAPcrossoverVersionList = shuffleIntArray(KNAPcrossoverVersionList);
+                TSPmutationVersionList = shuffleIntArray(TSPmutationVersionList);
+                TSPcrossoverVersionList = shuffleIntArray(TSPcrossoverVersionList);
                 indExclusionUsageLimitList = shuffleIntArray(indExclusionUsageLimitList);
                 indExclusionGenDurationList = shuffleIntArray(indExclusionGenDurationList);
                 turDecayParamList = shuffleDoubleArray(turDecayParamList);
@@ -149,8 +154,8 @@ public class CGATTPRunner {
 
             int numberOfParamConfigs = clusterWeightMeasureList.length*generationLimitList.length*populationSizeList.length*TSPmutationProbabilityList.length*KNAPmutationProbabilityList.length
                     *TSPcrossoverProbabilityList.length*KNAPcrossoverProbabilityList.length*numberOfClusterList.length*clusterisationAlgorithmIterList.length*edgeClustersDispersion.length*tournamentSizeList.length
-                    *populationTurPropList.length*mutationVersionList.length*crossoverVersionList.length*indExclusionUsageLimitList.length*indExclusionGenDurationList.length*turDecayParamList.length
-                    *minTournamentSizeList.length*individualsPairingMethodsList.length;
+                    *populationTurPropList.length*KNAPmutationVersionList.length*KNAPcrossoverVersionList.length*TSPmutationVersionList.length*TSPcrossoverVersionList.length*indExclusionUsageLimitList.length
+                    *indExclusionGenDurationList.length*turDecayParamList.length*minTournamentSizeList.length*individualsPairingMethodsList.length;
             System.out.println("Number of param configurations: " + numberOfParamConfigs);
             String header = "dataset;counter;measure;no of repeats;avgIGD;stdev;uber pareto purity;mnd;tpfs;uber pareto IGD;uber pareto GD"
                     + ";uber pareto HV;uber pareto size;avgPurity;stdev;avgGD;stdev;avgHV;stdev;avgPFS;stdev"
@@ -163,9 +168,9 @@ public class CGATTPRunner {
                     + ";AvgAfterCrossAndMutAfterCrossDominationCounter"
                     + ";AvgAfterCrossAndMutAfterCrossDominationProp"
                     + ";generationLimit;populationSize;TSPmutationProbability" +
-                    ";KNAPmutationProbability;kMutVer;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
-                    ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp;mutationVersion;crossoverVersion" +
-                    ";indExclusionUsageLimit;indExclusionGenDuration;turDecayParam;minTournamentSize;IndPairing";
+                    ";KNAPmutationProbability;TSPcrossoverProbability;KNAPcrossoverProbability;numberOfClusters" +
+                    ";clusterIterLimit;edgeClustersProb;tournamentSize;populationTurProp;KNAPmutationVersion;KNAPcrossoverVersion" +
+                    ";TSPmutationVersion;TSPcrossoverVersion;indExclusionUsageLimit;indExclusionGenDuration;turDecayParam;minTournamentSize;IndPairing";
 
             System.out.println(header);
             try {
@@ -206,304 +211,317 @@ public class CGATTPRunner {
                                                         int tournamentSize = tournamentSizeList[q];
                                                         for( int r = 0; r < populationTurPropList.length; r++) {
                                                             int populationTurProp = populationTurPropList[r];
-                                                            for (int ii = 0; ii < mutationVersionList.length; ii++) {
-                                                                int mutationVersion = mutationVersionList[ii];
-                                                                for (int jj = 0; jj < crossoverVersionList.length; jj++) {
-                                                                    int crossoverVersion = crossoverVersionList[jj];
-                                                                    for (int kk = 0; kk < indExclusionUsageLimitList.length; kk++) {
-                                                                        int indExclusionUsageLimit = indExclusionUsageLimitList[kk];
-                                                                        for (int ll = 0; ll < indExclusionGenDurationList.length; ll++) {
-                                                                            int indExclusionGenDuration = indExclusionGenDurationList[ll];
-                                                                            for (int mm = 0; mm < turDecayParamList.length; mm++) {
-                                                                                double turDecayParam = turDecayParamList[mm];
-                                                                                for(int nn = 0; nn < minTournamentSizeList.length; nn++) {
-                                                                                    int minTournamentSize = minTournamentSizeList[nn];
-                                                                                    for (int oo = 0; oo < individualsPairingMethodsList.length; oo++) {
-                                                                                        IndividualsPairingMethod indPairingMethod = individualsPairingMethodsList[oo];
+                                                            for (int ii = 0; ii < KNAPmutationVersionList.length; ii++) {
+                                                                int KNAPmutationVersion = KNAPmutationVersionList[ii];
+                                                                for (int iii = 0; iii < KNAPcrossoverVersionList.length; iii++) {
+                                                                    int KNAPcrossoverVersion = KNAPcrossoverVersionList[iii];
+                                                                    for (int jjj = 0; jjj < TSPmutationVersionList.length; jjj++) {
+                                                                        int TSPmutationVersion = TSPmutationVersionList[jjj];
+                                                                        for (int jj = 0; jj < TSPcrossoverVersionList.length; jj++) {
+                                                                            int TSPcrossoverVersion = TSPcrossoverVersionList[jj];
+                                                                            for (int kk = 0; kk < indExclusionUsageLimitList.length; kk++) {
+                                                                                int indExclusionUsageLimit = indExclusionUsageLimitList[kk];
+                                                                                for (int ll = 0; ll < indExclusionGenDurationList.length; ll++) {
+                                                                                    int indExclusionGenDuration = indExclusionGenDurationList[ll];
+                                                                                    for (int mm = 0; mm < turDecayParamList.length; mm++) {
+                                                                                        double turDecayParam = turDecayParamList[mm];
+                                                                                        for (int nn = 0; nn < minTournamentSizeList.length; nn++) {
+                                                                                            int minTournamentSize = minTournamentSizeList[nn];
+                                                                                            for (int oo = 0; oo < individualsPairingMethodsList.length; oo++) {
+                                                                                                IndividualsPairingMethod indPairingMethod = individualsPairingMethodsList[oo];
 
-                                                                                        var eachRepeatHV = new ArrayList<Double>();
-                                                                                        var eachRepeatND = new ArrayList<Integer>();
-                                                                                        var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
-                                                                                        var eachRepeatResult = new ArrayList<List<BaseIndividual<Integer, TTP>>>();
-                                                                                        var eachRepeatIGD = new ArrayList<Double>();
-                                                                                        var eachRepeatGD = new ArrayList<Double>();
-                                                                                        var eachRepeatPurity = new ArrayList<Double>();
-                                                                                        paramCounter += 1;
+                                                                                                var eachRepeatHV = new ArrayList<Double>();
+                                                                                                var eachRepeatND = new ArrayList<Integer>();
+                                                                                                var eachRepeatOptimisationResult = new ArrayList<OptimisationResult>();
+                                                                                                var eachRepeatResult = new ArrayList<List<BaseIndividual<Integer, TTP>>>();
+                                                                                                var eachRepeatIGD = new ArrayList<Double>();
+                                                                                                var eachRepeatGD = new ArrayList<Double>();
+                                                                                                var eachRepeatPurity = new ArrayList<Double>();
+                                                                                                paramCounter += 1;
 
-                                                                                        int maxAdditionalPopulationSize = populationSize / 2;
-                                                                                        int minAdditionalPopulationSize = populationSize / 10;
+                                                                                                int maxAdditionalPopulationSize = populationSize / 2;
+                                                                                                int minAdditionalPopulationSize = populationSize / 10;
 
-                                                                                        List<BaseIndividual<Integer, TTP>> bestAPF = null;
-                                                                                        double bestAPFHV = -Double.MIN_VALUE;
+                                                                                                List<BaseIndividual<Integer, TTP>> bestAPF = null;
+                                                                                                double bestAPFHV = -Double.MIN_VALUE;
 
-                                                                                        String outputFilename = "." + File.separator + "out" + File.separator
-                                                                                                + removePrefixAndTtpPostFixFromFileName(problemPath, instanceWithOPF.get(k).getKey())
-                                                                                                + "_m-" + clusterWeightMeasure.getName()
-                                                                                                + "_g" + generationLimit + "_p-" + populationSize
-                                                                                                + "_Tm" + TSPmutationProbability + "_Km" + KNAPmutationProbability
-                                                                                                + "_Tc" + TSPcrossoverProbability + "_Kc" + KNAPcrossoverProbability
-                                                                                                + "_cN" + numberOfClusters + "_cI" + clusterIterLimit + "_edgC"
-                                                                                                + edgeClustersDispVal + "_t" + tournamentSize + "_popT" + populationTurProp
-                                                                                                + "_eL" + indExclusionUsageLimit + "_eg" + indExclusionGenDuration + "_d"
-                                                                                                + turDecayParam + "_mt" + minTournamentSize + "_" + indPairingMethod.getName()
-                                                                                                + "_km" + mutationVersion;
+                                                                                                String outputFilename = "." + File.separator + "out" + File.separator
+                                                                                                        + removePrefixAndTtpPostFixFromFileName(problemPath, instanceWithOPF.get(k).getKey())
+                                                                                                        + "_m-" + clusterWeightMeasure.getName()
+                                                                                                        + "_g" + generationLimit + "_p-" + populationSize
+                                                                                                        + "_Tm" + TSPmutationProbability + "_Km" + KNAPmutationProbability
+                                                                                                        + "_Tc" + TSPcrossoverProbability + "_Kc" + KNAPcrossoverProbability
+                                                                                                        + "_cN" + numberOfClusters + "_cI" + clusterIterLimit + "_edgC"
+                                                                                                        + edgeClustersDispVal + "_t" + tournamentSize + "_popT" + populationTurProp
+                                                                                                        + "_eL" + indExclusionUsageLimit + "_eg" + indExclusionGenDuration + "_d"
+                                                                                                        + turDecayParam + "_mt" + minTournamentSize + "_" + indPairingMethod.getName()
+                                                                                                        + "_km" + KNAPmutationVersion + "_kc" + KNAPcrossoverVersion
+                                                                                                        + "_tm" + TSPmutationVersion + "_tc" + TSPcrossoverVersion;
 
-                                                                                        String bestAPFoutputFile = "bestAPF";
-                                                                                        int bestIterNumber = 0;
+                                                                                                String bestAPFoutputFile = "bestAPF";
+                                                                                                int bestIterNumber = 0;
 //                                                                                        if(saveResultFiles) {
-                                                                                        File theDir = new File(outputFilename);
-                                                                                        if (!theDir.exists()) {
-                                                                                            theDir.mkdirs();
-                                                                                        }
+                                                                                                File theDir = new File(outputFilename);
+                                                                                                if (!theDir.exists()) {
+                                                                                                    theDir.mkdirs();
+                                                                                                }
 //                                                                                        }
 
-                                                                                        List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
-                                                                                        List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
-                                                                                        CGA<TTP> geneticAlgorithm = null;
-                                                                                        for(int xx = 0; xx < NUMBER_OF_REPEATS; xx++) {
-                                                                                            parameters.mutationVersion = mutationVersion;
-                                                                                            parameters.crossoverVersion = crossoverVersion;
-                                                                                            HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
-                                                                                            geneticAlgorithm = new CGA<>(
-                                                                                                    ttp,
-                                                                                                    clusterWeightMeasure,
-                                                                                                    populationSize,
-                                                                                                    generationLimit,
-                                                                                                    parameters,
-                                                                                                    TSPmutationProbability,
-                                                                                                    KNAPmutationProbability,
-                                                                                                    TSPcrossoverProbability,
-                                                                                                    KNAPcrossoverProbability,
-                                                                                                    instanceWithOPF.get(k).getKey().split("\\.")[0],
-                                                                                                    numberOfClusters,
-                                                                                                    clusterIterLimit,
-                                                                                                    edgeClustersDispVal,
-                                                                                                    tournamentSize,
-                                                                                                    maxAdditionalPopulationSize,
-                                                                                                    minAdditionalPopulationSize,
-                                                                                                    populationTurProp,
-                                                                                                    -666,
-                                                                                                    true,
-                                                                                                    hv,
-                                                                                                    optimalParetoFront,
-                                                                                                    outputFilename,
-                                                                                                    saveResultFiles,
-                                                                                                    xx,
-                                                                                                    indExclusionUsageLimit,
-                                                                                                    indExclusionGenDuration,
-                                                                                                    turDecayParam,
-                                                                                                    minTournamentSize,
-                                                                                                    indPairingMethod
-                                                                                            );
+                                                                                                List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
+                                                                                                List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
+                                                                                                CGA<TTP> geneticAlgorithm = null;
+                                                                                                for (int xx = 0; xx < NUMBER_OF_REPEATS; xx++) {
+                                                                                                    parameters.KNAPmutationVersion = KNAPmutationVersion;
+                                                                                                    parameters.KNAPcrossoverVersion = KNAPcrossoverVersion;
+                                                                                                    parameters.TSPmutationVersion = TSPmutationVersion;
+                                                                                                    parameters.TSPcrossoverVersion = TSPcrossoverVersion;
+                                                                                                    HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
+                                                                                                    geneticAlgorithm = new CGA<>(
+                                                                                                            ttp,
+                                                                                                            clusterWeightMeasure,
+                                                                                                            populationSize,
+                                                                                                            generationLimit,
+                                                                                                            parameters,
+                                                                                                            TSPmutationProbability,
+                                                                                                            KNAPmutationProbability,
+                                                                                                            TSPcrossoverProbability,
+                                                                                                            KNAPcrossoverProbability,
+                                                                                                            instanceWithOPF.get(k).getKey().split("\\.")[0],
+                                                                                                            numberOfClusters,
+                                                                                                            clusterIterLimit,
+                                                                                                            edgeClustersDispVal,
+                                                                                                            tournamentSize,
+                                                                                                            maxAdditionalPopulationSize,
+                                                                                                            minAdditionalPopulationSize,
+                                                                                                            populationTurProp,
+                                                                                                            -666,
+                                                                                                            true,
+                                                                                                            hv,
+                                                                                                            optimalParetoFront,
+                                                                                                            outputFilename,
+                                                                                                            saveResultFiles,
+                                                                                                            xx,
+                                                                                                            indExclusionUsageLimit,
+                                                                                                            indExclusionGenDuration,
+                                                                                                            turDecayParam,
+                                                                                                            minTournamentSize,
+                                                                                                            indPairingMethod
+                                                                                                    );
 
-                                                                                            var result = geneticAlgorithm.optimize();
-                                                                                            geneticAlgorithm.removeDuplicatesAndDominated(result, uberPareto);
+                                                                                                    var result = geneticAlgorithm.optimize();
+                                                                                                    geneticAlgorithm.removeDuplicatesAndDominated(result, uberPareto);
 //                    uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
-                                                                                            //            printResults(result);
+                                                                                                    //            printResults(result);
 
-                                                                                            eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
-                                                                                            eachRepeatResult.add(result);
+                                                                                                    eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
+                                                                                                    eachRepeatResult.add(result);
 
-                                                                                            String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
-                                                                                            if(saveResultFiles) {
+                                                                                                    String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
+                                                                                                    if (saveResultFiles.getLevel() >= 1) {
+                                                                                                        try {
+                                                                                                            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                                    + File.separator + instanceNameForFile + "_config0_run" + xx + "_archive.csv"));
+                                                                                                            writer.write(printResultsForComparison(result, false));
+                                                                                                            writer.close();
+                                                                                                        } catch (
+                                                                                                                IOException e) {
+                                                                                                            e.printStackTrace();
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                    System.out.print(xx + ", ");
+                                                                                                }
+                                                                                                System.out.println("");
+
+                                                                                                optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
+                                                                                                geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
+
+                                                                                                int mnd = geneticAlgorithm.getNumberOfNotDominated(uberPareto, optimalApfWithUberPareto);
+
+                                                                                                Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>
+                                                                                                        , ArrayList<List<BaseIndividual<Integer, TTP>>>> normalisedApfAndResults
+                                                                                                        = normaliseParetoFrontsByMinMax(optimalApfWithUberPareto, uberPareto, eachRepeatResult, ttp,
+                                                                                                        parameters.evaluator);
+                                                                                                List<BaseIndividual<Integer, TTP>> normalisedOptimalPftWithUberPareto = normalisedApfAndResults.getKey().getKey();
+                                                                                                List<BaseIndividual<Integer, TTP>> normalisedUberPareto = normalisedApfAndResults.getKey().getValue();
+                                                                                                ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedResults = normalisedApfAndResults.getValue();
+
+//                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
+                                                                                                InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(normalisedOptimalPftWithUberPareto);
+                                                                                                GenerationalDistance gdCalculator = new GenerationalDistance(normalisedOptimalPftWithUberPareto);
+                                                                                                Purity purityCalculator = new Purity(normalisedOptimalPftWithUberPareto);
+
+                                                                                                BaseIndividual<Integer, TTP> normalisedHvNadirPoint = new BaseIndividual<>(ttp, new ArrayList<>(), parameters.evaluator);
+                                                                                                normalisedHvNadirPoint.setObjectives(new double[]{1.0, 1.0});
+                                                                                                normalisedHvNadirPoint.setNormalObjectives(new double[]{1.0, 1.0});
+                                                                                                normalisedHvNadirPoint.setHashCode();
+                                                                                                HVMany hvCalculator = new HVMany(normalisedHvNadirPoint);
+
+                                                                                                for (int yy = 0; yy < normalisedResults.size(); yy++) {
+                                                                                                    var normRes = normalisedResults.get(yy);
+                                                                                                    var result = eachRepeatResult.get(yy);
+
+                                                                                                    var hvValue = hvCalculator.getMeasure(normRes);
+                                                                                                    eachRepeatHV.add(hvValue);
+                                                                                                    eachRepeatND.add(result.size());
+
+                                                                                                    if (hvValue > bestAPFHV) {
+                                                                                                        bestAPFHV = hvValue;
+                                                                                                        bestAPF = result;
+                                                                                                        bestIterNumber = yy;
+                                                                                                    }
+
+                                                                                                    var igdValue = igdCalculator.getMeasure(normRes);
+                                                                                                    eachRepeatIGD.add(igdValue);
+
+                                                                                                    var gdValue = gdCalculator.getMeasure(normRes);
+                                                                                                    eachRepeatGD.add(gdValue);
+
+                                                                                                    var purityValue = purityCalculator.getMeasure(normRes);
+                                                                                                    eachRepeatPurity.add(purityValue);
+                                                                                                }
+
+                                                                                                String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
                                                                                                 try {
                                                                                                     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                            + File.separator + instanceNameForFile + "_config0_run" + xx + "_archive.csv"));
-                                                                                                    writer.write(printResultsForComparison(result, false));
+                                                                                                            + File.separator + instanceNameForFile + "_UBER_PARETO.csv"));
+                                                                                                    writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
                                                                                                     writer.close();
                                                                                                 } catch (
                                                                                                         IOException e) {
                                                                                                     e.printStackTrace();
                                                                                                 }
-                                                                                            } else {
-                                                                                                System.out.print(xx + ", ");
-                                                                                            }
-                                                                                        }
-                                                                                        if(!saveResultFiles) {
-                                                                                            System.out.println("");
-                                                                                        }
 
-                                                                                        optimalApfWithUberPareto = new ArrayList<>(optimalParetoFront);
-                                                                                        geneticAlgorithm.removeDuplicatesAndDominated(uberPareto, optimalApfWithUberPareto);
+                                                                                                if (saveResultFiles.getLevel() > 1) {
+                                                                                                    try {
+                                                                                                        BufferedWriter writer = null;
 
-                                                                                        int mnd = geneticAlgorithm.getNumberOfNotDominated(uberPareto, optimalApfWithUberPareto);
+                                                                                                        writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                                + File.separator + instanceNameForFile + "_apf.csv"));
+                                                                                                        writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
+                                                                                                        writer.close();
 
-                                                                                        Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>
-                                                                                                , ArrayList<List<BaseIndividual<Integer, TTP>>>> normalisedApfAndResults
-                                                                                                = normaliseParetoFrontsByMinMax(optimalApfWithUberPareto, uberPareto, eachRepeatResult, ttp,
-                                                                                                parameters.evaluator);
-                                                                                        List<BaseIndividual<Integer, TTP>> normalisedOptimalPftWithUberPareto = normalisedApfAndResults.getKey().getKey();
-                                                                                        List<BaseIndividual<Integer, TTP>> normalisedUberPareto = normalisedApfAndResults.getKey().getValue();
-                                                                                        ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedResults = normalisedApfAndResults.getValue();
+                                                                                                        writer = new BufferedWriter(new FileWriter(outputFilename
+                                                                                                                + File.separator + instanceNameForFile + "_genes_UBER_PARETO.csv"));
+                                                                                                        writer.write(printGenes(uberPareto, ttp));
+                                                                                                        writer.close();
+                                                                                                    } catch (
+                                                                                                            IOException e) {
+                                                                                                        e.printStackTrace();
+                                                                                                    }
+                                                                                                }
 
-//                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
-                                                                                        InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(normalisedOptimalPftWithUberPareto);
-                                                                                        GenerationalDistance gdCalculator = new GenerationalDistance(normalisedOptimalPftWithUberPareto);
-                                                                                        Purity purityCalculator = new Purity(normalisedOptimalPftWithUberPareto);
+                                                                                                OptionalDouble NDaverage = eachRepeatND
+                                                                                                        .stream()
+                                                                                                        .mapToDouble(a -> a)
+                                                                                                        .average();
+                                                                                                var avgPFS = NDaverage.isPresent() ? NDaverage.getAsDouble() : -666.0;
 
-                                                                                        BaseIndividual<Integer, TTP> normalisedHvNadirPoint = new BaseIndividual<>(ttp, new ArrayList<>(), parameters.evaluator);
-                                                                                        normalisedHvNadirPoint.setObjectives(new double[]{1.0, 1.0});
-                                                                                        normalisedHvNadirPoint.setNormalObjectives(new double[]{1.0, 1.0});
-                                                                                        normalisedHvNadirPoint.setHashCode();
-                                                                                        HVMany hvCalculator = new HVMany(normalisedHvNadirPoint);
+                                                                                                double NDstandardDeviation = 0.0;
+                                                                                                for (double num : eachRepeatND) {
+                                                                                                    NDstandardDeviation += Math.pow(num - avgPFS, 2);
+                                                                                                }
+                                                                                                NDstandardDeviation = Math.sqrt(NDstandardDeviation / eachRepeatND.size());
 
-                                                                                        for(int yy = 0; yy < normalisedResults.size(); yy++) {
-                                                                                            var normRes = normalisedResults.get(yy);
-                                                                                            var result = eachRepeatResult.get(yy);
+                                                                                                OptionalDouble average = eachRepeatHV
+                                                                                                        .stream()
+                                                                                                        .mapToDouble(a -> a)
+                                                                                                        .average();
+                                                                                                var avgHV = average.isPresent() ? average.getAsDouble() : -666.0;
 
-                                                                                            var hvValue = hvCalculator.getMeasure(normRes);
-                                                                                            eachRepeatHV.add(hvValue);
-                                                                                            eachRepeatND.add(result.size());
+                                                                                                double standardDeviation = 0.0;
+                                                                                                for (double num : eachRepeatHV) {
+                                                                                                    standardDeviation += Math.pow(num - avgHV, 2);
+                                                                                                }
 
-                                                                                            if (hvValue > bestAPFHV) {
-                                                                                                bestAPFHV = hvValue;
-                                                                                                bestAPF = result;
-                                                                                                bestIterNumber = yy;
-                                                                                            }
+                                                                                                standardDeviation = Math.sqrt(standardDeviation / eachRepeatHV.size());
 
-                                                                                            var igdValue = igdCalculator.getMeasure(normRes);
-                                                                                            eachRepeatIGD.add(igdValue);
+                                                                                                OptionalDouble averageIGD = eachRepeatIGD
+                                                                                                        .stream()
+                                                                                                        .mapToDouble(a -> a)
+                                                                                                        .average();
+                                                                                                var averageIGDVal = averageIGD.isPresent() ? averageIGD.getAsDouble() : -666.0;
+                                                                                                double averageIGDValStdev = 0.0;
+                                                                                                for (double num : eachRepeatIGD) {
+                                                                                                    averageIGDValStdev += Math.pow(num - averageIGDVal, 2);
+                                                                                                }
+                                                                                                averageIGDValStdev = Math.sqrt(averageIGDValStdev / eachRepeatIGD.size());
 
-                                                                                            var gdValue = gdCalculator.getMeasure(normRes);
-                                                                                            eachRepeatGD.add(gdValue);
+                                                                                                OptionalDouble averageGD = eachRepeatGD
+                                                                                                        .stream()
+                                                                                                        .mapToDouble(a -> a)
+                                                                                                        .average();
+                                                                                                var averageGDVal = averageGD.isPresent() ? averageGD.getAsDouble() : -666.0;
+                                                                                                double averageGDStdev = 0.0;
+                                                                                                for (double num : eachRepeatGD) {
+                                                                                                    averageGDStdev += Math.pow(num - averageGDVal, 2);
+                                                                                                }
+                                                                                                averageGDStdev = Math.sqrt(averageGDStdev / eachRepeatGD.size());
 
-                                                                                            var purityValue = purityCalculator.getMeasure(normRes);
-                                                                                            eachRepeatPurity.add(purityValue);
-                                                                                        }
-
-                                                                                        String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
-                                                                                        try {
-                                                                                            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                    + File.separator + instanceNameForFile + "_UBER_PARETO.csv"));
-                                                                                            writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
-                                                                                            writer.close();
-                                                                                        } catch (IOException e) {
-                                                                                            e.printStackTrace();
-                                                                                        }
-
-                                                                                        if(saveResultFiles) {
-                                                                                            try {
-                                                                                                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                        + File.separator + instanceNameForFile + "_apf.csv"));
-                                                                                                writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
-                                                                                                writer.close();
-
-                                                                                                writer = new BufferedWriter(new FileWriter(outputFilename
-                                                                                                        + File.separator + instanceNameForFile + "_genes_UBER_PARETO.csv"));
-                                                                                                writer.write(printGenes(uberPareto, ttp));
-                                                                                                writer.close();
-                                                                                            } catch (IOException e) {
-                                                                                                e.printStackTrace();
-                                                                                            }
-                                                                                        }
-
-                                                                                        OptionalDouble NDaverage = eachRepeatND
-                                                                                                .stream()
-                                                                                                .mapToDouble(a -> a)
-                                                                                                .average();
-                                                                                        var avgPFS = NDaverage.isPresent() ? NDaverage.getAsDouble() : -666.0;
-
-                                                                                        double NDstandardDeviation = 0.0;
-                                                                                        for(double num: eachRepeatND) {
-                                                                                            NDstandardDeviation += Math.pow(num - avgPFS, 2);
-                                                                                        }
-                                                                                        NDstandardDeviation = Math.sqrt(NDstandardDeviation/eachRepeatND.size());
-
-                                                                                        OptionalDouble average = eachRepeatHV
-                                                                                                .stream()
-                                                                                                .mapToDouble(a -> a)
-                                                                                                .average();
-                                                                                        var avgHV = average.isPresent() ? average.getAsDouble() : -666.0;
-
-                                                                                        double standardDeviation = 0.0;
-                                                                                        for(double num: eachRepeatHV) {
-                                                                                            standardDeviation += Math.pow(num - avgHV, 2);
-                                                                                        }
-
-                                                                                        standardDeviation = Math.sqrt(standardDeviation/eachRepeatHV.size());
-
-                                                                                        OptionalDouble averageIGD = eachRepeatIGD
-                                                                                                .stream()
-                                                                                                .mapToDouble(a -> a)
-                                                                                                .average();
-                                                                                        var averageIGDVal = averageIGD.isPresent() ? averageIGD.getAsDouble() : -666.0;
-                                                                                        double averageIGDValStdev = 0.0;
-                                                                                        for(double num: eachRepeatIGD) {
-                                                                                            averageIGDValStdev += Math.pow(num - averageIGDVal, 2);
-                                                                                        }
-                                                                                        averageIGDValStdev = Math.sqrt(averageIGDValStdev/eachRepeatIGD.size());
-
-                                                                                        OptionalDouble averageGD = eachRepeatGD
-                                                                                                .stream()
-                                                                                                .mapToDouble(a -> a)
-                                                                                                .average();
-                                                                                        var averageGDVal = averageGD.isPresent() ? averageGD.getAsDouble() : -666.0;
-                                                                                        double averageGDStdev = 0.0;
-                                                                                        for(double num: eachRepeatGD) {
-                                                                                            averageGDStdev += Math.pow(num - averageGDVal, 2);
-                                                                                        }
-                                                                                        averageGDStdev = Math.sqrt(averageGDStdev/eachRepeatGD.size());
-
-                                                                                        OptionalDouble averagePurity = eachRepeatPurity
-                                                                                                .stream()
-                                                                                                .mapToDouble(a -> a)
-                                                                                                .average();
-                                                                                        var averagePurityVal = averagePurity.isPresent() ? averagePurity.getAsDouble() : -666.0;
-                                                                                        double averagePurityStdev = 0.0;
-                                                                                        for(double num: eachRepeatPurity) {
-                                                                                            averagePurityStdev += Math.pow(num - averagePurityVal, 2);
-                                                                                        }
-                                                                                        averagePurityStdev = Math.sqrt(averagePurityStdev/eachRepeatPurity.size());
+                                                                                                OptionalDouble averagePurity = eachRepeatPurity
+                                                                                                        .stream()
+                                                                                                        .mapToDouble(a -> a)
+                                                                                                        .average();
+                                                                                                var averagePurityVal = averagePurity.isPresent() ? averagePurity.getAsDouble() : -666.0;
+                                                                                                double averagePurityStdev = 0.0;
+                                                                                                for (double num : eachRepeatPurity) {
+                                                                                                    averagePurityStdev += Math.pow(num - averagePurityVal, 2);
+                                                                                                }
+                                                                                                averagePurityStdev = Math.sqrt(averagePurityStdev / eachRepeatPurity.size());
 
 
-                                                                                        String runResult = instanceNameForFile + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
-                                                                                                + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
-                                                                                                + ";" + averageIGDVal + ";" + averageIGDValStdev
-                                                                                                + ";" + purityCalculator.getMeasure(normalisedUberPareto)
-                                                                                                + ";" + mnd + ";" + optimalApfWithUberPareto.size()
-                                                                                                + ";" + igdCalculator.getMeasure(normalisedUberPareto)
-                                                                                                + ";" + gdCalculator.getMeasure(normalisedUberPareto)
+                                                                                                String runResult = instanceNameForFile + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
+                                                                                                        + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
+                                                                                                        + ";" + averageIGDVal + ";" + averageIGDValStdev
+                                                                                                        + ";" + purityCalculator.getMeasure(normalisedUberPareto)
+                                                                                                        + ";" + mnd + ";" + optimalApfWithUberPareto.size()
+                                                                                                        + ";" + igdCalculator.getMeasure(normalisedUberPareto)
+                                                                                                        + ";" + gdCalculator.getMeasure(normalisedUberPareto)
 //                        + ";" + new HVMany(parameters.evaluator.getNadirPoint()).getMeasure(normalisedUberPareto)
-                                                                                                + ";" + hvCalculator.getMeasure(normalisedUberPareto)
-                                                                                                + ";" + normalisedUberPareto.size()
-                                                                                                + ";" + averagePurityVal + ";" + averagePurityStdev
-                                                                                                + ";" + averageGDVal + ";" + averageGDStdev
-                                                                                                + ";" + avgHV + ";" + standardDeviation
-                                                                                                + ";" + avgPFS + ";" + NDstandardDeviation
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossParentDominationProp(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationCounter(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationProp(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationCounter(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationProp(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationCounter(eachRepeatOptimisationResult)
-                                                                                                + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationProp(eachRepeatOptimisationResult)
-                                                                                                + ";" + generationLimit
-                                                                                                + ";" + populationSize + ";" + TSPmutationProbability
-                                                                                                + ";" + KNAPmutationProbability + ";" + parameters.mutationVersion + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
-                                                                                                + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize
-                                                                                                + ";" + populationTurProp + ";" + mutationVersion + ";" + crossoverVersion
-                                                                                                + ";" + indExclusionUsageLimit + ";" + indExclusionGenDuration
-                                                                                                + ";" + turDecayParam + ";" + minTournamentSize + ";" + indPairingMethod;
-                                                                                        System.out.println(runResult);
-                                                                                        try {
-                                                                                            FileWriter fw = new FileWriter(baseDir + summaryOutputFileName, true);
-                                                                                            BufferedWriter bw = new BufferedWriter(fw);
-                                                                                            bw.write(runResult);
-                                                                                            bw.newLine();
-                                                                                            bw.close();
-                                                                                        } catch(IOException e) {
-                                                                                            e.printStackTrace();
-                                                                                        }
+                                                                                                        + ";" + hvCalculator.getMeasure(normalisedUberPareto)
+                                                                                                        + ";" + normalisedUberPareto.size()
+                                                                                                        + ";" + averagePurityVal + ";" + averagePurityStdev
+                                                                                                        + ";" + averageGDVal + ";" + averageGDStdev
+                                                                                                        + ";" + avgHV + ";" + standardDeviation
+                                                                                                        + ";" + avgPFS + ";" + NDstandardDeviation
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossParentDominationCounter(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossParentDominationProp(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationCounter(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAndMutParentDominationProp(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationCounter(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAfterCrossAndMutDominationProp(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationCounter(eachRepeatOptimisationResult)
+                                                                                                        + ";" + OptimisationResult.getAvgAfterCrossAndMutAfterCrossDominationProp(eachRepeatOptimisationResult)
+                                                                                                        + ";" + generationLimit
+                                                                                                        + ";" + populationSize + ";" + TSPmutationProbability
+                                                                                                        + ";" + KNAPmutationProbability + ";" + TSPcrossoverProbability + ";" + KNAPcrossoverProbability
+                                                                                                        + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + edgeClustersDispVal + ";" + tournamentSize
+                                                                                                        + ";" + populationTurProp + ";" + KNAPmutationVersion + ";" + KNAPcrossoverVersion + ";" + TSPmutationVersion
+                                                                                                        + ";" + TSPcrossoverVersion + ";" + indExclusionUsageLimit + ";" + indExclusionGenDuration
+                                                                                                        + ";" + turDecayParam + ";" + minTournamentSize + ";" + indPairingMethod;
+                                                                                                System.out.println(runResult);
+                                                                                                try {
+                                                                                                    FileWriter fw = new FileWriter(baseDir + summaryOutputFileName, true);
+                                                                                                    BufferedWriter bw = new BufferedWriter(fw);
+                                                                                                    bw.write(runResult);
+                                                                                                    bw.newLine();
+                                                                                                    bw.close();
+                                                                                                } catch (
+                                                                                                        IOException e) {
+                                                                                                    e.printStackTrace();
+                                                                                                }
 
-                                                                                        if(saveResultFiles) {
-                                                                                            try {
-                                                                                                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
-                                                                                                        + bestAPFoutputFile + bestIterNumber + ".csv"));
-                                                                                                writer.write(printResultsForComparison(bestAPF, false));
-                                                                                                writer.close();
-                                                                                            } catch (IOException e) {
-                                                                                                e.printStackTrace();
+                                                                                                if (saveResultFiles.getLevel() > 1) {
+                                                                                                    try {
+                                                                                                        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
+                                                                                                                + bestAPFoutputFile + bestIterNumber + ".csv"));
+                                                                                                        writer.write(printResultsForComparison(bestAPF, false));
+                                                                                                        writer.close();
+                                                                                                    } catch (
+                                                                                                            IOException e) {
+                                                                                                        e.printStackTrace();
+                                                                                                    }
+                                                                                                }
                                                                                             }
                                                                                         }
                                                                                     }

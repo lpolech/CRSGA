@@ -12,6 +12,7 @@ import center.method.Centroid;
 import data.*;
 import distance.measures.L2Norm;
 import interfaces.QualityMeasure;
+import util.FILE_OUTPUT_LEVEL;
 
 import java.io.File;
 import java.util.*;
@@ -41,7 +42,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             int indExclusionUsageLimit,
             int indExclusionGenDuration,
             List<BaseIndividual<Integer, PROBLEM>> excludedPopulation,
-            boolean saveResultFiles) {
+            FILE_OUTPUT_LEVEL saveResultFiles) {
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);

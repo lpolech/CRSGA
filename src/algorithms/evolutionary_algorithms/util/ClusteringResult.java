@@ -5,6 +5,7 @@ import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
 import algorithms.problem.TTP;
 import data.ClustersAndTheirStatistics;
+import util.FILE_OUTPUT_LEVEL;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class ClusteringResult {
     private final String clusteringResultFileName;
     private final int maxTravellingTimeClusterId;
     private final int minTravellingTimeClusterId;
-    private final boolean saveResultFiles;
+    private final FILE_OUTPUT_LEVEL saveResultFiles;
     ClustersAndTheirStatistics clustersAndTheirStatistics;
     List<Double> clustersDispersion;
     List<Double> clusterWeights;
@@ -29,7 +30,7 @@ public class ClusteringResult {
                             List<Double> clusterWeights,
                             List<IndividualCluster> clustersWithIndDstToCentre, String clusteringResultFilePath,
                             String clusteringResultFileName, int minTravellingTimeClusterId, int maxTravellingTimeClusterId,
-                            boolean saveResultFiles) {
+                            FILE_OUTPUT_LEVEL saveResultFiles) {
         this.clustersAndTheirStatistics = clustersAndTheirStatistics;
         this.clustersDispersion = clustersDispersion;
         this.clusterWeights = clusterWeights;
@@ -70,7 +71,7 @@ public class ClusteringResult {
     }
 
     public void toFile(){
-        if(saveResultFiles) {
+        if(saveResultFiles.getLevel() > 1) {
             this.clustersAndTheirStatistics.toFile(this.clusteringResultFilePath, this.clusteringResultFileName,
                     this.minTravellingTimeClusterId, this.maxTravellingTimeClusterId, this.clustersDispersion,
                     this.clusterWeights);

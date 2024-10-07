@@ -17,6 +17,7 @@ import algorithms.visualization.EvolutionHistoryElement;
 import algorithms.visualization.KmeansClusterisation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
+import util.FILE_OUTPUT_LEVEL;
 import util.ParameterFunctions;
 
 import java.io.BufferedWriter;
@@ -40,7 +41,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int minTournamentSize;
     private final ParameterFunctions parameterFunction;
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
-    private final boolean saveResultFiles;
+    private final FILE_OUTPUT_LEVEL saveResultFiles;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -82,7 +83,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                HVMany hv,
                List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
                String outputFilename,
-               boolean saveResultFiles,
+               FILE_OUTPUT_LEVEL saveResultFiles,
                int iterationNumber,
                int indExclusionUsageLimit,
                int indExclusionGenDuration,
@@ -131,7 +132,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
         // create empty file
         String hvHistoryFilePath = outputFilename + File.separator + "hv_hisotry" + this.iterationNumber + ".csv";
-        if(saveResultFiles) {
+        if(saveResultFiles.getLevel() > 1) {
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
                 writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
@@ -270,7 +271,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             double archiveHv = this.hvCalculator.getMeasure(archive);
             double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
             double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
-            if(saveResultFiles) {
+            if(saveResultFiles.getLevel() > 1) {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
                     writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
@@ -307,7 +308,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             ++generation;
         }
 
-        if(saveResultFiles) {
+        if(saveResultFiles.getLevel() > 1) {
             EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
         }
         archive = removeDuplicates(archive);
@@ -316,7 +317,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     }
 
     private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
-        if(excludedArchive.size() > 0 && saveResultFiles) {
+        if(excludedArchive.size() > 0 && saveResultFiles.getLevel() > 1) {
             toFileExcludedIndividuals(excludedArchive, gaClusteringResults.getClusteringResultFilePath(), gaClusteringResults.getClusteringResultFileName());
         }
         gaClusteringResults.toFile();

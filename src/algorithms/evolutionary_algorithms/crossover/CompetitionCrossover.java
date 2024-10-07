@@ -28,28 +28,34 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
   public List<List<Integer>> crossover(double TSPcr, double KNAPcr, List<Integer> firstParent,
                                        List<Integer> secondParent,
                                        ParameterSet<Integer, BaseProblemRepresentation> parameters) {
-    List<Integer> firstChild = new ArrayList<>(firstParent);
-    List<Integer> secondChild = new ArrayList<>(secondParent);
 
     CrossoverResult intermediateResult = null;
 
-    if(parameters.crossoverVersion == 1) {
+    if(parameters.TSPcrossoverVersion == 1) {
+      List<Integer> firstChild = new ArrayList<>(firstParent);
+      List<Integer> secondChild = new ArrayList<>(secondParent);
       intermediateResult = indWiseEdgeCrossoverTSP(TSPcr, firstParent, secondParent, parameters, firstChild, secondChild); // BASELINE
-    } else if(parameters.crossoverVersion == 2) {
+    } else if(parameters.TSPcrossoverVersion == 2) {
       intermediateResult = indWiseTwoOrSinglePointPMXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, false); // TWO point as the last param is true
-    } else if(parameters.crossoverVersion == 3) {
+    } else if(parameters.TSPcrossoverVersion == 3) {
       intermediateResult = indWiseTwoOrSinglePointPMXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, true); // SINGLE point as the last param is true
-    } else if(parameters.crossoverVersion == 4) {
+    } else if(parameters.TSPcrossoverVersion == 4) {
       intermediateResult = indWiseOXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, false);
-    } else if(parameters.crossoverVersion == 5) {
+    } else if(parameters.TSPcrossoverVersion == 5) {
       intermediateResult = indWiseOXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, true);
-    } else if(parameters.crossoverVersion == 6) {
+    } else if(parameters.TSPcrossoverVersion == 6) {
       intermediateResult = indWiseCXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint);
     }
 
-    indWiseUniformCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult); // BASELINE
-//    indWiseSinglePointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
-//    indWiseTwoPointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult.firstChild(), intermediateResult.secondChild());
+//    printTSPGeneDifference(firstParent, secondParent, intermediateResult.firstChild(), intermediateResult.secondChild(), parameters.geneSplitPoint);
+
+    if(parameters.KNAPcrossoverVersion == 1) {
+      indWiseUniformCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult); // BASELINE
+    } else if(parameters.KNAPcrossoverVersion == 2) {
+      indWiseSinglePointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult);
+    } else if(parameters.KNAPcrossoverVersion == 3) {
+      indWiseTwoPointCrossoverKNAP(KNAPcr, firstParent, secondParent, parameters, intermediateResult);
+    }
 
     List<List<Integer>> result = new ArrayList<>();
     result.add(intermediateResult.firstChild());
@@ -58,7 +64,25 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     return result;
   }
 
-    private CrossoverResult indWiseCXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint) {
+  private void printTSPGeneDifference(List<Integer> firstParent, List<Integer> secondParent, List<Integer> firstChild, List<Integer> secondChild, int geneSplitPoint) {
+    printOoutCommonTSPGenes(firstParent, firstChild, geneSplitPoint, "firstParent", "firstChild");
+    printOoutCommonTSPGenes(firstParent, secondChild, geneSplitPoint, "firstParent", "secondChild");
+    printOoutCommonTSPGenes(secondParent, firstChild, geneSplitPoint, "secondParent", "firstChild");
+    printOoutCommonTSPGenes(secondParent, secondChild, geneSplitPoint, "secondParent", "secondChild");
+    System.out.println();
+  }
+
+  private static void printOoutCommonTSPGenes(List<Integer> first, List<Integer> second, int geneSplitPoint, String firstGenesName, String secondGenesName) {
+    int commonGenes = 0;
+    for(int i = 0; i < geneSplitPoint; i++) {
+      if(first.get(i) == second.get(i)) {
+        commonGenes++;
+      }
+    }
+    System.out.println(firstGenesName + " X " + secondGenesName + " TSP common genes: " + commonGenes);
+  }
+
+  private CrossoverResult indWiseCXCrossoverTSP(double TSPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters, int geneSplitPoint) {
         if (parameters.random.nextDouble() > TSPcr) {
             return new CrossoverResult(new ArrayList<>(firstParent), new ArrayList<>(secondParent));
         }
