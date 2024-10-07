@@ -34,7 +34,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     if(parameters.TSPcrossoverVersion == 1) {
       List<Integer> firstChild = new ArrayList<>(firstParent);
       List<Integer> secondChild = new ArrayList<>(secondParent);
-      intermediateResult = indWiseEdgeCrossoverTSP(TSPcr, firstParent, secondParent, parameters, firstChild, secondChild); // BASELINE
+      intermediateResult = indWiseEdgeCrossoverTSP(TSPcr, firstParent, secondParent, parameters, firstChild, secondChild);
     } else if(parameters.TSPcrossoverVersion == 2) {
       intermediateResult = indWiseTwoOrSinglePointPMXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, false); // TWO point as the last param is true
     } else if(parameters.TSPcrossoverVersion == 3) {
@@ -44,7 +44,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
     } else if(parameters.TSPcrossoverVersion == 5) {
       intermediateResult = indWiseOXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint, true);
     } else if(parameters.TSPcrossoverVersion == 6) {
-      intermediateResult = indWiseCXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint);
+      intermediateResult = indWiseCXCrossoverTSP(TSPcr, firstParent, secondParent, parameters, parameters.geneSplitPoint); // BASELINE
     }
 
 //    printTSPGeneDifference(firstParent, secondParent, intermediateResult.firstChild(), intermediateResult.secondChild(), parameters.geneSplitPoint);
