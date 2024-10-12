@@ -42,6 +42,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final ParameterFunctions parameterFunction;
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
     private final FILE_OUTPUT_LEVEL saveResultFiles;
+    private final int clusteringRunFrequencyInCost;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -89,7 +90,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                int indExclusionGenDuration,
                double turDecayParam,
                int minTournamentSize,
-               IndividualsPairingMethod indPairingMethod) {
+               IndividualsPairingMethod indPairingMethod,
+               int clusteringRunFrequencyInCost) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -127,6 +129,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             this.parameterFunction = null;
         }
         this.pairingMethod = indPairingMethod;
+        this.clusteringRunFrequencyInCost = clusteringRunFrequencyInCost;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -143,8 +146,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         }
 //        System.out.println("generation; additional population; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure");
         int generation = 1;
-        BaseIndividual<Integer, PROBLEM> best;
-        List<BaseIndividual<Integer, PROBLEM>> newPopulation;
         List<BaseIndividual<Integer, PROBLEM>> archive = new ArrayList<>();
         List<BaseIndividual<Integer, PROBLEM>> excludedArchive = new ArrayList<>();
 
@@ -162,6 +163,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.optimisationResult = new OptimisationResult();
 
         int cost = populationSize;
+        int costSinceLastClustering = 0;
         population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
 
         for (BaseIndividual<Integer, PROBLEM> individual : population) {
@@ -171,11 +173,19 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive.addAll(population);
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
+        population = new ArrayList<>();
 
+        boolean isClusterinRun = true;
         while (cost < generationLimit) {
-            newPopulation = new ArrayList<>();
-            recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
-            gaClusteringResults = kmeansCluster.clustering(clusterWeightMeasure,
+            int archiveChanges = 0;
+            if(costSinceLastClustering >= clusteringRunFrequencyInCost) {
+                archiveChanges = removeDuplicatesAndDominated(population, archive);
+                population = new ArrayList<>();
+                isClusterinRun = true;
+                costSinceLastClustering = 0;
+                recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive); // TODO: archive exclusion should be adjusted since we have dynamic clustering
+            }
+            gaClusteringResults = kmeansCluster.clustering(gaClusteringResults, clusterWeightMeasure,
                     archive,
                     clusterSize,
                     clusterIterLimit,
@@ -185,11 +195,18 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     indExclusionUsageLimit,
                     indExclusionGenDuration,
                     excludedArchive,
-                    saveResultFiles);
+                    saveResultFiles,
+                    population,
+                    isClusterinRun);
+
+            if(isClusterinRun) {
+                isClusterinRun = false;
+            }
+//            archiveChanges = removeDuplicatesAndDominated(population, archive);
 
 //            while (newPopulation.size() < populationSize) {
                 var pairs = clusterDensityBasedSelection.select(gaClusteringResults,
-                        parameters, clusterWeightMeasure, population, parameterFunction, cost, pairingMethod);
+                        parameters, clusterWeightMeasure, parameterFunction, cost, pairingMethod);
 
 //                for(var e: population) {
 //                    EvolutionHistoryElement.addIfNotFull(evolutionHistory,
@@ -198,6 +215,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //                }
 
                 int noOfChildDominatingParents = 0;
+                if(clusteringRunFrequencyInCost > 0) {
+                    Collections.shuffle(pairs);
+                    pairs = pairs.subList(0, Math.min((int)Math.ceil((clusteringRunFrequencyInCost - costSinceLastClustering)/2.0), pairs.size())); // each pair costs 2 cost
+                }
                 for(var mama: pairs) {
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
                     BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
@@ -210,10 +231,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     var secondChildAfterCross = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChildAfterCross.buildSolution(secondChildAfterCross.getGenes(), parameters);
 
-                    children.set(0, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
-                            children.get(0), 0, newPopulation.size(), parameters));
-                    children.set(1, parameters.mutation.mutate(newPopulation, mutationProbability, KNAPmutationProbability,
-                            children.get(1), 0, newPopulation.size(), parameters));
+                    children.set(0, parameters.mutation.mutate(null, mutationProbability, KNAPmutationProbability,
+                            children.get(0), 0, -666, parameters));
+                    children.set(1, parameters.mutation.mutate(null, mutationProbability, KNAPmutationProbability,
+                            children.get(1), 0, -666, parameters));
 
                     var firstChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
                     firstChildAfterCrossAndMut.buildSolution(firstChildAfterCrossAndMut.getGenes(), parameters);
@@ -235,6 +256,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
                     cost = cost + 2;
+                    costSinceLastClustering = costSinceLastClustering + 2;
 
                     if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
                         noOfChildDominatingParents++;
@@ -262,15 +284,16 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             }
 
             writeReportingFiles(excludedArchive, gaClusteringResults);
-            int archiveChanges = removeDuplicatesAndDominated(population, archive);
-            population = new ArrayList<>();
+//            population = new ArrayList<>();
 
 //            var optimalParetoFrontWithArchive = this.getNondominatedFromTwoLists(archive, this.optimalParetoFront);
             List<BaseIndividual<Integer, PROBLEM>> optimalParetoFrontWithArchive = new ArrayList<>(this.optimalParetoFront);
-            removeDuplicatesAndDominated(archive, optimalParetoFrontWithArchive);
-            double archiveHv = this.hvCalculator.getMeasure(archive);
-            double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
-            double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
+            List<BaseIndividual<Integer, PROBLEM>> archCopy = new ArrayList<>(archive);
+            archiveChanges = removeDuplicatesAndDominated(population, archCopy);
+            removeDuplicatesAndDominated(archCopy, optimalParetoFrontWithArchive);
+            double archiveHv = this.hvCalculator.getMeasure(archCopy);
+            double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archCopy);
+            double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archCopy);
             if(saveResultFiles.getLevel() > 1) {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
@@ -308,6 +331,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             ++generation;
         }
 
+        removeDuplicatesAndDominated(population, archive);
         if(saveResultFiles.getLevel() > 1) {
             EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
         }

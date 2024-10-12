@@ -32,8 +32,9 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
     }
 
     public ClusteringResult clustering(
+            ClusteringResult gaClusteringResults,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer,PROBLEM>> population,
+            List<BaseIndividual<Integer,PROBLEM>> archive,
             int clusterSize,
             int clusterIterLimit,
             double edgeClustersWeightMultiplier,
@@ -42,7 +43,10 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             int indExclusionUsageLimit,
             int indExclusionGenDuration,
             List<BaseIndividual<Integer, PROBLEM>> excludedPopulation,
-            FILE_OUTPUT_LEVEL saveResultFiles) {
+            FILE_OUTPUT_LEVEL saveResultFiles,
+            List<BaseIndividual<Integer, PROBLEM>> population,
+            boolean isClusterinRun) {
+
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
         Parameters.setInstanceName(true);
@@ -51,45 +55,47 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         Centroid centreMethod = new Centroid();
         Kmeans.setCenterMethod(centreMethod);
         Cluster.setAlgorithm(new Kmeans());
-        int dataLength = population.size();
+        List<BaseIndividual<Integer, PROBLEM>> dataToConsider = null;
+        if(isClusterinRun) {
+            dataToConsider = archive;
+        } else {
+            dataToConsider = new ArrayList<>(archive);
+            dataToConsider.addAll(population);
+        }
+        int dataLength = dataToConsider.size();
         var populationMapping = new HashMap<String, BaseIndividual<Integer, PROBLEM>>(dataLength);
         DataPoint[] dataToCluster = new DataPoint[dataLength];
-        for(int i = 0; i < population.size(); i++) {
-            var ind = population.get(i);
+        for (int i = 0; i < dataLength; i++) {
+            var ind = dataToConsider.get(i);
             int indUsage = ind.getAdjustedUsageCounter();
-            var individualName = "ParetoFront_" + i;
+            var individualName = ((i < archive.size())? "ParetoFront_": "Population_") + i;
             dataToCluster[i] = new DataPoint(ind.getObjectives(), ind.getObjectives(), individualName, null);
             dataToCluster[i].setGlobalUsageCounter(indUsage);
             populationMapping.put(individualName, ind);
         }
 
-        HashMap<Integer,String> dimensionNumberAndItsName = new HashMap<>();
+        HashMap<Integer, String> dimensionNumberAndItsName = new HashMap<>();
         dimensionNumberAndItsName.put(0, "TravellingTime");
         dimensionNumberAndItsName.put(1, "KnapsackProfit");
-        DataStatistics dataStats = DataReader.calculateDataStatistics(dataToCluster, population.get(0).getObjectives().length, null);
-        Data data = new Data(dataToCluster, dataToCluster.length, population.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
-        Cluster dataCluster = centreMethod.makeCluster(data, measure);
 
-        int dynamicClusterSize = Integer.max(1, (int)(population.size()/(double)clusterSize));
-        ClustersAndTheirStatistics clustering = dataCluster.performSplit(dynamicClusterSize, -1);
-        clustering = updateArchiveAndExcludedIndividualsBasedOnClusters(clustering, populationMapping, indExclusionUsageLimit, indExclusionGenDuration, population, excludedPopulation);
+        ClustersAndTheirStatistics clustering = null;
+        DataStatistics dataStats = null;
+        Data data = null;
+        if(isClusterinRun || gaClusteringResults == null) {
+            dataStats = DataReader.calculateDataStatistics(dataToCluster, archive.get(0).getObjectives().length, null);
+            data = new Data(dataToCluster, dataToCluster.length, archive.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
+            Cluster dataCluster = centreMethod.makeCluster(data, measure);
+            int dynamicClusterSize = Integer.max(1, (int) (archive.size() / (double) clusterSize));
+            clustering = dataCluster.performSplit(dynamicClusterSize, -1);
+            clustering = updateArchiveAndExcludedIndividualsBasedOnClusters(clustering, populationMapping, indExclusionUsageLimit, indExclusionGenDuration, archive, excludedPopulation);
+        } else {
+            dataStats = gaClusteringResults.getDataStats(); // we'll use the initial normalised coordinates, but it should be ok as most of the points should be covered by the pareto front area
+            data = new Data(dataToCluster, dataToCluster.length, dataToConsider.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
+            Cluster dataCluster = centreMethod.makeCluster(data, measure);
+            clustering = dataCluster.assignPointsToClustersAndUpdateCentres(gaClusteringResults.getClustersAndTheirStatistics().getClusters());
+        }
 
         clustering.calculateInternalMeasures(clusterWeightMeasure, parameters);
-
-//        clustering = clustering.addGapClusters(measure, centreMethod);
-
-//        var dispersionMax = -Double.MIN_VALUE;
-//        var dispersionMin = Double.MAX_VALUE;
-//        for(int i = 0; i < clusteringDispersion.length; i++) {
-//            var dispersion = clusteringDispersion[i];
-//            dispersionMax = Double.max(dispersionMax, dispersion);
-//            dispersionMin = Double.min(dispersionMin, dispersion);
-//        }
-//        var dispersionRange = dispersionMax - dispersionMin;
-//        var scaledDispersion = new double[clusteringDispersion.length];
-//        for(int i = 0; i < clusteringDispersion.length; i++) {
-//            scaledDispersion[i] = (clusteringDispersion[i] - dispersionMin)/dispersionRange;
-//        }
 
         int minTravellingTimeClusterNumber = -1;
         double minTravellingTimeVal = Double.MAX_VALUE;
@@ -166,24 +172,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
         return new ClusteringResult(clustering, clustersDispersion, clusterWeights, individualClusters,
                 clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId,
-                saveResultFiles);
-
-//        List<Pair<Double, List<BaseIndividual<Integer, PROBLEM>>>> clustersResult = new ArrayList();
-//        for (int j = 0; i < population.size(); i += clusterSize) {
-//            var maxCrowdingDistance = 0.0;
-//            var subList = new ArrayList<>(population.subList(i, Math.min(i + clusterSize, population.size())));
-//            for (int ii = 0; j < subList.size(); j++) {
-//                var individual = subList.get(j);
-//                var individualDistance = individual.getDistance();
-//                if(individualDistance > maxCrowdingDistance) {
-//                    maxCrowdingDistance = individualDistance;
-//                }
-//            }
-//            clustersResult.add(new Pair<>(maxCrowdingDistance, subList));
-//        }
-//
-//        Collections.sort(clustersResult, Comparator.comparing(p -> -p.getKey()));
-//        return clustersResult;
+                saveResultFiles, dataStats);
     }
 
     private ClustersAndTheirStatistics updateArchiveAndExcludedIndividualsBasedOnClusters(ClustersAndTheirStatistics clustering,

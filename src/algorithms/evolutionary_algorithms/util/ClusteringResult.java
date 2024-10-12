@@ -1,10 +1,7 @@
 package algorithms.evolutionary_algorithms.util;
 
-import algorithms.evolutionary_algorithms.genetic_algorithm.GeneticAlgorithm;
-import algorithms.problem.BaseIndividual;
-import algorithms.problem.BaseProblemRepresentation;
-import algorithms.problem.TTP;
 import data.ClustersAndTheirStatistics;
+import data.DataStatistics;
 import util.FILE_OUTPUT_LEVEL;
 
 import java.util.List;
@@ -15,6 +12,7 @@ public class ClusteringResult {
     private final int maxTravellingTimeClusterId;
     private final int minTravellingTimeClusterId;
     private final FILE_OUTPUT_LEVEL saveResultFiles;
+    private final DataStatistics dataStats;
     ClustersAndTheirStatistics clustersAndTheirStatistics;
     List<Double> clustersDispersion;
     List<Double> clusterWeights;
@@ -30,7 +28,7 @@ public class ClusteringResult {
                             List<Double> clusterWeights,
                             List<IndividualCluster> clustersWithIndDstToCentre, String clusteringResultFilePath,
                             String clusteringResultFileName, int minTravellingTimeClusterId, int maxTravellingTimeClusterId,
-                            FILE_OUTPUT_LEVEL saveResultFiles) {
+                            FILE_OUTPUT_LEVEL saveResultFiles, DataStatistics dataStats) {
         this.clustersAndTheirStatistics = clustersAndTheirStatistics;
         this.clustersDispersion = clustersDispersion;
         this.clusterWeights = clusterWeights;
@@ -40,6 +38,7 @@ public class ClusteringResult {
         this.minTravellingTimeClusterId = minTravellingTimeClusterId;
         this.maxTravellingTimeClusterId = maxTravellingTimeClusterId;
         this.saveResultFiles = saveResultFiles;
+        this.dataStats = dataStats;
     }
 
     public ClustersAndTheirStatistics getClustersAndTheirStatistics() {
@@ -68,6 +67,10 @@ public class ClusteringResult {
 
     public void setClustersWithIndDstToCentre(List<IndividualCluster> clustersWithIndDstToCentre) {
         this.clustersWithIndDstToCentre = clustersWithIndDstToCentre;
+    }
+
+    public DataStatistics getDataStats() {
+        return dataStats;
     }
 
     public void toFile(){

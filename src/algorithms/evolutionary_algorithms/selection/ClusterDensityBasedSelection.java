@@ -96,7 +96,6 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
             int currCost,
             IndividualsPairingMethod pairingMethod) {
@@ -104,16 +103,16 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
 
         switch (pairingMethod) {
             case ALL_POSSIBLE_PAIRS:
-                returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                returnPairs.addAll(addArchiveAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
             case CROSS_CLUSTER_ALL_POSSIBLE_PAIRS:
-                returnPairs.addAll(addArchiveCrossClustersAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                returnPairs.addAll(addArchiveCrossClustersAllPossiblePairs(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
             case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR:
-                returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
             case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED:
-                returnPairs.addAll(addArchiveNeigbouringPairsSimplified(clusteringResult, parameters, clusterWeightMeasure, population, turDecayFunction, currCost));
+                returnPairs.addAll(addArchiveNeigbouringPairsSimplified(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
             default:
                 System.err.println("UNKNOWN POINT PAIRING METHOD! PLEASE CHECK!");
@@ -127,7 +126,6 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
@@ -191,7 +189,6 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
@@ -271,7 +268,6 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
@@ -426,7 +422,6 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population,
             ParameterFunctions turDecayFunction,
             int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
