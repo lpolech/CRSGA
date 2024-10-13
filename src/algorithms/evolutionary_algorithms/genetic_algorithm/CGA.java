@@ -361,13 +361,15 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     }
 
     private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population) {
-        performLocalSearch(currCost, costLimit, archive, population, 1.0, 0.0, this.tspLocalSearchArchiveProp);
-        performLocalSearch(currCost, costLimit, archive, population, 0.0, 1.0, this.knapLocalSearchArchiveProp);
+        // TODO: mozna dodac, ze nie dodajemy osbnikow do populacji a jedynie (ewentualnie) do archiwum
+        currCost = performLocalSearch(currCost, costLimit, archive, population, 1.0, 0.0, this.tspLocalSearchArchiveProp);
+        currCost = performLocalSearch(currCost, costLimit, archive, population, 0.0, 1.0, this.knapLocalSearchArchiveProp);
+        removeDuplicatesAndDominated(population, archive);
 
         return currCost;
     }
 
-    private void performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf, double archiveProp) {
+    private int performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf, double archiveProp) {
         int numberOfIndividuals = Math.max(1, (int) (archiveProp * archive.size()));
         Random rand = new Random();
 
@@ -382,6 +384,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             currCost += 1;
         }
+
+        return currCost;
     }
 
     private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
