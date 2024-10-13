@@ -45,7 +45,9 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             List<BaseIndividual<Integer, PROBLEM>> excludedPopulation,
             FILE_OUTPUT_LEVEL saveResultFiles,
             List<BaseIndividual<Integer, PROBLEM>> population,
-            boolean isClusterinRun) {
+            boolean isClusterinRun,
+            boolean isRecalculateCentres,
+            boolean isPopulationUsed) {
 
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
@@ -92,7 +94,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             dataStats = gaClusteringResults.getDataStats(); // we'll use the initial normalised coordinates, but it should be ok as most of the points should be covered by the pareto front area
             data = new Data(dataToCluster, dataToCluster.length, dataToConsider.get(0).getObjectives().length, dataStats, dimensionNumberAndItsName);
             Cluster dataCluster = centreMethod.makeCluster(data, measure);
-            clustering = dataCluster.assignPointsToClustersAndUpdateCentres(gaClusteringResults.getClustersAndTheirStatistics().getClusters());
+            clustering = dataCluster.assignPointsToClustersAndUpdateCentres(gaClusteringResults.getClustersAndTheirStatistics().getClusters(), isRecalculateCentres);
         }
 
         clustering.calculateInternalMeasures(clusterWeightMeasure, parameters);

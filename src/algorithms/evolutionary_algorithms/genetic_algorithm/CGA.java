@@ -43,6 +43,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront;
     private final FILE_OUTPUT_LEVEL saveResultFiles;
     private final int clusteringRunFrequencyInCost;
+    private final boolean isClusteringEveryXCost;
+    private final boolean isRecalculateCentres;
+    private final boolean isPopulationUsed;
+    private final double tspLocalSearchArchiveProp;
+    private final double knapLocalSearchArchiveProp;
     private double KNAPmutationProbability;
     private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
@@ -91,7 +96,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                double turDecayParam,
                int minTournamentSize,
                IndividualsPairingMethod indPairingMethod,
-               int clusteringRunFrequencyInCost) {
+               int clusteringRunFrequencyInCost,
+               boolean isClusteringEveryXCost,
+               boolean isRecalculateCentres,
+               boolean isPopulationUsed,
+               double tspLocalSearchArchiveProp,
+               double knapLocalSearchArchiveProp) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -130,6 +140,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         }
         this.pairingMethod = indPairingMethod;
         this.clusteringRunFrequencyInCost = clusteringRunFrequencyInCost;
+        this.isClusteringEveryXCost = isClusteringEveryXCost;
+        this.isRecalculateCentres = isRecalculateCentres;
+        this.isPopulationUsed = isPopulationUsed;
+        this.tspLocalSearchArchiveProp = tspLocalSearchArchiveProp;
+        this.knapLocalSearchArchiveProp = knapLocalSearchArchiveProp;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -178,7 +193,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         boolean isClusterinRun = true;
         while (cost < generationLimit) {
             int archiveChanges = 0;
-            if(costSinceLastClustering >= clusteringRunFrequencyInCost) {
+
+            localSearch(cost, generationLimit, archive, population);
+
+            if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost || !isPopulationUsed) {
                 archiveChanges = removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
                 isClusterinRun = true;
@@ -197,7 +215,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     excludedArchive,
                     saveResultFiles,
                     population,
-                    isClusterinRun);
+                    isClusterinRun,
+                    isRecalculateCentres,
+                    isPopulationUsed);
 
             if(isClusterinRun) {
                 isClusterinRun = false;
@@ -338,6 +358,30 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population) {
+        performLocalSearch(currCost, costLimit, archive, population, 1.0, 0.0, this.tspLocalSearchArchiveProp);
+        performLocalSearch(currCost, costLimit, archive, population, 0.0, 1.0, this.knapLocalSearchArchiveProp);
+
+        return currCost;
+    }
+
+    private void performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf, double archiveProp) {
+        int numberOfIndividuals = Math.max(1, (int) (archiveProp * archive.size()));
+        Random rand = new Random();
+
+        for(int i = 0; i < numberOfIndividuals && currCost <= costLimit; i++) {
+            int randomIndex = rand.nextInt(archive.size()); // Generate a random index
+            var chosenInd = archive.get(randomIndex);
+            List<Integer> chosenIndGenes = chosenInd.getGenes();
+            parameters.mutation.mutate(null, TSPf, KNAPf, chosenIndGenes, 0, -666, parameters);
+            var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, parameters.evaluator);
+            mutatedInd.buildSolution(mutatedInd.getGenes(), parameters);
+            population.add(mutatedInd);
+
+            currCost += 1;
+        }
     }
 
     private void writeReportingFiles(List<BaseIndividual<Integer, PROBLEM>> excludedArchive, ClusteringResult gaClusteringResults) {
