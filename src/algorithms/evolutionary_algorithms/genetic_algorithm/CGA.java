@@ -62,6 +62,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private int populationTurProp;
     private int mutationVersion;
     private IndividualsPairingMethod pairingMethod;
+    private double localSearchProp;
 
     public OptimisationResult getOptimisationResult() {
         return optimisationResult;
@@ -101,7 +102,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                boolean isRecalculateCentres,
                boolean isPopulationUsed,
                double tspLocalSearchArchiveProp,
-               double knapLocalSearchArchiveProp) {
+               double knapLocalSearchArchiveProp,
+               double localSearchProp) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -145,6 +147,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.isPopulationUsed = isPopulationUsed;
         this.tspLocalSearchArchiveProp = tspLocalSearchArchiveProp;
         this.knapLocalSearchArchiveProp = knapLocalSearchArchiveProp;
+        this.localSearchProp = localSearchProp;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -194,7 +197,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         while (cost < generationLimit) {
             int archiveChanges = 0;
 
-            localSearch(cost, generationLimit, archive, population);
+            if (parameters.random.nextDouble() < localSearchProp) {
+                localSearch(cost, generationLimit, archive, population);
+            }
 
             if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost || !isPopulationUsed) {
                 archiveChanges = removeDuplicatesAndDominated(population, archive);
