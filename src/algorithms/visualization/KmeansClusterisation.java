@@ -47,7 +47,8 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             List<BaseIndividual<Integer, PROBLEM>> population,
             boolean isClusterinRun,
             boolean isRecalculateCentres,
-            boolean isPopulationUsed) {
+            boolean isPopulationUsed,
+            String clusteringResultFilePath) {
 
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);
         Parameters.setClassAttribute(false);
@@ -170,7 +171,6 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
 //            clusterWeights.set(minTravellingTimeClusterNumber, clusterWeights.get(minTravellingTimeClusterNumber) * weightsMultiplier);
         }
 
-        String clusteringResultFilePath = "." + File.separator + "out" + File.separator + "clustering_res";
         String clusteringResultFileName = "clusteringRes_" + generationNum + ".csv";
         return new ClusteringResult(clustering, clustersDispersion, clusterWeights, individualClusters,
                 clusteringResultFilePath, clusteringResultFileName, minTravellingTimeClusterId, maxTravellingTimeClusterId,

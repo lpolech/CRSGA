@@ -168,7 +168,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         List<BaseIndividual<Integer, PROBLEM>> excludedArchive = new ArrayList<>();
 
         ClusteringResult gaClusteringResults = null;
-
+        String clusteringResultFilePath = "." + File.separator + "out" + File.separator + "clustering_res";
+        EvolutionHistoryElement.setClusteringResultFilePath(clusteringResultFilePath);
         List<EvolutionHistoryElement> evolutionHistory = new ArrayList<>();
 
 //        BaseIndividual<Integer, PROBLEM> firstParent;
@@ -204,12 +205,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost) {
                 isClusterinRun = true;
                 costSinceLastClustering = 0;
-                archiveChanges = removeDuplicatesAndDominated(population, archive);
+                archiveChanges += removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
             }
 
             if(!isPopulationUsed) {
-                archiveChanges = removeDuplicatesAndDominated(population, archive);
+                archiveChanges += removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
             }
 
@@ -228,7 +229,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     population,
                     isClusterinRun,
                     isRecalculateCentres,
-                    isPopulationUsed);
+                    isPopulationUsed,
+                    clusteringResultFilePath);
 
             if(isClusterinRun) {
                 isClusterinRun = false;
@@ -320,7 +322,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //            var optimalParetoFrontWithArchive = this.getNondominatedFromTwoLists(archive, this.optimalParetoFront);
             List<BaseIndividual<Integer, PROBLEM>> optimalParetoFrontWithArchive = new ArrayList<>(this.optimalParetoFront);
             List<BaseIndividual<Integer, PROBLEM>> archCopy = new ArrayList<>(archive);
-            archiveChanges = removeDuplicatesAndDominated(population, archCopy);
+            archiveChanges += removeDuplicatesAndDominated(population, archCopy);
             removeDuplicatesAndDominated(archCopy, optimalParetoFrontWithArchive);
             double archiveHv = this.hvCalculator.getMeasure(archCopy);
             double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archCopy);
@@ -364,7 +366,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         removeDuplicatesAndDominated(population, archive);
         if(saveResultFiles.getLevel() > 1) {
-            EvolutionHistoryElement.toFile(evolutionHistory, gaClusteringResults.getClusteringResultFilePath());
+            EvolutionHistoryElement.toFile(evolutionHistory);
         }
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);

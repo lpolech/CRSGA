@@ -1,6 +1,5 @@
 package algorithms.visualization;
 
-import data.Cluster;
 import utils.Constans;
 
 import java.io.BufferedWriter;
@@ -13,6 +12,8 @@ import java.util.*;
 
 public class EvolutionHistoryElement {
     private static int historySize = 150_000; // needs to be limited due to HEAP SPACE for the output string builder
+    private static String clusteringResultFilePath;
+    private static int fileCounter = 0;
     private int generationNumber;
     private double x;
     private double y;
@@ -23,8 +24,10 @@ public class EvolutionHistoryElement {
     private double p2y;
 
     public static void addIfNotFull(List<EvolutionHistoryElement> history, int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
-        if(history.size() < EvolutionHistoryElement.historySize) {
-            history.add(new EvolutionHistoryElement(generationNumber, x, y, mut, p1x, p1y, p2x, p2y));
+        history.add(new EvolutionHistoryElement(generationNumber, x, y, mut, p1x, p1y, p2x, p2y));
+        if(history.size() >= EvolutionHistoryElement.historySize) {
+            toFile(history);
+            history.clear();
         }
     }
     public EvolutionHistoryElement(int generationNumber, double x, double y, int mut, double p1x, double p1y, double p2x, double p2y) {
@@ -70,10 +73,10 @@ public class EvolutionHistoryElement {
         return optimisedMut;
     }
 
-    public static void toFile(List<EvolutionHistoryElement> evolutionHistory, String folderName) {
+    public static void toFile(List<EvolutionHistoryElement> evolutionHistory) {
         try {
-            String fullPath = folderName + File.separator + "ArchHist.csv";
-            Files.createDirectories(Paths.get(folderName));
+            String fullPath = clusteringResultFilePath + File.separator + "ArchHist" + fileCounter + ".csv";
+            Files.createDirectories(Paths.get(clusteringResultFilePath));
             BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath));
             StringBuilder output = new StringBuilder();
 
@@ -98,9 +101,14 @@ public class EvolutionHistoryElement {
 
             writer.write(output.toString());
             writer.close();
+            fileCounter++;
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setClusteringResultFilePath(String clusteringResultFilePath) {
+        EvolutionHistoryElement.clusteringResultFilePath = clusteringResultFilePath;
     }
 
     public int getGenerationNumber() {
