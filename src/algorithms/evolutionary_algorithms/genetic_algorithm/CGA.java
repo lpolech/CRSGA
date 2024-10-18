@@ -201,13 +201,19 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 localSearch(cost, generationLimit, archive, population);
             }
 
-            if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost || !isPopulationUsed) {
-                archiveChanges = removeDuplicatesAndDominated(population, archive);
-                population = new ArrayList<>();
+            if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost) {
                 isClusterinRun = true;
                 costSinceLastClustering = 0;
-                recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive); // TODO: archive exclusion should be adjusted since we have dynamic clustering
+                archiveChanges = removeDuplicatesAndDominated(population, archive);
+                population = new ArrayList<>();
             }
+
+            if(!isPopulationUsed) {
+                archiveChanges = removeDuplicatesAndDominated(population, archive);
+                population = new ArrayList<>();
+            }
+
+            recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive); // TODO: archive exclusion should be adjusted since we have dynamic clustering
             gaClusteringResults = kmeansCluster.clustering(gaClusteringResults, clusterWeightMeasure,
                     archive,
                     clusterSize,
