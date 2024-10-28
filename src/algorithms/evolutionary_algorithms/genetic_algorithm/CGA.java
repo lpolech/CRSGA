@@ -198,9 +198,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         while (cost < generationLimit) {
             int archiveChanges = 0;
 
-            if (parameters.random.nextDouble() < localSearchProp) {
-                localSearch(cost, generationLimit, archive, population);
-            }
+            cost = localSearch(cost, generationLimit, archive, localSearchProp);
 
             if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost) {
                 isClusterinRun = true;
@@ -373,11 +371,22 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         return pareto;
     }
 
-    private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population) {
-        // TODO: mozna dodac, ze nie dodajemy osbnikow do populacji a jedynie (ewentualnie) do archiwum
-        currCost = performLocalSearch(currCost, costLimit, archive, population, 1.0, 0.0, this.tspLocalSearchArchiveProp);
-        currCost = performLocalSearch(currCost, costLimit, archive, population, 0.0, 1.0, this.knapLocalSearchArchiveProp);
-        removeDuplicatesAndDominated(population, archive);
+    private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, double localSearchProp) {
+        List<BaseIndividual<Integer, PROBLEM>> localSearchPopulation = new LinkedList<>();
+        for(int i = 0; i < archive.size() && currCost <= costLimit; i++) {
+            if(parameters.random.nextDouble() < localSearchProp) {
+                var chosenInd = archive.get(i);
+                List<Integer> chosenIndGenes = chosenInd.getGenes();
+                parameters.mutation.mutate(null, this.tspLocalSearchArchiveProp, this.knapLocalSearchArchiveProp, chosenIndGenes, 0, -666, parameters);
+                var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, parameters.evaluator);
+                mutatedInd.buildSolution(mutatedInd.getGenes(), parameters);
+                localSearchPopulation.add(mutatedInd);
+
+                currCost += 1;
+            }
+        }
+
+        removeDuplicatesAndDominated(localSearchPopulation, archive);
 
         return currCost;
     }

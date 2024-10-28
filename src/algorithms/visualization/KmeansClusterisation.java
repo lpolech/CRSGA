@@ -122,8 +122,14 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         List<IndividualCluster> individualClusters = new ArrayList<>(clustering.getClusters().length);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
-            double travellingTime = cluster.getCenter().getCoordinate(0);
-            double profit = cluster.getCenter().getCoordinate(1);
+            double travellingTime = Arrays.stream(cluster.getPoints())
+                    .mapToDouble(pts -> pts.getCoordinate(0))  // Map each person to their age
+                    .min()                     // Get the minimum value
+                    .orElseThrow(() -> new IllegalArgumentException("Array is empty"));
+            double profit = Arrays.stream(cluster.getPoints())
+                    .mapToDouble(pts -> pts.getCoordinate(1))  // Map each person to their age
+                    .min()                     // Get the minimum value
+                    .orElseThrow(() -> new IllegalArgumentException("Array is empty"));
 
             if(travellingTime < minTravellingTimeVal) {
                 minTravellingTimeVal = travellingTime;
