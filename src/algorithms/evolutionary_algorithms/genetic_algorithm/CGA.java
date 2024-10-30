@@ -1,6 +1,7 @@
 package algorithms.evolutionary_algorithms.genetic_algorithm;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
+import algorithms.evolutionary_algorithms.genetic_algorithm.utils.InitialPopulationWithEvaluation;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.selection.ClusterDensityBasedSelection;
 import algorithms.evolutionary_algorithms.selection.IndividualsPairingMethod;
@@ -181,12 +182,17 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         this.optimisationResult = new OptimisationResult();
 
+
         int cost = populationSize;
         int costSinceLastClustering = 0;
         population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
 
+        List<InitialPopulationWithEvaluation> initialPopulationWithEvaluation = new ArrayList<>();
+
         for (BaseIndividual<Integer, PROBLEM> individual : population) {
             individual.buildSolution(individual.getGenes(), parameters);
+
+//            initialPopulationWithEvaluation.add(new InitialPopulationWithEvaluation(, individual.getObjectives()[0], individual.getObjectives()[1]));
         }
 
         archive.addAll(population);
@@ -278,14 +284,17 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     firstChild.buildSolution(firstChild.getGenes(), parameters);
                     secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChild.buildSolution(secondChild.getGenes(), parameters);
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+
+                    if(saveResultFiles.getLevel() > 2) {
+                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
                                 firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
                                 secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
                                 firstParent.getObjectives()[0], firstParent.getObjectives()[1],
                                 secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                    }
                     cost = cost + 2;
                     costSinceLastClustering = costSinceLastClustering + 2;
 
@@ -305,12 +314,14 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 }
 //            }
 
-            for(IndividualCluster cluster: gaClusteringResults.getClustersWithIndDstToCentre()) { //archive) {
-                int clusterId = cluster.getClusterId();
-                for(var clsInd: cluster.getCluster()) {
-                    var e = ((IndividualWithDstToItsCentre)clsInd).getIndividual();
-                    EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], clusterId,
-                            e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
+            if(saveResultFiles.getLevel() > 2) {
+                for (IndividualCluster cluster : gaClusteringResults.getClustersWithIndDstToCentre()) { //archive) {
+                    int clusterId = cluster.getClusterId();
+                    for (var clsInd : cluster.getCluster()) {
+                        var e = ((IndividualWithDstToItsCentre) clsInd).getIndividual();
+                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation, e.getObjectives()[0], e.getObjectives()[1], clusterId,
+                                e.getObjectives()[0], e.getObjectives()[1], e.getObjectives()[0], e.getObjectives()[1]);
+                    }
                 }
             }
 
@@ -365,10 +376,17 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         removeDuplicatesAndDominated(population, archive);
         if(saveResultFiles.getLevel() > 1) {
             EvolutionHistoryElement.toFile(evolutionHistory);
+            saveInitialPopulationAndItsStats(initialPopulationWithEvaluation, "initialPop" + this.iterationNumber + ".csv", "initialPopSummary.csv");
         }
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    private void saveInitialPopulationAndItsStats(List<InitialPopulationWithEvaluation> initialPopulationWithEvaluation, String populationFileName, String populationSummaryFileName) {
+        String initialPopulationFilePath = outputFilename + File.separator + populationFileName;
+        String populationSummaryFileNamePath = outputFilename + File.separator + populationSummaryFileName;
+
     }
 
     private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, double localSearchProp) {
