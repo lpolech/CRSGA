@@ -374,7 +374,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         }
 
         removeDuplicatesAndDominated(population, archive);
-        if(saveResultFiles.getLevel() > 1) {
+        if(saveResultFiles.getLevel() > 2) {
             EvolutionHistoryElement.toFile(evolutionHistory);
             saveInitialPopulationAndItsStats(initialPopulationWithEvaluation, "initialPop" + this.iterationNumber + ".csv", "initialPopSummary.csv");
         }
