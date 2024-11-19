@@ -37,7 +37,7 @@ public class RandomTTPInitialPopulation<PROBLEM extends BaseProblemRepresentatio
       for (int j = 0; j < splitPoint; ++j) {
         genes.set(j, j);
       }
-      Collections.shuffle(genes.subList(1, splitPoint));
+      Collections.shuffle(genes.subList(1, splitPoint), parameters.random.getRandom());
 
       for (int j = splitPoint; j < numGenes; ++j) {
         genes.set(j, parameters.random.next(parameters.upperBounds[j]));

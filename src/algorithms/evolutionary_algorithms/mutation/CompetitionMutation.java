@@ -218,7 +218,7 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
       int secondGene = Math.max(a, b);
 
       List<Integer> subList = genesToMutate.subList(firstGene, secondGene);
-      Collections.shuffle(subList);
+      Collections.shuffle(subList, parameters.random.getRandom());
     }
   }
 
@@ -235,7 +235,7 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
 
       List<Integer> sublistToBeDisplaced = removeAndReturnSubList(genesToMutate, firstGene, secondGene);
       int displacementLocation = parameters.random.nextInt(splitPoint - sublistToBeDisplaced.size());
-      Collections.shuffle(sublistToBeDisplaced);
+      Collections.shuffle(sublistToBeDisplaced, parameters.random.getRandom());
       genesToMutate.addAll(displacementLocation, sublistToBeDisplaced);
     }
   }
@@ -477,7 +477,7 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
       int secondGene = Math.max(a, b);
 
       List<Integer> subList = genesToMutate.subList(firstGene, secondGene);
-      Collections.shuffle(subList);
+      Collections.shuffle(subList, parameters.random.getRandom());
     }
   }
 
@@ -495,7 +495,7 @@ public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepres
 
       List<Integer> sublistToBeDisplaced = removeAndReturnSubList(genesToMutate, firstGene, secondGene);
       int displacementLocation = parameters.random.nextInt(genesToMutate.size() - splitPoint) + splitPoint;
-      Collections.shuffle(sublistToBeDisplaced);
+      Collections.shuffle(sublistToBeDisplaced, parameters.random.getRandom());
       genesToMutate.addAll(displacementLocation, sublistToBeDisplaced);
     }
   }

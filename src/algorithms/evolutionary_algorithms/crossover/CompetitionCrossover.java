@@ -345,7 +345,7 @@ public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepr
         Set<Integer> neighbourhoodOfX = neighbourhood.get(x);
         int minSize = neighbourhoodOfX.stream().mapToInt(neighbour -> neighbourhood.get(neighbour).size()).min().orElse(0);
         neighbourhoodOfX = neighbourhoodOfX.stream().filter(neighbour -> neighbourhood.get(neighbour).size() == minSize).collect(Collectors.toSet());
-        int random = parameters.random.next(neighbourhoodOfX.size());
+        int random = parameters.random.nextInt(neighbourhoodOfX.size());
         Iterator<Integer> iter = neighbourhoodOfX.iterator();
         for (int j = 0; j < random; j++) {
           iter.next();

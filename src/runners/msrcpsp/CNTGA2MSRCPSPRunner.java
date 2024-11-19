@@ -97,7 +97,7 @@
 //                }
 //            }
 //
-//            Collections.shuffle(cartesianProductOfParams);
+//            Collections.shuffle(cartesianProductOfParams, parameters.random.getRandom());
 //            String header = "dataset;counter;no of repeats;avgHV;stdev;avgND;stdev;uber pareto size;final uber pareto HV;avg uber pareto hv;stdev;"
 //                    + "generationLimit;populationSize;mutationProbability;crossoverProbability;numberOfClusters" +
 //                    ";clusterIterLimit;edgeClustersProb;tournamentSize";

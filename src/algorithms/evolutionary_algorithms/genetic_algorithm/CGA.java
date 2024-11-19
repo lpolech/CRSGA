@@ -182,13 +182,15 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         this.optimisationResult = new OptimisationResult();
 
-
         int cost = populationSize;
         int costSinceLastClustering = 0;
         population = parameters.initialPopulation.generate(problem, populationSize, parameters.evaluator, parameters);
 
         List<InitialPopulationWithEvaluation> initialPopulationWithEvaluation = new ArrayList<>();
 
+        if(saveResultFiles.getLevel() > 2) {
+            savePopulationToFile(population, outputFilename + File.separator + "initial_popul.csv");
+        }
         for (BaseIndividual<Integer, PROBLEM> individual : population) {
             individual.buildSolution(individual.getGenes(), parameters);
 
@@ -196,6 +198,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         }
 
         archive.addAll(population);
+
+
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
         population = new ArrayList<>();
@@ -253,7 +257,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
                 int noOfChildDominatingParents = 0;
                 if(clusteringRunFrequencyInCost > 0) {
-                    Collections.shuffle(pairs);
+                    Collections.shuffle(pairs, parameters.random.getRandom());
                     pairs = pairs.subList(0, Math.min((int)Math.ceil((clusteringRunFrequencyInCost - costSinceLastClustering)/2.0), pairs.size())); // each pair costs 2 cost
                 }
                 for(var mama: pairs) {
@@ -383,6 +387,59 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         return pareto;
     }
 
+    private void savePopulationToFile(List<BaseIndividual<Integer,PROBLEM>> population, String outputFilePath) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath));
+            StringBuilder header = new StringBuilder();
+
+            for(int i = 0; i < population.size(); i++) {
+                boolean headerIsEmpty = header.isEmpty();
+                StringBuilder objectives = new StringBuilder();
+                StringBuilder normObjectives = new StringBuilder();
+                BaseIndividual<Integer,PROBLEM> ind = population.get(i);
+//                for(int j = 0; j < ind.getObjectives().length; j++) {
+//                    objectives.append(ind.getObjectives()[j] + ";");
+//                    if(headerIsEmpty) {
+//                        header.append("obj" + j + ";");
+//                    }
+//                }
+//
+//                for(int j = 0; j < ind.getNormalObjectives().length; j++) {
+//                    normObjectives.append(ind.getNormalObjectives()[j] + ";");
+//                    if(headerIsEmpty) {
+//                        header.append("normObj" + j + ";");
+//                    }
+//                }
+
+                StringBuilder genes = new StringBuilder();
+                for(int j = 0; j < ind.getGenes().size(); j++) {
+                    genes.append(ind.getGenes().get(j) + ";");
+                    if(headerIsEmpty) {
+                        header.append("gene" + j + ";");
+                    }
+                }
+
+                int hashCode = ind.getHashCode();
+
+                if(headerIsEmpty) {
+                    header.append("hashCode;");
+                }
+
+                if(i == 0) {
+                    writer.write(header.toString() + "\n");
+                }
+//                writer.write(objectives.toString());
+//                writer.write(normObjectives.toString());
+                writer.write(genes.toString());
+                writer.write(String.valueOf(hashCode));
+                writer.write("\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void saveInitialPopulationAndItsStats(List<InitialPopulationWithEvaluation> initialPopulationWithEvaluation, String populationFileName, String populationSummaryFileName) {
         String initialPopulationFilePath = outputFilename + File.separator + populationFileName;
         String populationSummaryFileNamePath = outputFilename + File.separator + populationSummaryFileName;
@@ -409,12 +466,12 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         return currCost;
     }
 
-    private int performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive, List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf, double archiveProp) {
+    private int performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive,
+                                   List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf,
+                                   double archiveProp) {
         int numberOfIndividuals = Math.max(1, (int) (archiveProp * archive.size()));
-        Random rand = new Random();
-
         for(int i = 0; i < numberOfIndividuals && currCost <= costLimit; i++) {
-            int randomIndex = rand.nextInt(archive.size()); // Generate a random index
+            int randomIndex = parameters.random.nextInt(archive.size()); // Generate a random index
             var chosenInd = archive.get(randomIndex);
             List<Integer> chosenIndGenes = chosenInd.getGenes();
             parameters.mutation.mutate(null, TSPf, KNAPf, chosenIndGenes, 0, -666, parameters);
