@@ -47,7 +47,6 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             List<BaseIndividual<Integer, PROBLEM>> population,
             boolean isClusterinRun,
             boolean isRecalculateCentres,
-            boolean isPopulationUsed,
             String clusteringResultFilePath) {
 
         Parameters.setNumberOfClusterisationAlgIterations(clusterIterLimit);

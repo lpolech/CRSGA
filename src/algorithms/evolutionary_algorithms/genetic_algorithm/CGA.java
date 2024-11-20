@@ -46,7 +46,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int clusteringRunFrequencyInCost;
     private final boolean isClusteringEveryXCost;
     private final boolean isRecalculateCentres;
-    private final boolean isPopulationUsed;
+    private boolean isPopulationUsed;
     private final double tspLocalSearchArchiveProp;
     private final double knapLocalSearchArchiveProp;
     private double KNAPmutationProbability;
@@ -157,7 +157,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         if(saveResultFiles.getLevel() > 1) {
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath));
-                writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt\n");
+                writer.write("gen;cost;hv;igd;gd;child dominance cnt;archive changes cnt;arch hist ma;use popul\n");
                 writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -199,16 +199,46 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
         archive.addAll(population);
 
-
         archive = removeDuplicates(archive);
         archive = getNondominated(archive);
         population = new ArrayList<>();
 
         boolean isClusterinRun = true;
+
+        boolean maArchHistIsPopulationUsed = false;
+        double minMaArchChangesThreshold = 50;
+        double maxMaArchChangesThreshold = 150.0;
+        int maArchChangesSize = 10;
+        LinkedList<Integer> maArchChangesHist = new LinkedList<>();
+        maArchChangesHist.addAll(Collections.nCopies(maArchChangesSize, Integer.MAX_VALUE));
+        int costSinceLastMaRecord = 0;
+        int maArchiveChanges = 0;
+        double archHistMa = Double.MAX_VALUE;
+
         while (cost < generationLimit) {
             int archiveChanges = 0;
 
             cost = localSearch(cost, generationLimit, archive, localSearchProp);
+
+            if(costSinceLastMaRecord >= clusteringRunFrequencyInCost) {
+                costSinceLastMaRecord = 0;
+                maArchChangesHist.addFirst(maArchiveChanges);
+                maArchChangesHist.removeLast();
+                OptionalDouble archHistMAOptional = maArchChangesHist
+                        .stream()
+                        .mapToDouble(a -> a)
+                        .average();
+                archHistMa = archHistMAOptional.isPresent() ? archHistMAOptional.getAsDouble() : Double.MAX_VALUE;
+
+                if(archHistMa <= minMaArchChangesThreshold) {
+                    maArchHistIsPopulationUsed = true;
+                }
+
+                if(archHistMa > maxMaArchChangesThreshold) {
+                    maArchHistIsPopulationUsed = false;
+                }
+                maArchiveChanges = 0;
+            }
 
             if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost) {
                 isClusterinRun = true;
@@ -217,7 +247,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 population = new ArrayList<>();
             }
 
-            if(!isPopulationUsed) {
+            if(!isPopulationUsed && !maArchHistIsPopulationUsed) {
                 archiveChanges += removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
             }
@@ -237,7 +267,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     population,
                     isClusterinRun,
                     isRecalculateCentres,
-                    isPopulationUsed,
                     clusteringResultFilePath);
 
             if(isClusterinRun) {
@@ -301,6 +330,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                     }
                     cost = cost + 2;
                     costSinceLastClustering = costSinceLastClustering + 2;
+                    costSinceLastMaRecord = costSinceLastMaRecord + 2;
 
                     if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
                         noOfChildDominatingParents++;
@@ -344,7 +374,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));
                     writer.write(generation + ";" + cost + ";" + archiveHv + ";" + archiveIgd + ";" + archiveGd
-                            + ";" + noOfChildDominatingParents + ";" + archiveChanges + "\n");
+                            + ";" + noOfChildDominatingParents + ";" + archiveChanges + ";" + archHistMa
+                            + ";" + maArchHistIsPopulationUsed + "\n");
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -374,6 +405,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //
 //            population = newPopulation.subList(0, populationSize);
 
+            maArchiveChanges += archiveChanges;
             ++generation;
         }
 
