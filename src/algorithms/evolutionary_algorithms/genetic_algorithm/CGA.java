@@ -46,6 +46,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private final int clusteringRunFrequencyInCost;
     private final boolean isClusteringEveryXCost;
     private final boolean isRecalculateCentres;
+    private final double minMaArchChangesThreshold;
+    private final double maxMaArchChangesThreshold;
+    private final int maArchChangesSize;
     private boolean isPopulationUsed;
     private final double tspLocalSearchArchiveProp;
     private final double knapLocalSearchArchiveProp;
@@ -104,7 +107,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                boolean isPopulationUsed,
                double tspLocalSearchArchiveProp,
                double knapLocalSearchArchiveProp,
-               double localSearchProp) {
+               double localSearchProp,
+               double minMaArchChangesThreshold,
+               double maxMaArchChangesThreshold,
+               int maArchChangesSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;
@@ -149,6 +155,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         this.tspLocalSearchArchiveProp = tspLocalSearchArchiveProp;
         this.knapLocalSearchArchiveProp = knapLocalSearchArchiveProp;
         this.localSearchProp = localSearchProp;
+        
+        this.minMaArchChangesThreshold = minMaArchChangesThreshold;
+        this.maxMaArchChangesThreshold = maxMaArchChangesThreshold;
+        this.maArchChangesSize = maArchChangesSize;
     }
 
     public List<BaseIndividual<Integer, PROBLEM>> optimize() {
@@ -206,9 +216,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         boolean isClusterinRun = true;
 
         boolean maArchHistIsPopulationUsed = false;
-        double minMaArchChangesThreshold = 50;
-        double maxMaArchChangesThreshold = 150.0;
-        int maArchChangesSize = 10;
         LinkedList<Integer> maArchChangesHist = new LinkedList<>();
         maArchChangesHist.addAll(Collections.nCopies(maArchChangesSize, Integer.MAX_VALUE));
         int costSinceLastMaRecord = 0;
@@ -404,6 +411,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 //            }
 //
 //            population = newPopulation.subList(0, populationSize);
+            randomlyRemoveFromPopulation();
 
             maArchiveChanges += archiveChanges;
             ++generation;
@@ -417,6 +425,13 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    private void randomlyRemoveFromPopulation() {
+        int toRemove = population.size() - populationSize;
+        for (int i = 0; i < toRemove; i++) {
+            population.remove(parameters.random.nextInt(population.size()));
+        }
     }
 
     private void savePopulationToFile(List<BaseIndividual<Integer,PROBLEM>> population, String outputFilePath) {
