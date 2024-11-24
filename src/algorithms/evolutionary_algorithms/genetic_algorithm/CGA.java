@@ -67,6 +67,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private int mutationVersion;
     private IndividualsPairingMethod pairingMethod;
     private double localSearchProp;
+    private int numberOfExtraPopulationTriggered;
 
     public OptimisationResult getOptimisationResult() {
         return optimisationResult;
@@ -221,6 +222,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         int costSinceLastMaRecord = 0;
         int maArchiveChanges = 0;
         double archHistMa = Double.MAX_VALUE;
+        this.numberOfExtraPopulationTriggered = 0;
 
         while (cost < generationLimit) {
             int archiveChanges = 0;
@@ -238,6 +240,9 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 archHistMa = archHistMAOptional.isPresent() ? archHistMAOptional.getAsDouble() : Double.MAX_VALUE;
 
                 if(archHistMa <= minMaArchChangesThreshold) {
+                    if(!maArchHistIsPopulationUsed) {
+                        this.numberOfExtraPopulationTriggered++;
+                    }
                     maArchHistIsPopulationUsed = true;
                 }
 
@@ -425,6 +430,10 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
+    }
+
+    public int getNumberOfExtraPopulationTriggered() {
+        return numberOfExtraPopulationTriggered;
     }
 
     private void randomlyRemoveFromPopulation() {

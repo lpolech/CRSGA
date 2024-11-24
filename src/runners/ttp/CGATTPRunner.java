@@ -106,9 +106,9 @@ public class CGATTPRunner {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
-            int[] populationSizeList = new int[] {10, 50, 100, 150, 500}; //{10};//{5000, 6000, 7000}; //{10};//{10, 50, 100, 150, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
+            int NUMBER_OF_REPEATS = 1;
+            int[] generationLimitList = new int[] {5_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int[] populationSizeList = new int[] {700};//{225, 300, 400, 550, 650, 750, 850}; //{10};//{5000, 6000, 7000}; //{10};//{10, 50, 100, 150, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.05, 0.07, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.3};//{0.6};//{1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
             double[] TSPcrossoverProbabilityList = new double[] {0.3};//{0.3};//{0.75};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.75};//{0.3, 0.35};//{0.35, 0.4};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.4};//{0.0, 0.1, 0.3, 0.5, 0.7, 0.9};//{0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//}{0.0, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};//{0.45};{0.8};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.8};//{0.2};//{0.2};//{0.0, 0.05, 0.1, 0.15, 0.2}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
@@ -134,13 +134,13 @@ public class CGATTPRunner {
             double[] tspLocalSearchArchivePropList = {0.0};//{1.0, 0.0};//{0.0, 0.1, 0.3, 0.6, 1.0};//
             /*if negative, no decay will be applied!*/ int[] minTournamentSizeList = new int[] {-666};//{-666};//{15};//{30, 40, 50, 60, 70};
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED};//, IndividualsPairingMethod.ALL_POSSIBLE_PAIRS, IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR, IndividualsPairingMethod.CROSS_CLUSTER_ALL_POSSIBLE_PAIRS};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
-            double[] minMaArchChangesThresholdList = {50};//{-666.0};//{290};
-            double[] maxMaArchChangesThresholdList = {100};//{Double.MAX_VALUE};//{320};
+            double[] minMaArchChangesThresholdList = {0};//, 10, 20, 50, 100, 150, 200, 250};//{-666.0};//{290};
+            double[] maxMaArchChangesThresholdList = {/*0, 5, 10, 15, 20, 25, 50, 75, 100, 125,*/ 150, 175, 200, 225, 250, 275, 300, 325, 350, 500};//{Double.MAX_VALUE};//{320};
             int[] maArchChangesSizeList = {10};//{3, 5, 10, 20};
 
-            boolean shuffleParams = true;
-            FILE_OUTPUT_LEVEL saveResultFiles = FILE_OUTPUT_LEVEL.ALL;//FILE_OUTPUT_LEVEL.NONE FILE_OUTPUT_LEVEL.ALL FILE_OUTPUT_LEVEL.MINIMAL FILE_OUTPUT_LEVEL.REASONABLE;
-            String summaryOutputFileName = "24-11-21_popul_diversity.csv";
+            boolean shuffleParams = false;
+            FILE_OUTPUT_LEVEL saveResultFiles = FILE_OUTPUT_LEVEL.REASONABLE;//FILE_OUTPUT_LEVEL.NONE FILE_OUTPUT_LEVEL.ALL FILE_OUTPUT_LEVEL.MINIMAL FILE_OUTPUT_LEVEL.REASONABLE;
+            String summaryOutputFileName = "24-11-22_popul_diversity_ma_params2.csv";
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList, parameters.random);
@@ -196,7 +196,8 @@ public class CGATTPRunner {
                     ";tspLocalSearchArchiveProp;knapLocalSearchArchiveProp;localSearchProp;numberOfClusters" +
                     ";clusterIterLimit;isClusteringEveryXCostEnabled;isCentresRecalculated;clusteringRunFrequencyInCost" +
                     ";isPopulationUsed;edgeClustersProb;tournamentSize;populationTurProp;KNAPmutationVersion;KNAPcrossoverVersion" +
-                    ";TSPmutationVersion;TSPcrossoverVersion;minMaArchChangesThreshold;maxMaArchChangesThreshold;maArchChangesSize" +
+                    ";TSPmutationVersion;TSPcrossoverVersion" +
+                    ";minMaArchChangesThreshold;maxMaArchChangesThreshold;maArchChangesSize;avgExtraPopulationTriggered;avgExtraPopulationTriggeredStdev" +
                     ";indExclusionUsageLimit;indExclusionGenDuration" +
                     ";turDecayParam;minTournamentSize;IndPairing";
 
@@ -288,6 +289,7 @@ public class CGATTPRunner {
                                                                                                                                         var eachRepeatIGD = new ArrayList<Double>();
                                                                                                                                         var eachRepeatGD = new ArrayList<Double>();
                                                                                                                                         var eachRepeatPurity = new ArrayList<Double>();
+                                                                                                                                        List<Integer> eachRepeatNumberOfExtraPopulationTriggered = new ArrayList<>();
                                                                                                                                         paramCounter += 1;
 
                                                                                                                                         int maxAdditionalPopulationSize = populationSize / 2;
@@ -373,6 +375,7 @@ public class CGATTPRunner {
                                                                                                                                             );
 
                                                                                                                                             var result = geneticAlgorithm.optimize();
+                                                                                                                                            eachRepeatNumberOfExtraPopulationTriggered.add(geneticAlgorithm.getNumberOfExtraPopulationTriggered());
                                                                                                                                             geneticAlgorithm.removeDuplicatesAndDominated(result, uberPareto);
 //                    uberPareto = geneticAlgorithm.getNondominatedFromTwoLists(result, uberPareto);
                                                                                                                                             //            printResults(result);
@@ -534,6 +537,18 @@ public class CGATTPRunner {
                                                                                                                                         averagePurityStdev = Math.sqrt(averagePurityStdev / eachRepeatPurity.size());
                                                                                                                                         long runsWithPurity = eachRepeatPurity.stream().filter(value -> value > 0).count();
 
+                                                                                                                                        OptionalDouble avgEachRepeatNumberOfExtraPopulationTriggered = eachRepeatNumberOfExtraPopulationTriggered
+                                                                                                                                                .stream()
+                                                                                                                                                .mapToDouble(a -> a)
+                                                                                                                                                .average();
+                                                                                                                                        double avgEachRepeatNumberOfExtraPopulationTriggeredVal = avgEachRepeatNumberOfExtraPopulationTriggered.isPresent()?
+                                                                                                                                                avgEachRepeatNumberOfExtraPopulationTriggered.getAsDouble() : -666.0;
+                                                                                                                                        double avgEachRepeatNumberOfExtraPopulationTriggeredStdev = 0.0;
+                                                                                                                                        for(int num: eachRepeatNumberOfExtraPopulationTriggered) {
+                                                                                                                                            avgEachRepeatNumberOfExtraPopulationTriggeredStdev += Math.pow(num - avgEachRepeatNumberOfExtraPopulationTriggeredVal, 2);
+                                                                                                                                        }
+                                                                                                                                        avgEachRepeatNumberOfExtraPopulationTriggeredStdev = Math.sqrt(avgEachRepeatNumberOfExtraPopulationTriggeredStdev /
+                                                                                                                                                eachRepeatNumberOfExtraPopulationTriggered.size());
 
                                                                                                                                         String runResult = instanceNameForFile + ";" + paramCounter + "/" + numberOfParamConfigs + ";"
                                                                                                                                                 + clusterWeightMeasure.getClass().getName() + ";" + NUMBER_OF_REPEATS
@@ -566,6 +581,8 @@ public class CGATTPRunner {
                                                                                                                                                 + ";" + clusteringRunFrequencyInCost + ";" + isPopulationUsed + ";" + edgeClustersDispVal + ";" + tournamentSize
                                                                                                                                                 + ";" + populationTurProp + ";" + KNAPmutationVersion + ";" + KNAPcrossoverVersion + ";" + TSPmutationVersion
                                                                                                                                                 + ";" + TSPcrossoverVersion + ";" + minMaArchChangesThreshold + ";" + maxMaArchChangesThreshold + ";" + maArchChangesSize
+                                                                                                                                                + ";" + avgEachRepeatNumberOfExtraPopulationTriggeredVal
+                                                                                                                                                + ";" + avgEachRepeatNumberOfExtraPopulationTriggeredStdev
                                                                                                                                                 + ";" + indExclusionUsageLimit + ";" + indExclusionGenDuration
                                                                                                                                                 + ";" + turDecayParam + ";" + minTournamentSize + ";" + indPairingMethod;
                                                                                                                                         System.out.println(runResult);
