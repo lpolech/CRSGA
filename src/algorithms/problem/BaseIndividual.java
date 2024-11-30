@@ -71,6 +71,10 @@ public class BaseIndividual<GENE extends Number, PROBLEM extends BaseProblemRepr
         this.exclusionGenerationCounter = Math.max(exclusionGenerationCounter - 1, 0);
     }
 
+    public void reduceExclusionGenerationCounter(int counterReduction) {
+        this.exclusionGenerationCounter = Math.max(exclusionGenerationCounter - counterReduction, 0);
+    }
+
     public int getAdjustedUsageCounter() {
         return adjustedUsageCounter;
     }

@@ -257,6 +257,8 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 costSinceLastClustering = 0;
                 archiveChanges += removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
+                recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration,
+                        archive, excludedArchive, costSinceLastClustering); // TODO: archive exclusion should be adjusted since we have dynamic clustering
             }
 
             if(!isPopulationUsed && !maArchHistIsPopulationUsed) {
@@ -264,7 +266,6 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                 population = new ArrayList<>();
             }
 
-            recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive); // TODO: archive exclusion should be adjusted since we have dynamic clustering
             gaClusteringResults = kmeansCluster.clustering(gaClusteringResults, clusterWeightMeasure,
                     archive,
                     clusterSize,
@@ -581,20 +582,22 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
     private void recordGenerationAndUpdateArchiveAndExcludedIndividuals(int indExclusionUsageLimit,
                                                                         int indExclusionGenDuration,
                                                                         List<BaseIndividual<Integer, PROBLEM>> archive,
-                                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
-        recordGenerationForExcludedIndividuals(archive, excludedArchive);
-//        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
+                                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive,
+                                                                        int costSinceLastRun) {
+        recordGenerationForExcludedIndividuals(archive, excludedArchive, costSinceLastRun);
+        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
     }
 
     private void recordGenerationForExcludedIndividuals(List<BaseIndividual<Integer, PROBLEM>> archive,
-                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive) {
+                                                        List<BaseIndividual<Integer, PROBLEM>> excludedArchive,
+                                                        int exclusionCounterReduction) {
         // Use an iterator to safely remove elements from excludedArchive while iterating
         Iterator<BaseIndividual<Integer, PROBLEM>> iterator = excludedArchive.iterator();
 
         while (iterator.hasNext()) {
             BaseIndividual<Integer, PROBLEM> individual = iterator.next();
             // Decrement the exclusion generation counter
-            individual.reduceExclusionGenerationCounter();
+            individual.reduceExclusionGenerationCounter(exclusionCounterReduction);
 
             // If the counter reaches zero, move the individual back to the main archive
             if (individual.getExclusionGenerationCounter() == 0) {
