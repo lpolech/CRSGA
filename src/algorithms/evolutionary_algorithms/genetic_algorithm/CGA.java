@@ -585,7 +585,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
                                                                         List<BaseIndividual<Integer, PROBLEM>> excludedArchive,
                                                                         int costSinceLastRun) {
         recordGenerationForExcludedIndividuals(archive, excludedArchive, costSinceLastRun);
-        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
+//        updateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration, archive, excludedArchive);
     }
 
     private void recordGenerationForExcludedIndividuals(List<BaseIndividual<Integer, PROBLEM>> archive,
