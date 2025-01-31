@@ -254,11 +254,11 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
 
             if(costSinceLastClustering >= clusteringRunFrequencyInCost || !isClusteringEveryXCost) {
                 isClusterinRun = true;
-                costSinceLastClustering = 0;
                 archiveChanges += removeDuplicatesAndDominated(population, archive);
                 population = new ArrayList<>();
                 recordGenerationAndUpdateArchiveAndExcludedIndividuals(indExclusionUsageLimit, indExclusionGenDuration,
                         archive, excludedArchive, costSinceLastClustering); // TODO: archive exclusion should be adjusted since we have dynamic clustering
+                costSinceLastClustering = 0;
             }
 
             if(!isPopulationUsed && !maArchHistIsPopulationUsed) {
@@ -428,6 +428,7 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
             EvolutionHistoryElement.toFile(evolutionHistory);
             saveInitialPopulationAndItsStats(initialPopulationWithEvaluation, "initialPop" + this.iterationNumber + ".csv", "initialPopSummary.csv");
         }
+        removeDuplicatesAndDominated(excludedArchive, archive);
         archive = removeDuplicates(archive);
         List<BaseIndividual<Integer, PROBLEM>> pareto = getNondominated(archive);
         return pareto;
