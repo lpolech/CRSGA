@@ -1,3 +1,7 @@
+# Ignore all .csv files in the main directory (but not in subdirectories) - results of the aglorithm
+/*.csv
+/*.xlsx
+
 # Compiled class file
 *.class
 
