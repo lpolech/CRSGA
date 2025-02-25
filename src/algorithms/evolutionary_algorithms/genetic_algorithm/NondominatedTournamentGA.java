@@ -33,11 +33,12 @@ public class NondominatedTournamentGA<PROBLEM extends BaseProblemRepresentation>
         this.enhanceDiversity = enhanceDiversity;
     }
 
-    public List<BaseIndividual<Integer, PROBLEM>> optimize() {
-        int generation = 1;
-        BaseIndividual<Integer, PROBLEM> best;
-        List<BaseIndividual<Integer, PROBLEM>> newPopulation;
-        List<BaseIndividual<Integer, PROBLEM>> combinedPopulations = new ArrayList<>();
+	public List<BaseIndividual<Integer, PROBLEM>> optimize() {
+		int generation = 1;
+    int generationDiversityThreshold = (int)(this.populationSize * diversityThreshold);
+		BaseIndividual<Integer, PROBLEM> best;
+		List<BaseIndividual<Integer, PROBLEM>> newPopulation;
+		List<BaseIndividual<Integer, PROBLEM>> combinedPopulations = new ArrayList<>();
 
         BaseIndividual<Integer, PROBLEM> firstParent;
         BaseIndividual<Integer, PROBLEM> secondParent;
@@ -61,10 +62,21 @@ public class NondominatedTournamentGA<PROBLEM extends BaseProblemRepresentation>
         combinedPopulations = removeDuplicates(combinedPopulations);
         combinedPopulations = getNondominated(combinedPopulations);
 
+//    ConvergenceMeasure ed = new ConvergenceMeasure(
+//        parameters.evaluator.getPerfectPoint());
+//    HyperVolume hv = new HyperVolume(parameters.evaluator.getNadirPoint());
+//    ONVG pfs = new ONVG();
+//
+//    System.out.println(ed.getMeasure(combinedPopulations) + ";" + hv.getMeasure(combinedPopulations) + ";" + pfs.getMeasure(combinedPopulations));
+//    for (BaseIndividual i : combinedPopulations) {
+//      System.out.println(i.getObjectives()[0] + ";" + i.getObjectives()[1]);
+//    }
+//    System.out.println();
 
-        while (generation < generationLimit) {
-            newPopulation = new ArrayList<>();
-            sorter.nondominatedSorting(population);
+		while (generation < generationLimit) {
+			newPopulation = new ArrayList<>();
+      sorter.nondominatedSorting(population);
+//      crowdingDistance(population);
 
             while (newPopulation.size() < populationSize) {
 
