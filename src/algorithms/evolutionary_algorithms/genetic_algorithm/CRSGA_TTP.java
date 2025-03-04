@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
+public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgorithm<PROBLEM> {
     private final double edgeClustersDispersionVal;
     private final QualityMeasure clusterWeightMeasure;
     private final HVMany hvCalculator;
@@ -73,45 +73,45 @@ public class CGA<PROBLEM extends BaseProblemRepresentation> extends GeneticAlgor
         return optimisationResult;
     }
 
-    public CGA(PROBLEM problem,
-               QualityMeasure clusterWeightMeasure,
-               int populationSize,
-               int generationLimit,
-               ParameterSet<Integer, PROBLEM> parameters,
-               double TSPmutationProbability,
-               double KNAPmutationProbability,
-               double TSPcrossoverProbability,
-               double KNAPcrossoverProbability,
-               String directory,
-               int clusterSize,
-               int clusterIterLimit,
-               double edgeClustersDispersionVal,
-               int tournamentSize,
-               int maxAdditionalPopulationSize,
-               int minAdditionalPopulationSize,
-               int populationTurProp,
-               double diversityThreshold,
-               boolean enhanceDiversity,
-               HVMany hv,
-               List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
-               String outputFilename,
-               FILE_OUTPUT_LEVEL saveResultFiles,
-               int iterationNumber,
-               int indExclusionUsageLimit,
-               int indExclusionGenDuration,
-               double turDecayParam,
-               int minTournamentSize,
-               IndividualsPairingMethod indPairingMethod,
-               int clusteringRunFrequencyInCost,
-               boolean isClusteringEveryXCost,
-               boolean isRecalculateCentres,
-               boolean isPopulationUsed,
-               double tspLocalSearchArchiveProp,
-               double knapLocalSearchArchiveProp,
-               double localSearchProp,
-               double minMaArchChangesThreshold,
-               double maxMaArchChangesThreshold,
-               int maArchChangesSize) {
+    public CRSGA_TTP(PROBLEM problem,
+                     QualityMeasure clusterWeightMeasure,
+                     int populationSize,
+                     int generationLimit,
+                     ParameterSet<Integer, PROBLEM> parameters,
+                     double TSPmutationProbability,
+                     double KNAPmutationProbability,
+                     double TSPcrossoverProbability,
+                     double KNAPcrossoverProbability,
+                     String directory,
+                     int clusterSize,
+                     int clusterIterLimit,
+                     double edgeClustersDispersionVal,
+                     int tournamentSize,
+                     int maxAdditionalPopulationSize,
+                     int minAdditionalPopulationSize,
+                     int populationTurProp,
+                     double diversityThreshold,
+                     boolean enhanceDiversity,
+                     HVMany hv,
+                     List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
+                     String outputFilename,
+                     FILE_OUTPUT_LEVEL saveResultFiles,
+                     int iterationNumber,
+                     int indExclusionUsageLimit,
+                     int indExclusionGenDuration,
+                     double turDecayParam,
+                     int minTournamentSize,
+                     IndividualsPairingMethod indPairingMethod,
+                     int clusteringRunFrequencyInCost,
+                     boolean isClusteringEveryXCost,
+                     boolean isRecalculateCentres,
+                     boolean isPopulationUsed,
+                     double tspLocalSearchArchiveProp,
+                     double knapLocalSearchArchiveProp,
+                     double localSearchProp,
+                     double minMaArchChangesThreshold,
+                     double maxMaArchChangesThreshold,
+                     int maArchChangesSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
         this.KNAPmutationProbability = KNAPmutationProbability;

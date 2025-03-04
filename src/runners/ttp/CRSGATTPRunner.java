@@ -4,7 +4,7 @@ import algorithms.evaluation.BaseEvaluator;
 import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.CGA;
+import algorithms.evolutionary_algorithms.genetic_algorithm.CRSGA;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
@@ -19,6 +19,7 @@ import distance_measures.Euclidean;
 import interfaces.QualityMeasure;
 import internal_measures.FlatWithinPlusBetweenIndex;
 import javafx.util.Pair;
+import runners.CRSGARunnerHelper;
 import util.FILE_OUTPUT_LEVEL;
 import util.random.RandomBase;
 import util.random.RandomInt;
@@ -28,8 +29,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CGATTPRunner {
-    private static final Logger LOGGER = Logger.getLogger( CGATTPRunner.class.getName() );
+public class CRSGATTPRunner extends CRSGARunnerHelper {
+    private static final Logger LOGGER = Logger.getLogger( CRSGATTPRunner.class.getName() );
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final String problemPath = "." + File.separator + "problems" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator;
@@ -62,7 +63,7 @@ public class CGATTPRunner {
     );
 
     public static void main(String[] args) {
-        run(args);
+        new CRSGATTPRunner().run(args);
 //        ParameterFunctions pf1 = new ParameterFunctions(250, ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL, 40, 100, 0.00001);
 //        ParameterFunctions pf2 = new ParameterFunctions(250, ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL, 40, 100, 0.5);
 //        ParameterFunctions pf3 = new ParameterFunctions(250, ParameterFunctions.FUNCTION_TYPE.EXPONENTIAL, 40, 100, 1);
@@ -85,7 +86,7 @@ public class CGATTPRunner {
 //        }
     }
 
-    private static List<BaseIndividual<Integer, TTP>> run(String[] args) {
+    private List<BaseIndividual<Integer, TTP>> run(String[] args) {
         for (int k = 0; k < instanceWithOPF.size(); k++) {
             String instanceName = instanceWithOPF.get(k).getKey();
             System.out.println("File " + (k+1) + "/" + instanceWithOPF.size());
@@ -325,14 +326,14 @@ public class CGATTPRunner {
 
                                                                                                                                         List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
                                                                                                                                         List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
-                                                                                                                                        CGA<TTP> geneticAlgorithm = null;
+                                                                                                                                        CRSGA<TTP> geneticAlgorithm = null;
                                                                                                                                         for (int xxx = 0; xxx < NUMBER_OF_REPEATS; xxx++) {
                                                                                                                                             parameters.KNAPmutationVersion = KNAPmutationVersion;
                                                                                                                                             parameters.KNAPcrossoverVersion = KNAPcrossoverVersion;
                                                                                                                                             parameters.TSPmutationVersion = TSPmutationVersion;
                                                                                                                                             parameters.TSPcrossoverVersion = TSPcrossoverVersion;
                                                                                                                                             HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
-                                                                                                                                            geneticAlgorithm = new CGA<>(
+                                                                                                                                            geneticAlgorithm = new CRSGA<>(
                                                                                                                                                     ttp,
                                                                                                                                                     clusterWeightMeasure,
                                                                                                                                                     populationSize,
@@ -683,118 +684,6 @@ public class CGATTPRunner {
         }
 
         return booleanArray;
-    }
-
-    private static Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>, ArrayList<List<BaseIndividual<Integer, TTP>>>>
-    normaliseParetoFrontsByMinMax(List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto,
-                                  List<BaseIndividual<Integer, TTP>> uberPareto,
-                                  ArrayList<List<BaseIndividual<Integer, TTP>>> eachRepeatResult,
-                                  TTP ttp,
-                                  BaseEvaluator<Integer, TTP> evaluator) {
-        List<BaseIndividual<Integer, TTP>> normalisedOptimalApfWithUberPareto = new ArrayList<>();
-        List<BaseIndividual<Integer, TTP>> normalisedUberPareto = new ArrayList<>();
-        ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedEachRepeatResult = new ArrayList<>();
-
-        int noOfDims = optimalApfWithUberPareto.get(0).getObjectives().length;
-
-        // Initialize Min and Max values
-        List<Double> minValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
-        List<Double> maxValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
-        List<Double> minNormValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
-        List<Double> maxNormValues = new ArrayList<>(Collections.nCopies(noOfDims, 0.0));
-        for (int v = 0; v < noOfDims; ++v) {
-            maxValues.set(v, (-1)*Double.MAX_VALUE);
-            minValues.set(v, Double.MAX_VALUE);
-            maxNormValues.set(v, (-1)*Double.MAX_VALUE);
-            minNormValues.set(v, Double.MAX_VALUE);
-        }
-
-        getMinMax(optimalApfWithUberPareto, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
-        getMinMax(uberPareto, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
-
-        for(var res: eachRepeatResult) {
-            getMinMax(res, noOfDims, minValues, maxValues, minNormValues, maxNormValues);
-        }
-
-        normalisedOptimalApfWithUberPareto = normaliseByMinMax(optimalApfWithUberPareto,
-                minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator);
-        normalisedUberPareto = normaliseByMinMax(uberPareto,
-                minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator);
-
-        for(var res: eachRepeatResult) {
-            normalisedEachRepeatResult.add(normaliseByMinMax(res,
-                    minValues, maxValues, minNormValues, maxNormValues, ttp, evaluator));
-        }
-
-        return new Pair<>(new Pair<>(normalisedOptimalApfWithUberPareto, normalisedUberPareto), normalisedEachRepeatResult);
-    }
-
-    private static void getMinMax(List<BaseIndividual<Integer, TTP>> front, int noOfDims, List<Double> minValues, List<Double> maxValues, List<Double> minNormValues, List<Double> maxNormValues) {
-        for (int i = 0; i < front.size(); ++i) {
-            BaseIndividual<Integer, TTP> sol = front.get(i);
-            for (int v = 0; v < noOfDims; ++v) {
-                double evalValue = sol.getObjectives()[v];
-                minValues.set(v, Math.min(minValues.get(v), evalValue));
-                maxValues.set(v, Math.max(maxValues.get(v), evalValue));
-
-                double evalNormValue = sol.getNormalObjectives()[v];
-                minNormValues.set(v, Math.min(minNormValues.get(v), evalNormValue));
-                maxNormValues.set(v, Math.max(maxNormValues.get(v), evalNormValue));
-            }
-        }
-    }
-
-    public static double roundNumberToTwoDecimalPlaces(double number) {
-        return Math.round(number * 100.0) / 100.0;
-    }
-
-    public static List<BaseIndividual<Integer, TTP>> normaliseByMinMax(List<BaseIndividual<Integer, TTP>> front,
-                                                                       List<Double> minValues,
-                                                                       List<Double> maxValues,
-                                                                       List<Double> minNormValues,
-                                                                       List<Double> maxNormValues,
-                                                                       TTP ttp,
-                                                                       BaseEvaluator<Integer, TTP> evaluator) {
-        if (front.size() <= 0) {
-            System.err.println("Front is empty!");
-        }
-
-        int minValSize = minValues.size();
-        int maxValSize = maxValues.size();
-        int objDims = front.get(0).getObjectives().length;
-        int normObjDims = front.get(0).getNormalObjectives().length;
-
-        if (minValSize != maxValSize || minValSize != objDims || minValSize != normObjDims) {
-            System.err.println("Objective dimensions do not stack up!");
-        }
-
-        List<BaseIndividual<Integer, TTP>> normalisedFront = new ArrayList<>(front.size());
-        List<Double> diffVec = new ArrayList<>(Collections.nCopies(objDims, 0.0));
-        List<Double> diffNormVec = new ArrayList<>(Collections.nCopies(objDims, 0.0));
-        for (int v = 0; v < objDims; ++v) {
-            diffVec.set(v, maxValues.get(v) - minValues.get(v));
-            diffNormVec.set(v, maxNormValues.get(v) - minNormValues.get(v));
-        }
-
-        for(int i = 0; i < front.size(); ++i) {
-            BaseIndividual<Integer, TTP> sol = front.get(i);
-            List<Double> normObj = new ArrayList<>(Collections.nCopies(objDims, 0.0));
-            List<Double> normNormObj = new ArrayList<>(Collections.nCopies(objDims, 0.0));
-
-            for (int v = 0; v < objDims; ++v) {
-                normObj.set(v, (sol.getObjectives()[v] - minValues.get(v)) / diffVec.get(v));
-                normNormObj.set(v, (sol.getNormalObjectives()[v] - minNormValues.get(v)) / diffNormVec.get(v));
-            }
-
-            BaseIndividual<Integer, TTP> normIndividual = new BaseIndividual<>(ttp, new ArrayList<>(), evaluator);
-            normIndividual.setObjectives(normObj.stream().mapToDouble(d -> d).toArray());
-            normIndividual.setNormalObjectives(normNormObj.stream().mapToDouble(d -> d).toArray());
-            normIndividual.setHashCode();
-
-            normalisedFront.add(normIndividual);
-        }
-
-        return normalisedFront;
     }
 
     private static List<BaseIndividual<Integer, TTP>> readAPF(String apfPath, TTP ttp, BaseEvaluator<Integer, TTP> evaluator) {
