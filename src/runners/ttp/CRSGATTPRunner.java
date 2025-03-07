@@ -36,31 +36,31 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator;
     private static final String[] objectiveNames = new String[] {"Travelling time", "-1*Profit"};
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-//            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_kroA100_n99_bounded-strongly-corr_01true_pareto_front_approximation.csv")//,
-//            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "pr76_n75_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_pr76_n75_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "pr76_n75_uncorr_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "pr76_n75_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_pr76_n75_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "rd100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_rd100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "rd100_n99_uncorr_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "rd100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_rd100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "berlin52_n51_bounded-strongly-corr_01.ttp", apfsPath + "24-07-01_berlin52_n51_bounded-strongly-corr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "berlin52_n51_uncorr_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "berlin52_n51_uncorr-similar-weights_01.ttp", apfsPath + "24-07-01_berlin52_n51_uncorr-similar-weights_01_merged_SingleFlip.csv"),
-//            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n250_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n250_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n500_bounded-strongly-corr_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr-similar-weights_01_merged.csv"),
-//            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n500_uncorr_01_merged.csv")
+            new Pair<>(problemPath + "berlin26_n25_bounded-strongly-corr_01.ttp", apfsPath + "24-08-15_berlin26_n25_bounded-strongly-corr_01_merged.csv"),
+            new Pair<>(problemPath + "berlin52_n51_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_berlin52_n51_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "berlin52_n51_uncorr_01.ttp", apfsPath + "25-01-26_berlin52_n51_uncorr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "berlin52_n51_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_berlin52_n51_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_eil51_n50_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_eil51_n50_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "eil51_n50_uncorr_01.ttp", apfsPath + "25-01-26_eil51_n50_uncorr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_eil51_n150_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "25-01-26_eil51_n150_uncorr_01true_pareto_front_approximation.csv"),
+            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_eil51_n150_uncorr-similar-weights_01true_pareto_front_approximation.csv")//,
+//            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_kroA100_n99_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "25-01-26_kroA100_n99_uncorr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_kroA100_n99_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "pr76_n75_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_pr76_n75_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "pr76_n75_uncorr_01.ttp", apfsPath + "25-01-26_pr76_n75_uncorr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "pr76_n75_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_pr76_n75_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "rd100_n99_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_rd100_n99_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "rd100_n99_uncorr_01.ttp", apfsPath + "25-01-26_rd100_n99_uncorr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "rd100_n99_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_rd100_n99_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n250_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_eil51_n250_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr_01.ttp", apfsPath + "25-01-26_eil51_n250_uncorr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n250_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_eil51_n250_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n500_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_eil51_n500_bounded-strongly-corr_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n500_uncorr-similar-weights_01.ttp", apfsPath + "25-01-26_eil51_n500_uncorr-similar-weights_01true_pareto_front_approximation.csv"),
+//            new Pair<>(problemPath + "eil51_n500_uncorr_01.ttp", apfsPath + "25-01-26_eil51_n500_uncorr_01true_pareto_front_approximation.csv")
     );
 
     public static void main(String[] args) {
@@ -108,8 +108,8 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 3;
-            int[] generationLimitList = new int[] {1_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 30;
+            int[] generationLimitList = new int[] {250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {700};//{50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000};//{450, 550, 650, 750, 850, 1000};//{700};//{225, 300, 400, 550, 650, 750, 850}; //{10};//{5000, 6000, 7000}; //{10};//{10, 50, 100, 150, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.0, 0.2, 0.4, 0.6, 0.8, 1.0};//{0.6};//{0.0, 0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.05, 0.07, 0.1};//\0.5};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.3};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.0, 0.2, 0.4, 0.6, 0.8, 1.0};//{0.3};//{0.6};//{1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -117,9 +117,9 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
             double[] KNAPcrossoverProbabilityList = new double[] {1.0};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{1.0};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{1.0};//{1.0, 0.8, 0.6, 0.4, 0.2};//{0.8};//{0.6, 0.7, 0.8, 0.9, 1.0};//}{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.95};//{0.95};//{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.95};//{0.95};//{0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.5};//{0.7};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.05, 0.1, 0.2, 0.3, 0.4, 0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             int[] numberOfClusterList = new int[] {2};//{3}; //{11, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{5};//{2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 17, 20, 22, 25, 30};//{2};//{2, 3, 4, 5, 10, 20};//{3};
             int[] clusterisationAlgorithmIterList = new int[]{50};//100};
-            /*if negative, it will disable that function */ int[] clusteringRunFrequencyInCostList = {250};//{5, 10, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000, 1025, 1050, 1075, 1100, 1125, 1150, 1175, 1200, 1225, 1250, 1275, 1300, 1325, 1350, 1375, 1400, 1425, 1450, 1475, 1500, 1525, 1550, 1575, 1600, 1625, 1650, 1675, 1700, 1725, 1750, 1775, 1800, 1825, 1850, 1875, 1900, 1925, 1950, 1975, 2000};//{10, 75, 150, 200, 250, 300, 350, 450, 550, 650, 750, 850, 950};//{250};//{5, 20, 60, 100};//{10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200};//, 250, 500, 750, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 30000, 50000};
-            boolean[] isRecalculateCentresList = {false};
             boolean[] isClusteringEveryXCostList = {true};
+            boolean[] isRecalculateCentresList = {false};
+            /*if negative, it will disable that function */ int[] clusteringRunFrequencyInCostList = {250};//{5, 10, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000, 1025, 1050, 1075, 1100, 1125, 1150, 1175, 1200, 1225, 1250, 1275, 1300, 1325, 1350, 1375, 1400, 1425, 1450, 1475, 1500, 1525, 1550, 1575, 1600, 1625, 1650, 1675, 1700, 1725, 1750, 1775, 1800, 1825, 1850, 1875, 1900, 1925, 1950, 1975, 2000};//{10, 75, 150, 200, 250, 300, 350, 450, 550, 650, 750, 850, 950};//{250};//{5, 20, 60, 100};//{10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200};//, 250, 500, 750, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 30000, 50000};
             boolean[] isPopulationUsedList = {false};
             double[] edgeClustersDispersion = new double[] {3};//{3, 3.5};//{3.0, 2.5, 3.5};//{/*0.5, 1.0, */2.0/*, 3.0, 5.0, 10.0*/};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[] {10};//{2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100}; //{10, 30, 50, 70/*, 90, 100*/}; //{500};//{70}; // {50};//{10, 20, 30, 40, 50}; //{15};//{10, 5, 15}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
@@ -128,8 +128,8 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
             int[] KNAPcrossoverVersionList = new int[] {1};//{1, 2, 3}; // {1}; // {1, 2, 3};
             int[] TSPmutationVersionList = new int[] {1};// {3 9 10};//{1, 2, 4, 5, 6, 7, 8, 11};//{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}; // // {1};
             int[] TSPcrossoverVersionList = new int[] {6};//{1, 2, 3, 4, 5, 6}; //{6};
-            int[] indExclusionUsageLimitList = new int[] {750};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
-            int[] indExclusionGenDurationList = new int[] {750};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
+            int[] indExclusionUsageLimitList = new int[] {100};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
+            int[] indExclusionGenDurationList = new int[] {850};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13  .5, -14.5, -15.5};//{-6, -8, -15, -100};
             double[] localSearchPropList = {0.00};//{0.02, 0.03, 0.04, 0.05};//{0.001};//{0.001, 0.005, 0.01, 0.03, 0.06, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//
             double[] knapLocalSearchArchivePropList = {0.0};//{1.0, 0.0};//{0.001};//{0.0, 0.1, 0.3, 0.6, 1.0};//
@@ -142,7 +142,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 
             boolean shuffleParams = false;
             FILE_OUTPUT_LEVEL saveResultFiles = FILE_OUTPUT_LEVEL.MINIMAL;//FILE_OUTPUT_LEVEL.NONE FILE_OUTPUT_LEVEL.ALL FILE_OUTPUT_LEVEL.MINIMAL FILE_OUTPUT_LEVEL.REASONABLE;
-            String summaryOutputFileName = "24-11-29_popul_diversity_exclusion.csv";
+            String summaryOutputFileName = "25-03-07_check_enable_msrcpsp_ttp_check.csv";
 
             if(shuffleParams) {
                 generationLimitList = shuffleIntArray(generationLimitList, parameters.random);
@@ -726,6 +726,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 
     private static ParameterSet<Integer, TTP> setParameters(TTP ttp) {
         ParameterSet<Integer, TTP> parameters = new ParameterSet<>();
+        parameters.objectiveNames = new String[] {"Profit", "Travelling Time"};
         parameters.upperBounds = ttp.getUpperBounds();
         parameters.populationMultiplicationFactor = 1;
         parameters.evalRate = 1.0;

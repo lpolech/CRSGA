@@ -20,12 +20,12 @@ public class CrossoverFactory {
         return new ExponentialCrossover();
       case SINGLE_POINT:
         return new SinglePointCrossover();
-      case ORDERED:
-        return new OrderedCrossover();
+      case TTP_ORDERED:
+        return new TTPOrderedCrossover();
       case UNIFORM:
         return new UniformCrossover();
-      case COMPETITION:
-        return new CompetitionCrossover();
+      case TTP_COMPETITION:
+        return new TTP_CompetitionCrossover();
       case TTP:
         return new TTPCrossover();
       default:

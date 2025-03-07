@@ -67,5 +67,5 @@ public class ParameterSet<GENE extends Number, PROBLEM extends BaseProblemRepres
   public BaseSelection<GENE, PROBLEM> selection;
   public BaseMigration<GENE, PROBLEM> migration;
   public ScheduleBuilder scheduleBuilder;
-
+  public String[] objectiveNames;
 }

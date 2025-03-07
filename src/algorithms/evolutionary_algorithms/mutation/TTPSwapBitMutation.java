@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Swaps two random genes.
  */
-public class SwapBitMutation extends BaseMutation<Number, BaseProblemRepresentation> {
+public class TTPSwapBitMutation extends BaseMutation<Number, BaseProblemRepresentation> {
 
   /**
    * Swaps two genes

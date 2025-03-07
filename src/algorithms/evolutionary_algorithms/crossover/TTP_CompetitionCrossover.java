@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepresentation> {
+public class TTP_CompetitionCrossover extends BaseCrossover<Integer, BaseProblemRepresentation> {
 
     /**
      * Crossover specialized for TTP.

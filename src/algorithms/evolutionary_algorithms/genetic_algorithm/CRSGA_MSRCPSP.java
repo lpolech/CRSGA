@@ -164,12 +164,6 @@ public class CRSGA_MSRCPSP<PROBLEM extends BaseProblemRepresentation> extends Ge
         String clusteringResultFilePath = "." + File.separator + "out" + File.separator + "clustering_res";
         EvolutionHistoryElement.setClusteringResultFilePath(clusteringResultFilePath);
         List<EvolutionHistoryElement> evolutionHistory = new ArrayList<>();
-
-//        BaseIndividual<Integer, PROBLEM> firstParent;
-//        BaseIndividual<Integer, PROBLEM> secondParent;
-
-        BaseIndividual<Integer, PROBLEM> firstChild;
-        BaseIndividual<Integer, PROBLEM> secondChild;
         List<List<Integer>> children;
 
         this.optimisationResult = new OptimisationResult();
@@ -289,59 +283,95 @@ public class CRSGA_MSRCPSP<PROBLEM extends BaseProblemRepresentation> extends Ge
                     BaseIndividual<Integer, PROBLEM> secondParent = firstAndSecondParent.getValue();
                     children = parameters.crossover.crossover(crossoverProbability, firstParent.getGenes(), secondParent.getGenes(), parameters);
 
-                    var firstChildAfterCross = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
-                    firstChildAfterCross.buildSolution(firstChildAfterCross.getGenes(), parameters);
-                    var secondChildAfterCross = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
-                    secondChildAfterCross.buildSolution(secondChildAfterCross.getGenes(), parameters);
+                    for(int i = 0; i < children.size(); i++) {
+                        var childAfterCross = new BaseIndividual<>(problem, children.get(i), parameters.evaluator);
+                        childAfterCross.buildSolution(childAfterCross.getGenes(), parameters);
 
-                    children.set(0, parameters.mutation.mutate(null, mutationProbability,
-                            children.get(0), 0, -666, parameters));
-                    children.set(1, parameters.mutation.mutate(null, mutationProbability,
-                            children.get(1), 0, -666, parameters));
+                        children.set(i, parameters.mutation.mutate(null, mutationProbability,
+                                children.get(i), -666, -666, parameters));
 
-                    var firstChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
-                    firstChildAfterCrossAndMut.buildSolution(firstChildAfterCrossAndMut.getGenes(), parameters);
-                    var secondChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
-                    secondChildAfterCrossAndMut.buildSolution(secondChildAfterCrossAndMut.getGenes(), parameters);
-                    this.optimisationResult.addDominanceStats(firstParent, secondParent, firstChildAfterCross,
-                            secondChildAfterCross, firstChildAfterCrossAndMut, secondChildAfterCrossAndMut);
+                        var childAfterCrossAndMut = new BaseIndividual<>(problem, children.get(i), parameters.evaluator);
+                        childAfterCrossAndMut.buildSolution(childAfterCrossAndMut.getGenes(), parameters);
 
-                    firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
-                    firstChild.buildSolution(firstChild.getGenes(), parameters);
-                    secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
-                    secondChild.buildSolution(secondChild.getGenes(), parameters);
+                        this.optimisationResult.addDominanceStats(firstParent, secondParent, childAfterCross,
+                                childAfterCrossAndMut);
 
-                    if(saveResultFiles.getLevel() > 2) {
-                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
-                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
-                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
-                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
-                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
-                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                        var child = new BaseIndividual<>(problem, children.get(i), parameters.evaluator);
+                        child.buildSolution(child.getGenes(), parameters);
+
+                        // FIXME: adjust for more objectives or leave it the way it is as the visualisation is 2d anyways
+                        if(saveResultFiles.getLevel() > 2) {
+                            EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+                                    child.getObjectives()[0], child.getObjectives()[1], -2,
+                                    firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+                                    secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+                        }
+
+                        cost = cost + 1;
+                        costSinceLastClustering = costSinceLastClustering + 1;
+                        costSinceLastMaRecord = costSinceLastMaRecord + 1;
+
+                        if(child.dominates(firstParent) || child.dominates(secondParent)) {
+                            noOfChildDominatingParents++;
+                        }
+
+                        population.add(child);
                     }
-                    cost = cost + 2;
-                    costSinceLastClustering = costSinceLastClustering + 2;
-                    costSinceLastMaRecord = costSinceLastMaRecord + 2;
 
-                    if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
-                        noOfChildDominatingParents++;
-                    }
-                    if(secondChild.dominates(firstParent) || secondChild.dominates(secondParent)) {
-                        noOfChildDominatingParents++;
-                    }
+//                    var firstChildAfterCross = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+//                    firstChildAfterCross.buildSolution(firstChildAfterCross.getGenes(), parameters);
+//                    var secondChildAfterCross = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+//                    secondChildAfterCross.buildSolution(secondChildAfterCross.getGenes(), parameters);
+
+//                    children.set(0, parameters.mutation.mutate(null, mutationProbability,
+//                            children.get(0), 0, -666, parameters));
+//                    children.set(1, parameters.mutation.mutate(null, mutationProbability,
+//                            children.get(1), 0, -666, parameters));
+
+//                    var firstChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+//                    firstChildAfterCrossAndMut.buildSolution(firstChildAfterCrossAndMut.getGenes(), parameters);
+//                    var secondChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+//                    secondChildAfterCrossAndMut.buildSolution(secondChildAfterCrossAndMut.getGenes(), parameters);
+//                    this.optimisationResult.addDominanceStats(firstParent, secondParent, firstChildAfterCross,
+//                            secondChildAfterCross, firstChildAfterCrossAndMut, secondChildAfterCrossAndMut);
+//
+//                    firstChild = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
+//                    firstChild.buildSolution(firstChild.getGenes(), parameters);
+//                    secondChild = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
+//                    secondChild.buildSolution(secondChild.getGenes(), parameters);
+
+//                    if(saveResultFiles.getLevel() > 2) {
+//                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+//                                firstChild.getObjectives()[0], firstChild.getObjectives()[1], -2,
+//                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+//                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+//                        EvolutionHistoryElement.addIfNotFull(evolutionHistory, generation,
+//                                secondChild.getObjectives()[0], secondChild.getObjectives()[1], -2,
+//                                firstParent.getObjectives()[0], firstParent.getObjectives()[1],
+//                                secondParent.getObjectives()[0], secondParent.getObjectives()[1]);
+//                    }
+//                    cost = cost + 2;
+//                    costSinceLastClustering = costSinceLastClustering + 2;
+//                    costSinceLastMaRecord = costSinceLastMaRecord + 2;
+
+//                    if(firstChild.dominates(firstParent) || firstChild.dominates(secondParent)) {
+//                        noOfChildDominatingParents++;
+//                    }
+//                    if(secondChild.dominates(firstParent) || secondChild.dominates(secondParent)) {
+//                        noOfChildDominatingParents++;
+//                    }
 
 //                    population.remove(firstParent);
 //                    population.remove(secondParent);
-                    population.add(firstChild);
-                    population.add(secondChild);
+//                    population.add(firstChild);
+//                    population.add(secondChild);
 //                    population = population.subList(Math.max(0, population.size() - populationSize), population.size());
 //                    System.out.println(population.size());
                 }
 //            }
 
             if(saveResultFiles.getLevel() > 2) {
+                // FIXME: adjust for more than 1 objective or maybe leave it the way it is as the image is 2D anyways
                 for (IndividualCluster cluster : gaClusteringResults.getClustersWithIndDstToCentre()) { //archive) {
                     int clusterId = cluster.getClusterId();
                     for (var clsInd : cluster.getCluster()) {
@@ -357,12 +387,12 @@ public class CRSGA_MSRCPSP<PROBLEM extends BaseProblemRepresentation> extends Ge
 
 //            var optimalParetoFrontWithArchive = this.getNondominatedFromTwoLists(archive, this.optimalParetoFront);
             List<BaseIndividual<Integer, PROBLEM>> optimalParetoFrontWithArchive = new ArrayList<>(this.optimalParetoFront);
-            List<BaseIndividual<Integer, PROBLEM>> archCopy = new ArrayList<>(archive);
-            archiveChanges += removeDuplicatesAndDominated(population, archCopy);
-            removeDuplicatesAndDominated(archCopy, optimalParetoFrontWithArchive);
-            double archiveHv = this.hvCalculator.getMeasure(archCopy);
-            double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archCopy);
-            double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archCopy);
+//            List<BaseIndividual<Integer, PROBLEM>> archCopy = new ArrayList<>(archive);
+            archiveChanges += removeDuplicatesAndDominated(population, archive);
+            removeDuplicatesAndDominated(archive, optimalParetoFrontWithArchive);
+            double archiveHv = this.hvCalculator.getMeasure(archive);
+            double archiveIgd = new InvertedGenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
+            double archiveGd = new GenerationalDistance(optimalParetoFrontWithArchive).getMeasure(archive);
             if(saveResultFiles.getLevel() > 1) {
                 try {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(hvHistoryFilePath, true));

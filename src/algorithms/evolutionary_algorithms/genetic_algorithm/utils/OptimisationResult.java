@@ -34,6 +34,44 @@ public class OptimisationResult<PROBLEM extends BaseProblemRepresentation> {
     public <PROBLEM extends BaseProblemRepresentation> void addDominanceStats(
             BaseIndividual<Integer, PROBLEM> firstParent,
             BaseIndividual<Integer, PROBLEM> secondParent,
+            BaseIndividual<Integer, PROBLEM> childAfterCross,
+            BaseIndividual<Integer, PROBLEM> childAfterCrossAndMut) {
+
+        if(childAfterCross.dominates(firstParent)) {
+            afterCrossParentDominationCounter++;
+        }
+        if(childAfterCross.dominates(secondParent)) {
+            afterCrossParentDominationCounter++;
+        }
+        numberOfAfterCrossChecks += 2;
+
+        if(childAfterCrossAndMut.dominates(firstParent)) {
+            afterCrossAndMutParentDominationCounter++;
+        } else {
+            firstParent.recordUnsuccessfulUsage();
+        }
+
+        if(childAfterCrossAndMut.dominates(secondParent)) {
+            afterCrossAndMutParentDominationCounter++;
+        } else {
+            secondParent.recordUnsuccessfulUsage();
+        }
+
+        numberOfAfterCrossAndMutChecks += 2;
+
+        if(childAfterCross.dominates(childAfterCrossAndMut)) {
+            afterCrossAfterCrossAndMutDominationCounter++;
+        }
+        if(childAfterCrossAndMut.dominates(childAfterCross)) {
+            afterCrossAndMutAfterCrossDominationCounter++;
+        }
+        numberOfAfterCrossAndMutAfterCrossChecks += 2;
+    }
+
+    //FIXME: remove when TTP adjusted
+    public <PROBLEM extends BaseProblemRepresentation> void addDominanceStats(
+            BaseIndividual<Integer, PROBLEM> firstParent,
+            BaseIndividual<Integer, PROBLEM> secondParent,
             BaseIndividual<Integer, PROBLEM> firstChildAfterCross,
             BaseIndividual<Integer, PROBLEM> secondChildAfterCross,
             BaseIndividual<Integer, PROBLEM> firstChildAfterCrossAndMut,

@@ -6,8 +6,8 @@ public enum CrossoverType {
   BINOMIAL,
   EXPONENTIAL,
   SINGLE_POINT,
-  ORDERED,
+    TTP_ORDERED,
   UNIFORM,
-  COMPETITION,
+  TTP_COMPETITION,
   TTP
 }

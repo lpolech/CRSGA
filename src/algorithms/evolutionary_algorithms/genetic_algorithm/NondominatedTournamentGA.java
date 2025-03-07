@@ -1,16 +1,11 @@
 package algorithms.evolutionary_algorithms.genetic_algorithm;
 
 import algorithms.evolutionary_algorithms.ParameterSet;
-import algorithms.evolutionary_algorithms.crossover.BaseCrossover;
-import algorithms.evolutionary_algorithms.crossover.DiversityCrossover;
-import algorithms.evolutionary_algorithms.mutation.BaseMutation;
-import algorithms.evolutionary_algorithms.mutation.SwapBitMutation;
 import algorithms.evolutionary_algorithms.selection.BaseSelection;
 import algorithms.evolutionary_algorithms.selection.DiversitySelection;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
-import algorithms.problem.TTP;
 
 import java.util.ArrayList;
 import java.util.List;

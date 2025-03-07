@@ -12,7 +12,7 @@ import java.util.List;
  * and fills the rest of the genome from the second parent.
  * Best suited for TSP.
  */
-public class OrderedCrossover extends BaseCrossover<Integer, BaseProblemRepresentation> {
+public class TTPOrderedCrossover extends BaseCrossover<Integer, BaseProblemRepresentation> {
 
   /**
    * Creates two children by swapping their n first genes.

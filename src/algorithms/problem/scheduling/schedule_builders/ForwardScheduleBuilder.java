@@ -37,7 +37,7 @@ public class ForwardScheduleBuilder extends ScheduleBuilder {
     int start;
     // Assign tasks with relation requirements
     for (int i = 0; i < tasks.length; ++i)  {
-      if (hasSuccessors[i]) {
+      if (hasSuccessors[i]) { // TODO: order the list based on how many times particular task is a predecessor and how long does it take to finish it
         res = resources[tasks[i].getResourceId()-1];
         start = Math.max(schedule.getEarliestTime(tasks[i]),
             res.getFinish());

@@ -4,7 +4,6 @@ package runners.ttp;
 import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.NondominatedTournamentGA;
 import algorithms.evolutionary_algorithms.genetic_algorithm.ThetaDEA;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
@@ -13,7 +12,6 @@ import algorithms.factories.*;
 import algorithms.io.TTPIO;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.TTP;
-import algorithms.problem.scheduling.Schedule;
 import algorithms.quality_measure.EDMany;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.ONVG;
@@ -66,8 +64,8 @@ public class ThetaDEATTPRunner {
 
     parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.RANDOM_TTP);
     parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_TOURNAMENT);
-    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.COMPETITION);
-    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.COMPETITION);
+    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.TTP_COMPETITION);
+    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.TTP_COMPETITION);
     parameters.evaluator = new EvaluatorFactory().createEvaluator(EvaluatorType.MULTI_OBJECTIVE_TTP_EVALUATOR, parameters.evalRate);
     parameters.evaluator.setIndividual(new BaseIndividual<>(ttp, parameters.evaluator));
 

@@ -29,6 +29,7 @@ public class RandomBitMutation extends BaseMutation<Integer, BaseProblemRepresen
   public List<Integer> mutate(List<BaseIndividual<Integer, BaseProblemRepresentation>> population, double mutationProbability,
                               List<Integer> genesToMutate, int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
 
+    // TODO: enfore changes and skip genes with only 1 relevant resource
     for (int i = 0; i < genesToMutate.size(); ++i) {
       if (parameters.random.nextDouble() < mutationProbability) {
         genesToMutate.set(i, parameters.random.nextInt(parameters.upperBounds[i]));

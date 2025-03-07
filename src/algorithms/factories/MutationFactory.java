@@ -31,10 +31,10 @@ public class MutationFactory {
         return new RandomVectorMutation();
       case NON_DOMINATED_RANDOM_VECTOR:
         return new NonDominatedRandomVectorMutation();
-      case SWAP_BIT:
-        return new SwapBitMutation();
-      case COMPETITION:
-        return new CompetitionMutation();
+      case TTP_SWAP_BIT:
+        return new TTPSwapBitMutation();
+      case TTP_COMPETITION:
+        return new TTPCompetitionMutation();
       case TTP:
         return new TTPMutation();
       default:

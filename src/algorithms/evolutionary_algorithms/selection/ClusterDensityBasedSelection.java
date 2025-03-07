@@ -151,9 +151,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
-            chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
-                    .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
         var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
@@ -185,6 +184,10 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         return returnPairs;
     }
 
+    private static List<Integer> getClusterNeighbourIndeces(ClusteringResult clusteringResult, int chosenClusterIndex) {
+        return (List<Integer>) clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex);
+    }
+
     public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addArchiveAllPossiblePairs(
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
@@ -213,9 +216,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
-            chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
-                    .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
         var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
@@ -293,9 +295,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
-            chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
-                    .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
         var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
@@ -303,7 +304,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
 
         int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
         int chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
-
+        // TODO: euclidean value instead of chosing one objective
         List<Pair<Integer, Double>> pointsIndexWithOneObjectiveVal = new ArrayList<>(chosenClusterSize + chosenClusterNeighbourSize);
         int mainObjectiveNumber = parameters.random.nextInt(parameters.evaluator.getNumObjectives());
 
@@ -447,9 +448,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
-            chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
-                    .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
         var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
@@ -559,9 +559,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!clusteringResult.getClustersAndTheirStatistics().getClusterChosenNeighbourIndicies().get(chosenClusterIndex).isEmpty()) {
-            chosenClusterNeighbourIndex = clusteringResult.getClustersAndTheirStatistics()
-                    .getClusterChosenNeighbourIndicies().get(chosenClusterIndex).get(0);
+        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
         var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];

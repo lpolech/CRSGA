@@ -51,8 +51,8 @@ public class NTGATTPBatchRunner {
 
     parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.RANDOM_TTP);
     parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_NO_CROWDING_TOURNAMENT);
-    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.COMPETITION);
-    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.COMPETITION);
+    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.TTP_COMPETITION);
+    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.TTP_COMPETITION);
     parameters.evaluator = new EvaluatorFactory().createEvaluator(EvaluatorType.MULTI_OBJECTIVE_TTP_EVALUATOR, parameters.evalRate);
 
     File assets = new File("assets/definitions/TTP/for_khaled");

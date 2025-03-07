@@ -61,8 +61,8 @@ public class NSGAMTSPRunner {
 
     parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.SHUFFLE);
     parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_TOURNAMENT);
-    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.ORDERED);
-    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.SWAP_BIT);
+    parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.TTP_ORDERED);
+    parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.TTP_SWAP_BIT);
     parameters.converter = new ConverterFactory(parameters).createConverter(ConverterType.TRUNCATING);
     parameters.evaluator = new EvaluatorFactory().createEvaluator(EvaluatorType.BASE_TSP_EVALUATOR, parameters.evalRate);
     parameters.evaluator.setIndividual(new BaseIndividual<>(tsp, parameters.evaluator));

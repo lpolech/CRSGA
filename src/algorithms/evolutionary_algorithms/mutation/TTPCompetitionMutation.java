@@ -7,7 +7,7 @@ import algorithms.problem.BaseProblemRepresentation;
 import java.util.Collections;
 import java.util.List;
 
-public class CompetitionMutation extends BaseMutation<Integer, BaseProblemRepresentation> {
+public class TTPCompetitionMutation extends BaseMutation<Integer, BaseProblemRepresentation> {
 
     /**
      * Swaps

@@ -12,7 +12,7 @@ import java.util.List;
  * Creates trial vector by choosing each gene from donor
  * with probability cr or by choosing gene from target.
  */
-public class BinomialCrossover extends BaseCrossover<Double, BaseProblemRepresentation> {
+public class BinomialCrossover<GENE extends Number> extends BaseCrossover<GENE, BaseProblemRepresentation> {
 
   /**
    * Performs a binomial crossover.
@@ -25,8 +25,8 @@ public class BinomialCrossover extends BaseCrossover<Double, BaseProblemRepresen
    * @return resulting array of genes
    */
   @Override
-  public List<List<Double>> crossover(double cr, List<Double> target, List<Double> donor, ParameterSet<Double, BaseProblemRepresentation> parameters) {
-    List<Double> trial = new ArrayList<>(Collections.nCopies(target.size(), 0.0d));
+  public List<List<GENE>> crossover(double cr, List<GENE> target, List<GENE> donor, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+    List<GENE> trial = new ArrayList<>(Collections.nCopies(target.size(), null));
     for (int i = 0; i < target.size(); ++i) {
       if (parameters.random.nextDouble() < cr) {
         trial.set(i, donor.get(i));
@@ -38,7 +38,7 @@ public class BinomialCrossover extends BaseCrossover<Double, BaseProblemRepresen
     int single = parameters.random.nextInt(target.size());
     trial.set(single, donor.get(single));
 
-    List<List<Double>> result = new ArrayList<>();
+    List<List<GENE>> result = new ArrayList<>();
     result.add(trial);
 
     return result;

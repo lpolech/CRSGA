@@ -33,8 +33,10 @@ public class Schedule extends BaseProblemRepresentation {
 
   @Override
   public Schedule buildSolution(List<? extends Number> genes, ParameterSet<? extends Number, ? extends BaseProblemRepresentation> parameters) {
-    if (parameters.converter != null) {
+    if (parameters.converter != null) { // TODO: a bit complicated implementation however it is to enable DE in MS-RCPSPS, converter should never be null
       parameters.converter.convertToInteger(this.getTasks(), genes);
+    } else {
+      System.err.println("Due to how the code is structured to enable DE, converter should never be null!");
     }
     if (parameters.constraintPreserver != null) {
       parameters.constraintPreserver.repair(this);

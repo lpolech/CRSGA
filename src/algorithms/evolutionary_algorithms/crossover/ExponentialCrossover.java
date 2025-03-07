@@ -12,7 +12,7 @@ import java.util.List;
  * Creates trial vector by randomly choosing starting point,
  * and then replacing following elements with probability cr
  */
-public class ExponentialCrossover extends BaseCrossover<Double, BaseProblemRepresentation> {
+public class ExponentialCrossover<GENE extends Number> extends BaseCrossover<GENE, BaseProblemRepresentation> {
 
   /**
    * Performs an exponential crossover.
@@ -24,8 +24,8 @@ public class ExponentialCrossover extends BaseCrossover<Double, BaseProblemRepre
    * @return resulting array of genes
    */
   @Override
-  public List<List<Double>> crossover(double cr, List<Double> target, List<Double> donor, ParameterSet<Double, BaseProblemRepresentation> parameters) {
-    List<Double> trial = new ArrayList<>(Collections.nCopies(target.size(), 0.0d));
+  public List<List<GENE>> crossover(double cr, List<GENE> target, List<GENE> donor, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
+    List<GENE> trial = new ArrayList<>(Collections.nCopies(target.size(), null));
     int startingPoint = parameters.random.nextInt(target.size());
     int L = 0;
     do {
@@ -47,7 +47,7 @@ public class ExponentialCrossover extends BaseCrossover<Double, BaseProblemRepre
     int single = parameters.random.nextInt(target.size());
     trial.set(single, donor.get(single));
 
-    List<List<Double>> result = new ArrayList<>();
+    List<List<GENE>> result = new ArrayList<>();
     result.add(trial);
 
     return result;

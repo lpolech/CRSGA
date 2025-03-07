@@ -7,7 +7,6 @@ import algorithms.evolutionary_algorithms.util.IndividualCluster;
 import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
-import algorithms.problem.TTP;
 import center.method.Centroid;
 import data.*;
 import distance.measures.L2Norm;
@@ -39,7 +38,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
             int clusterIterLimit,
             double edgeClustersWeightMultiplier,
             int generationNum,
-            ParameterSet<Integer, TTP> parameters,
+            ParameterSet<Integer, PROBLEM> parameters,
             int indExclusionUsageLimit,
             int indExclusionGenDuration,
             List<BaseIndividual<Integer, PROBLEM>> excludedPopulation,
@@ -77,8 +76,9 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         }
 
         HashMap<Integer, String> dimensionNumberAndItsName = new HashMap<>();
-        dimensionNumberAndItsName.put(0, "TravellingTime");
-        dimensionNumberAndItsName.put(1, "KnapsackProfit");
+        for(int i = 0; i < parameters.objectiveNames.length; i++) {
+            dimensionNumberAndItsName.put(i, parameters.objectiveNames[i]);
+        }
 
         ClustersAndTheirStatistics clustering = null;
         DataStatistics dataStats = null;
@@ -121,6 +121,7 @@ public class KmeansClusterisation<PROBLEM extends BaseProblemRepresentation> {
         List<IndividualCluster> individualClusters = new ArrayList<>(clustering.getClusters().length);
         for(int i = 0; i < clustering.getClusters().length; i++) {
             var cluster = clustering.getClusters()[i];
+            // FIXME: extend when more than 2 objectives
             double travellingTime = Arrays.stream(cluster.getPoints())
                     .mapToDouble(pts -> pts.getCoordinate(0))  // Map each person to their age
                     .min()                     // Get the minimum value
