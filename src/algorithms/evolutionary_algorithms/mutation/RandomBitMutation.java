@@ -36,9 +36,4 @@ public class RandomBitMutation extends BaseMutation<Integer, BaseProblemRepresen
     }
     return genesToMutate;
   }
-
-  @Override
-  public List<Integer> mutate(List<BaseIndividual<Integer, BaseProblemRepresentation>> population, double TSPf, double KNAPf, List<Integer> genesToMutate, int current, int populationSize, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
-    return null;
-  }
 }

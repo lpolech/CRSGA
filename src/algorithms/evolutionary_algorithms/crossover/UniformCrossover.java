@@ -48,9 +48,4 @@ public class UniformCrossover<GENE extends Number> extends BaseCrossover<GENE, B
     return result;
   }
 
-  @Override
-  public List<List<GENE>> crossover(double TSPcr, double KNAPcr, List<GENE> firstParent, List<GENE> secondParent, ParameterSet<GENE, BaseProblemRepresentation> parameters) {
-    return null;
-  }
-
 }

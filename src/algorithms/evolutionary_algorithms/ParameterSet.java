@@ -48,6 +48,11 @@ public class ParameterSet<GENE extends Number, PROBLEM extends BaseProblemRepres
   public int KNAPcrossoverVersion;
   public int TSPmutationVersion;
   public int TSPcrossoverVersion;
+  public double KNAPcrossoverProbability;;
+  public double KNAPmutationProbability;
+  public double localSearchMutationProp;
+  public double knapLocalSearchMutationProp = 0.0;
+
 
   // Random used for various purposes, i.e. mutation
   public RandomBase<GENE> random;

@@ -58,13 +58,10 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     private ClusterDensityBasedSelection clusterDensityBasedSelection;
     private KmeansClusterisation kmeansCluster;
     private String directory;
-    private int maxAdditionalPopulationSize;
-    private int minAdditionalPopulationSize;
     private int clusterSize;
     private int clusterIterLimit;
     private OptimisationResult optimisationResult;
     private int populationTurProp;
-    private int mutationVersion;
     private IndividualsPairingMethod pairingMethod;
     private double localSearchProp;
     private int numberOfExtraPopulationTriggered;
@@ -90,8 +87,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                      int maxAdditionalPopulationSize,
                      int minAdditionalPopulationSize,
                      int populationTurProp,
-                     double diversityThreshold,
-                     boolean enhanceDiversity,
                      HVMany hv,
                      List<BaseIndividual<Integer, PROBLEM>> optimalParetoFront,
                      String outputFilename,
@@ -117,8 +112,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
         this.KNAPmutationProbability = KNAPmutationProbability;
         this.KNAPcrossoverProbability = KNAPcrossoverProbability;
         this.directory = directory;
-        this.maxAdditionalPopulationSize = maxAdditionalPopulationSize;
-        this.minAdditionalPopulationSize = minAdditionalPopulationSize;
         this.populationTurProp = populationTurProp;
         this.clusterSize = clusterSize;
         this.edgeClustersDispersionVal = edgeClustersDispersionVal;
@@ -128,7 +121,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
         this.kmeansCluster = new KmeansClusterisation(false, false);
         this.clusterDensityBasedSelection = new ClusterDensityBasedSelection(tournamentSize);
         this.clusterWeightMeasure = clusterWeightMeasure;
-        this.mutationVersion = mutationVersion;
         this.hvCalculator = hv;
         this.optimalParetoFront = optimalParetoFront;
         this.outputFilename = outputFilename;
@@ -174,7 +166,7 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                 e.printStackTrace();
             }
         }
-//        System.out.println("generation; additional population; cur arch size; curr arch measure; clust added ind; prev arch size; prev arch measure");
+
         int generation = 1;
         List<BaseIndividual<Integer, PROBLEM>> archive = new ArrayList<>();
         List<BaseIndividual<Integer, PROBLEM>> excludedArchive = new ArrayList<>();
@@ -306,7 +298,7 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                     var firstAndSecondParent = (Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>)mama;
                     BaseIndividual<Integer, PROBLEM> firstParent = firstAndSecondParent.getKey();
                     BaseIndividual<Integer, PROBLEM> secondParent = firstAndSecondParent.getValue();
-                    children = parameters.crossover.crossover(crossoverProbability, KNAPcrossoverProbability,
+                    children = parameters.crossover.crossover(crossoverProbability,
                             firstParent.getGenes(), secondParent.getGenes(), parameters);
 
                     var firstChildAfterCross = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
@@ -314,9 +306,9 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                     var secondChildAfterCross = new BaseIndividual<>(problem, children.get(1), parameters.evaluator);
                     secondChildAfterCross.buildSolution(secondChildAfterCross.getGenes(), parameters);
 
-                    children.set(0, parameters.mutation.mutate(null, mutationProbability, KNAPmutationProbability,
+                    children.set(0, parameters.mutation.mutate(null, mutationProbability,
                             children.get(0), 0, -666, parameters));
-                    children.set(1, parameters.mutation.mutate(null, mutationProbability, KNAPmutationProbability,
+                    children.set(1, parameters.mutation.mutate(null, mutationProbability,
                             children.get(1), 0, -666, parameters));
 
                     var firstChildAfterCrossAndMut = new BaseIndividual<>(problem, children.get(0), parameters.evaluator);
@@ -507,12 +499,15 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, double localSearchProp) {
         List<BaseIndividual<Integer, PROBLEM>> localSearchPopulation = new LinkedList<>();
         for(int i = 0; i < archive.size() && currCost <= costLimit; i++) {
-            if(parameters.random.nextDouble() < localSearchProp) {
+            if(this.parameters.random.nextDouble() < localSearchProp) {
                 var chosenInd = archive.get(i);
                 List<Integer> chosenIndGenes = chosenInd.getGenes();
-                parameters.mutation.mutate(null, this.tspLocalSearchArchiveProp, this.knapLocalSearchArchiveProp, chosenIndGenes, 0, -666, parameters);
-                var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, parameters.evaluator);
-                mutatedInd.buildSolution(mutatedInd.getGenes(), parameters);
+                double originalValue = this.parameters.KNAPmutationProbability;
+                this.parameters.KNAPmutationProbability = this.parameters.knapLocalSearchMutationProp;
+                this.parameters.mutation.mutate(null, this.parameters.localSearchMutationProp, chosenIndGenes, 0, -666, this.parameters);
+                this.parameters.KNAPmutationProbability = originalValue;
+                var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, this.parameters.evaluator);
+                mutatedInd.buildSolution(mutatedInd.getGenes(), this.parameters);
                 localSearchPopulation.add(mutatedInd);
 
                 currCost += 1;
@@ -532,7 +527,10 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
             int randomIndex = parameters.random.nextInt(archive.size()); // Generate a random index
             var chosenInd = archive.get(randomIndex);
             List<Integer> chosenIndGenes = chosenInd.getGenes();
-            parameters.mutation.mutate(null, TSPf, KNAPf, chosenIndGenes, 0, -666, parameters);
+            double originalValue = this.parameters.KNAPmutationProbability;
+            this.parameters.KNAPmutationProbability = KNAPf;
+            this.parameters.mutation.mutate(null, TSPf, chosenIndGenes, 0, -666, this.parameters);
+            this.parameters.KNAPmutationProbability = originalValue;
             var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, parameters.evaluator);
             mutatedInd.buildSolution(mutatedInd.getGenes(), parameters);
             population.add(mutatedInd);
@@ -771,14 +769,14 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
 
     private void clonePreventionMethod(List<BaseIndividual<Integer, PROBLEM>> newPopulation, BaseIndividual<Integer, PROBLEM> firstChild, BaseIndividual<Integer, PROBLEM> secondChild) {
         for (int i = 0; newPopulation.contains(firstChild) && i < 20; i++) {
-            firstChild.setGenes(parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability, firstChild.getGenes(), 0, populationSize, parameters));
+            firstChild.setGenes(parameters.mutation.mutate(population, mutationProbability, firstChild.getGenes(), 0, populationSize, parameters));
         }
         if (!newPopulation.contains(firstChild)) {
             firstChild.buildSolution(firstChild.getGenes(), parameters);
             newPopulation.add(firstChild);
         }
         for (int i = 0; newPopulation.contains(secondChild) && i < 20; i++) {
-            secondChild.setGenes(parameters.mutation.mutate(population, mutationProbability, KNAPmutationProbability, secondChild.getGenes(), 0, populationSize, parameters));
+            secondChild.setGenes(parameters.mutation.mutate(population, mutationProbability, secondChild.getGenes(), 0, populationSize, parameters));
         }
         if (!newPopulation.contains(secondChild)) {
             secondChild.buildSolution(secondChild.getGenes(), parameters);

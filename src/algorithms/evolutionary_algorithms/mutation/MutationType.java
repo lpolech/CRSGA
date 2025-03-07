@@ -9,6 +9,6 @@ public enum MutationType {
   RANDOM_VECTOR,
   NON_DOMINATED_RANDOM_VECTOR,
   SWAP_BIT,
-  COMPETITION,
+  COMPETITION, TTP,
 
 }

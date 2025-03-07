@@ -56,11 +56,6 @@ public class NonDominatedRandomVectorMutation extends BaseMutation<Double, BaseP
     return mutant;
   }
 
-  @Override
-  public List<Double> mutate(List<BaseIndividual<Double, BaseProblemRepresentation>> population, double TSPf, double KNAPf, List<Double> genesToMutate, int current, int populationSize, ParameterSet<Double, BaseProblemRepresentation> parameters) {
-    return null;
-  }
-
   protected List<BaseIndividual<Double, BaseProblemRepresentation>> getNondominated(
       List<BaseIndividual<Double, BaseProblemRepresentation>> population) {
 

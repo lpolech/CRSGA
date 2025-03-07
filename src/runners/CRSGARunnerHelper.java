@@ -3,6 +3,7 @@ package runners;
 import algorithms.evaluation.BaseEvaluator;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.problem.scheduling.Schedule;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -120,5 +121,117 @@ public class CRSGARunnerHelper<GENE extends Number, PROBLEM extends BaseProblemR
         }
 
         return normalisedFront;
+    }
+
+    protected String printResultsForComparison(List<BaseIndividual<GENE, PROBLEM>> resultIndividuals, String[] objNames, boolean isVerbose) {
+        if(!resultIndividuals.isEmpty() && resultIndividuals.get(0).getObjectives().length != objNames.length) {
+            System.err.println("printResultsForComparison: objective names do not match the number of objectives!");
+        }
+
+        String output = "";
+//        for(int i = 0; i < objNames.length; i++) {
+//            output += objNames[i] + ";";
+//        }
+//        if(isVerbose) {
+//            System.out.println(output);
+//        }
+//        output += "\n";
+
+        for (int i = 0; i < resultIndividuals.size(); ++i) {
+            BaseIndividual<GENE, PROBLEM> ind = resultIndividuals.get(i);
+
+            for(int j = 0; j < ind.getObjectives().length; j++) {
+                output += ind.getObjectives()[j] + ";";
+            }
+            if(isVerbose) {
+                System.out.println(output);
+            }
+            output += "\n";
+        }
+        return output;
+    }
+
+    protected String printParetos(String firstParetoName, List<BaseIndividual<Integer, Schedule>> firstPareto,
+                                String secondParetoName, List<BaseIndividual<Integer, Schedule>> secondPareto,
+                                String[] objNames, boolean isVerbose, boolean negateTTPCost) {
+        if(!firstPareto.isEmpty() && firstPareto.get(0).getObjectives().length != objNames.length) {
+            System.err.println("printParetos: objective names do not match the number of objectives in the first pareto front!");
+        }
+
+        if(!secondPareto.isEmpty() && secondPareto.get(0).getObjectives().length != objNames.length) {
+            System.err.println("printParetos: objective names do not match the number of objectives in the second pareto front!");
+        }
+
+        if(!firstPareto.isEmpty() && !secondPareto.isEmpty() && firstPareto.get(0).getObjectives().length != secondPareto.get(0).getObjectives().length) {
+            System.err.println("printParetos: pareto fronts do not have the same number of objectives!");
+        }
+        int noOfObj = firstPareto.get(0).getObjectives().length;
+
+        String output = ";" + firstParetoName;
+        String emptyEntry = "";
+        for(int i = 0; i < noOfObj; i++) {
+            emptyEntry += ";";
+        }
+        output += emptyEntry + secondParetoName + "\n";
+
+//        for(int i = 0; i < objNames.length; i++) {
+//            output += objNames[i] + ";";
+//        }
+//        if(isVerbose) {
+//            System.out.println(output);
+//        }
+//        output += "\n";
+
+        for (int i = 0; i < Math.max(firstPareto.size(), secondPareto.size()); ++i) {
+            List<Double> firstParetoObjVals = new ArrayList<>(noOfObj);
+            if(firstPareto.size() - 1 >= i) {
+                for(int j = 0; j < noOfObj; j++) {
+                    firstParetoObjVals.add(firstPareto.get(i).getObjectives()[j]);
+                }
+                if(negateTTPCost) {
+                    firstParetoObjVals.set(1, (-1)*firstParetoObjVals.get(1));
+                }
+            }
+
+            List<Double> secondParetoObjVals = new ArrayList<>(noOfObj);
+            if(secondPareto.size() - 1 >= i) {
+                for(int j = 0; j < noOfObj; j++) {
+                    secondParetoObjVals.add(secondPareto.get(i).getObjectives()[j]);
+                }
+                if(negateTTPCost) {
+                    secondParetoObjVals.set(1, (-1)*secondParetoObjVals.get(1));
+                }
+            }
+
+            if(!firstParetoObjVals.isEmpty()) {
+                for(int j = 0; j < noOfObj; j++) {
+                    output += firstParetoObjVals.get(j) + ";";
+                }
+            } else {
+                output += emptyEntry;
+            }
+
+            if(!secondParetoObjVals.isEmpty()) {
+                for(int j = 0; j < noOfObj; j++) {
+                    output += secondParetoObjVals.get(j) + ";";
+                }
+            } else {
+                output += emptyEntry;
+            }
+            output += "\n";
+
+            if(isVerbose) {
+                System.out.println(output);
+            }
+        }
+        return output;
+    }
+
+    protected static String removePrefixAndPostFixFromFileName(String prefixPath, String postFix, String fileName) {
+        if(fileName.endsWith(postFix)) {
+            int prefixPosition = fileName.lastIndexOf(prefixPath) + prefixPath.length();
+            return fileName.substring(prefixPosition, fileName.lastIndexOf(postFix));
+        }
+        return fileName;
     }
 }

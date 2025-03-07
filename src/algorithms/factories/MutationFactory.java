@@ -35,6 +35,8 @@ public class MutationFactory {
         return new SwapBitMutation();
       case COMPETITION:
         return new CompetitionMutation();
+      case TTP:
+        return new TTPMutation();
       default:
         return new RandomVectorMutation();
     }

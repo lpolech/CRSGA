@@ -4,7 +4,7 @@ import algorithms.evaluation.BaseEvaluator;
 import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.CRSGA;
+import algorithms.evolutionary_algorithms.genetic_algorithm.CRSGA_TTP;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.initial_population.InitialPopulationType;
 import algorithms.evolutionary_algorithms.mutation.MutationType;
@@ -34,6 +34,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
     private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
     private static final String problemPath = "." + File.separator + "problems" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator;
+    private static final String[] objectiveNames = new String[] {"Travelling time", "-1*Profit"};
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
 //            new Pair<>( problemPath + "eil51_n50_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n50_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n50_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n50_uncorr-similar-weights_01_merged.csv"),
@@ -41,7 +42,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 //            new Pair<>(problemPath + "eil51_n150_bounded-strongly-corr_01.ttp", apfsPath + "24-06-11_eil51_n150_bounded-strongly-corr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n150_uncorr_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr_01_merged.csv"),
 //            new Pair<>(problemPath + "eil51_n150_uncorr-similar-weights_01.ttp", apfsPath + "24-06-11_eil51_n150_uncorr-similar-weights_01_merged.csv"),
-            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_kroA100_n99_bounded-strongly-corr_01_merged_SingleFlip.csv")//,
+            new Pair<>(problemPath + "kroA100_n99_bounded-strongly-corr_01.ttp", apfsPath + "25-01-26_kroA100_n99_bounded-strongly-corr_01true_pareto_front_approximation.csv")//,
 //            new Pair<>(problemPath + "kroA100_n99_uncorr_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "kroA100_n99_uncorr-similar-weights_01.ttp", apfsPath + "24-06-30_kroA100_n99_uncorr-similar-weights_01_merged_SingleFlip.csv"),
 //            new Pair<>(problemPath + "pr76_n75_bounded-strongly-corr_01.ttp", apfsPath + "24-06-30_pr76_n75_bounded-strongly-corr_01_merged_SingleFlip.csv"),
@@ -107,8 +108,8 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 //                new FlatDunn3(new Euclidean())
             };
 
-            int NUMBER_OF_REPEATS = 30;
-            int[] generationLimitList = new int[] {250_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
+            int NUMBER_OF_REPEATS = 3;
+            int[] generationLimitList = new int[] {1_000};//{50_000};//{250_000};//{5_000};//{5_000};//{25_000, 12_500, 5_000, 2_500, 1_666, 1_250, 500, 250};//500};
             int[] populationSizeList = new int[] {700};//{50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850, 875, 900, 925, 950, 975, 1000};//{450, 550, 650, 750, 850, 1000};//{700};//{225, 300, 400, 550, 650, 750, 850}; //{10};//{5000, 6000, 7000}; //{10};//{10, 50, 100, 150, 500}; //{10};//{10};//{20};//{10, 100};//{20};//{10, 20, 50, 100};//{50};// 100};
             double[] TSPmutationProbabilityList = new double[] {0.6};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.0, 0.2, 0.4, 0.6, 0.8, 1.0};//{0.6};//{0.0, 0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.05, 0.07, 0.1};//\0.5};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.5};//{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.25};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.25};//{0.3};//{0.4};//}{0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, {0.4};//{0.4};//{0.1, 0.2, 0.3, 0.4, 0.5};//{0.01};//{0.007};//{0.002, 0.004, 0.006, 0.008};//{0.004};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.9};//{0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0001, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6}; //{0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
             double[] KNAPmutationProbabilityList = new double[] {0.3};//{0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};//{0.0, 0.2, 0.4, 0.6, 0.8, 1.0};//{0.3};//{0.6};//{1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};//{0.005};//{0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1};//{0.0027};//{0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0021, 0.0022, 0.0023, 0.0024, 0.0025, 0.0026, 0.0027, 0.0028, 0.0029, 0.0031, 0.0032, 0.0033, 0.0034, 0.0035, 0.0036, 0.0037, 0.0038, 0.0039};//, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019};//{0.0031};//{0.0001, 0.0003, 0.0005, 0.0007, 0.0009, 0.0011, 0.0013, 0.0015, 0.0017, 0.0019, 0.0021, 0.0023, 0.0025, 0.0027, 0.0029, 0.0031, 0.0033, 0.0035, 0.0037, 0.0039};//{0.0024};//0.04};//{0.001, 0.005, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.125, 0.15};//{0.006};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.034};//{0.006};//{0.006};//{0.006};//{0.8, 0.9, 1.0};//{0.01};//{0.006};//{0.004, 0.005, 0.006, 0.007};//{0.01};//{0.01, 0.02, 0.03, 0.04};//, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//{0.0, 0.0025, 0.005, 0.0075}; //{0.005, 0.01, 0.015};//, 0.005, 0.015};
@@ -127,8 +128,8 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
             int[] KNAPcrossoverVersionList = new int[] {1};//{1, 2, 3}; // {1}; // {1, 2, 3};
             int[] TSPmutationVersionList = new int[] {1};// {3 9 10};//{1, 2, 4, 5, 6, 7, 8, 11};//{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}; // // {1};
             int[] TSPcrossoverVersionList = new int[] {6};//{1, 2, 3, 4, 5, 6}; //{6};
-            int[] indExclusionUsageLimitList = new int[] {50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
-            int[] indExclusionGenDurationList = new int[] {50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
+            int[] indExclusionUsageLimitList = new int[] {750};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
+            int[] indExclusionGenDurationList = new int[] {750};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13  .5, -14.5, -15.5};//{-6, -8, -15, -100};
             double[] localSearchPropList = {0.00};//{0.02, 0.03, 0.04, 0.05};//{0.001};//{0.001, 0.005, 0.01, 0.03, 0.06, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//
             double[] knapLocalSearchArchivePropList = {0.0};//{1.0, 0.0};//{0.001};//{0.0, 0.1, 0.3, 0.6, 1.0};//
@@ -300,7 +301,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                         double bestAPFHV = -Double.MIN_VALUE;
 
                                                                                                                                         String outputFilename = "." + File.separator + "out" + File.separator
-                                                                                                                                                + removePrefixAndTtpPostFixFromFileName(problemPath, instanceWithOPF.get(k).getKey())
+                                                                                                                                                + removePrefixAndPostFixFromFileName(problemPath, ".ttp", instanceWithOPF.get(k).getKey())
                                                                                                                                                 + "_m-" + clusterWeightMeasure.getName()
                                                                                                                                                 + "_g" + generationLimit + "_p-" + populationSize
                                                                                                                                                 + "_Tm" + TSPmutationProbability + "_Km" + KNAPmutationProbability
@@ -326,14 +327,14 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 
                                                                                                                                         List<BaseIndividual<Integer, TTP>> uberPareto = new ArrayList<>();
                                                                                                                                         List<BaseIndividual<Integer, TTP>> optimalApfWithUberPareto = new ArrayList<>();
-                                                                                                                                        CRSGA<TTP> geneticAlgorithm = null;
+                                                                                                                                        CRSGA_TTP<TTP> geneticAlgorithm = null;
                                                                                                                                         for (int xxx = 0; xxx < NUMBER_OF_REPEATS; xxx++) {
                                                                                                                                             parameters.KNAPmutationVersion = KNAPmutationVersion;
                                                                                                                                             parameters.KNAPcrossoverVersion = KNAPcrossoverVersion;
                                                                                                                                             parameters.TSPmutationVersion = TSPmutationVersion;
                                                                                                                                             parameters.TSPcrossoverVersion = TSPcrossoverVersion;
                                                                                                                                             HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
-                                                                                                                                            geneticAlgorithm = new CRSGA<>(
+                                                                                                                                            geneticAlgorithm = new CRSGA_TTP<>(
                                                                                                                                                     ttp,
                                                                                                                                                     clusterWeightMeasure,
                                                                                                                                                     populationSize,
@@ -351,8 +352,6 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                                     maxAdditionalPopulationSize,
                                                                                                                                                     minAdditionalPopulationSize,
                                                                                                                                                     populationTurProp,
-                                                                                                                                                    -666,
-                                                                                                                                                    true,
                                                                                                                                                     hv,
                                                                                                                                                     optimalParetoFront,
                                                                                                                                                     outputFilename,
@@ -384,12 +383,12 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                             eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
                                                                                                                                             eachRepeatResult.add(result);
 
-                                                                                                                                            String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
+                                                                                                                                            String instanceNameForFile = removePrefixAndPostFixFromFileName(problemPath, ".ttp", instanceName);
                                                                                                                                             if (saveResultFiles.getLevel() >= 1) {
                                                                                                                                                 try {
                                                                                                                                                     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                                             + File.separator + instanceNameForFile + "_config0_run" + xxx + "_archive.csv"));
-                                                                                                                                                    writer.write(printResultsForComparison(result, false));
+                                                                                                                                                    writer.write(printResultsForComparison(result, objectiveNames, false));
                                                                                                                                                     writer.close();
                                                                                                                                                 } catch (
                                                                                                                                                         IOException e) {
@@ -449,11 +448,11 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                             eachRepeatPurity.add(purityValue);
                                                                                                                                         }
 
-                                                                                                                                        String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
+                                                                                                                                        String instanceNameForFile = removePrefixAndPostFixFromFileName(problemPath, ".ttp", instanceName);
                                                                                                                                         try {
                                                                                                                                             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                                     + File.separator + instanceNameForFile + "_UBER_PARETO.csv"));
-                                                                                                                                            writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
+                                                                                                                                            writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, objectiveNames, false, false));
                                                                                                                                             writer.close();
                                                                                                                                         } catch (
                                                                                                                                                 IOException e) {
@@ -466,7 +465,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
 
                                                                                                                                                 writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                                         + File.separator + instanceNameForFile + "_apf.csv"));
-                                                                                                                                                writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
+                                                                                                                                                writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, objectiveNames, false, true));
                                                                                                                                                 writer.close();
 
                                                                                                                                                 writer = new BufferedWriter(new FileWriter(outputFilename
@@ -602,7 +601,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                             try {
                                                                                                                                                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
                                                                                                                                                         + bestAPFoutputFile + bestIterNumber + ".csv"));
-                                                                                                                                                writer.write(printResultsForComparison(bestAPF, false));
+                                                                                                                                                writer.write(printResultsForComparison(bestAPF, objectiveNames, false));
                                                                                                                                                 writer.close();
                                                                                                                                             } catch (
                                                                                                                                                     IOException e) {
@@ -714,14 +713,6 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
         return front;
     }
 
-    private static String removePrefixAndTtpPostFixFromFileName(String prefixPath, String fileName) {
-        if(fileName.endsWith(".ttp")) {
-            int prefixPosition = fileName.lastIndexOf(prefixPath) + prefixPath.length();
-            return fileName.substring(prefixPosition, fileName.lastIndexOf(".ttp"));
-        }
-        return fileName;
-    }
-
     private static TTP readFile(int k) {
         var definitionFile = baseDir + instanceWithOPF.get(k).getKey();
         TTPIO reader = new TTPIO();
@@ -743,83 +734,11 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
         parameters.geneSplitPoint = ttp.getSplitPoint();
         parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(InitialPopulationType.RANDOM_TTP);
         parameters.selection = new SelectionFactory(parameters).createSelection(SelectionType.NONDOMINATED_SORTING_NO_CROWDING_TOURNAMENT);
-        parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.COMPETITION);
-        parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.COMPETITION);
+        parameters.crossover = new CrossoverFactory().createCrossover(CrossoverType.TTP);
+        parameters.mutation = new MutationFactory(parameters).createMutation(MutationType.TTP);
         parameters.evaluator = new EvaluatorFactory().createEvaluator(EvaluatorType.MULTI_OBJECTIVE_TTP_EVALUATOR, parameters.evalRate);
         parameters.evaluator.setIndividual(new BaseIndividual<>(ttp, parameters.evaluator));
         return parameters;
-    }
-
-    private static String printResultsForComparison(List<BaseIndividual<Integer, TTP>> resultIndividuals, boolean isVerbose) {
-        String output = "";
-        if(isVerbose) {
-            output += "Profit; Travelling Time\n";
-            System.out.println("Profit; Travelling Time");
-        }
-        for (int i = 0; i < resultIndividuals.size(); ++i) {
-            double profit = 0;
-            double travellingTime = resultIndividuals.get(i).getProblem().getTravellingTime();
-            int[] selection = resultIndividuals.get(i).getProblem().getSelection();
-            for (int j = 0; j < selection.length; ++j) {
-                if (selection[j] > 0) {
-                    profit += resultIndividuals.get(i).getProblem().getKnapsack().getItem(j).getProfit();
-                }
-            }
-            output += travellingTime + ";" + (-1)*profit + "\n";
-            if(isVerbose) {
-                System.out.println(travellingTime + ";" + (-1)*profit);
-            }
-        }
-        return output;
-    }
-
-    private static String printParetos(String firstParetoName, List<BaseIndividual<Integer, TTP>> firstPareto,
-                                       String secondParetoName, List<BaseIndividual<Integer, TTP>> secondPareto,
-                                       boolean isVerbose) {
-        String output = ";" + firstParetoName + ";;" + secondParetoName + "\n";
-        if(isVerbose) {
-//            output += "Profit; Travelling Time\n";
-            System.out.println("Profit; Travelling Time");
-        }
-        for (int i = 0; i < Math.max(firstPareto.size(), secondPareto.size()); ++i) {
-            double runProfit = Double.NaN;
-            double runTravellingTime = Double.NaN;
-            if(firstPareto.size() - 1 >= i) {
-                runProfit = 0;
-                runTravellingTime = firstPareto.get(i).getProblem().getTravellingTime();
-                int[] selection = firstPareto.get(i).getProblem().getSelection();
-                for (int j = 0; j < selection.length; ++j) {
-                    if (selection[j] > 0) {
-                        runProfit += firstPareto.get(i).getProblem().getKnapsack().getItem(j).getProfit();
-                    }
-                }
-            }
-
-            double apfProfit = Double.NaN;
-            double apfTravellingTime = Double.NaN;
-            if(secondPareto.size() - 1 >= i) {
-                apfTravellingTime = secondPareto.get(i).getObjectives()[0];
-                apfProfit = (-1)*secondPareto.get(i).getObjectives()[1];
-            }
-
-            if(!Double.isNaN(runProfit) && !Double.isNaN(runTravellingTime)) {
-                output += runTravellingTime + ";" + (-1)*runProfit + ";";
-            } else {
-                output += ";;";
-            }
-
-            if(!Double.isNaN(apfProfit) && !Double.isNaN(apfTravellingTime)) {
-                output += apfTravellingTime + ";" + (-1)*apfProfit;
-            } else {
-                output += ";;";
-            }
-            output += "\n";
-
-            if(isVerbose) {
-                System.out.println(output);
-            }
-        }
-        return output;
     }
 
     private static String printGenes(List<BaseIndividual<Integer, TTP>> resultIndividuals, TTP problem) {

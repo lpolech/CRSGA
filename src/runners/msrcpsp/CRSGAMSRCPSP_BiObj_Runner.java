@@ -6,7 +6,6 @@ import algorithms.evaluation.EvaluatorType;
 import algorithms.evolutionary_algorithms.ParameterSet;
 import algorithms.evolutionary_algorithms.converters.ConverterType;
 import algorithms.evolutionary_algorithms.crossover.CrossoverType;
-import algorithms.evolutionary_algorithms.genetic_algorithm.CRSGA;
 import algorithms.evolutionary_algorithms.genetic_algorithm.CRSGA_MSRCPSP;
 import algorithms.evolutionary_algorithms.genetic_algorithm.utils.OptimisationResult;
 import algorithms.evolutionary_algorithms.initial_population.*;
@@ -16,7 +15,6 @@ import algorithms.evolutionary_algorithms.selection.SelectionType;
 import algorithms.factories.*;
 import algorithms.io.MSRCPSPIO;
 import algorithms.problem.BaseIndividual;
-import algorithms.problem.TTP;
 import algorithms.problem.scheduling.Schedule;
 import algorithms.problem.scheduling.schedule_builders.ScheduleBuilderType;
 import algorithms.quality_measure.GenerationalDistance;
@@ -39,9 +37,10 @@ import java.util.logging.Logger;
 
 public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
     private static final Logger LOGGER = Logger.getLogger( CRSGAMSRCPSP_BiObj_Runner.class.getName() );
-    private static final String baseDir = "." + File.separator; //assets/definitions/TTP/selected_01/";
+    private static final String baseDir = "." + File.separator;
     private static final String problemPath = "." + File.separator + "assets" + File.separator + "definitions" + File.separator + "MSRCPSP_small" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator + "MSRCPSP" + File.separator;
+    private static final String[] objectiveNames = new String[] {"Duration", "Cost"};
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
             new Pair<>(problemPath + "10_3_5_3.def", apfsPath + "dummy.csv"),
             new Pair<>(problemPath + "10_5_8_5.def", apfsPath + "dummy.csv"),
@@ -93,13 +92,13 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
             double[] edgeClustersDispersion = new double[] {3};//{3, 3.5};//{3.0, 2.5, 3.5};//{/*0.5, 1.0, */2.0/*, 3.0, 5.0, 10.0*/};//3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5};//{2};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{2.5};//{0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 7.0};//{4.0};//{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10, 20, 50, 1000};//{4.0};//{0.5, 1.0, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4.0};//{0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 20, 50};//{4};//{0.5};//{4};//{0.1, 0.5, 1, 2, 4, 10, 100};//{4}//{0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1, 4, 5, 10.0, 50, 100, 1_000, 5_000}; //{4};//, 10_000, 15_000, 20_000, 50_000, 100_000};//{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};//{0.5, 1.0, 1.5, 2.0}; //}{0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 1.5, 2.0};
             int[] tournamentSizeList = new int[] {10};//{2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100}; //{10, 30, 50, 70/*, 90, 100*/}; //{500};//{70}; // {50};//{10, 20, 30, 40, 50}; //{15};//{10, 5, 15}; //{100};//{60};//{20, 40, 60, 80, 100}; //{0.95};////{200};//{10, 30, 50, 70, 90, 120, 200}; //{150};//{60, 70, 80, 90, 100}; //{80};//{10};//{80};//{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}; //{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 50, 100}; //{90};
             int[] populationTurPropList = new int[]{100}; //{50};
-            MutationType[] mutationList = new MutationType[] {MutationType.BEST, MutationType.CURRENT, MutationType.RANDOM_BIT, MutationType.RANDOM_VECTOR, MutationType.NON_DOMINATED_RANDOM_VECTOR, MutationType.SWAP_BIT};
-            CrossoverType[] crossoverList = new CrossoverType[] {CrossoverType.BINOMIAL, CrossoverType.EXPONENTIAL, CrossoverType.SINGLE_POINT, CrossoverType.ORDERED, CrossoverType.UNIFORM};
+            MutationType[] mutationList = new MutationType[] {MutationType.BEST, MutationType.CURRENT, MutationType.RANDOM_BIT, MutationType.RANDOM_VECTOR, MutationType.NON_DOMINATED_RANDOM_VECTOR, MutationType.SWAP_BIT, MutationType.COMPETITION};
+            CrossoverType[] crossoverList = new CrossoverType[] {CrossoverType.BINOMIAL, CrossoverType.EXPONENTIAL, CrossoverType.SINGLE_POINT, CrossoverType.ORDERED, CrossoverType.UNIFORM, CrossoverType.COMPETITION};
             int[] indExclusionUsageLimitList = new int[] {50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{750};//{300, 400, 500, 600, 700, 800, 900, 1000};//{250};//{100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};//{550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 1000};//{25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700};
             int[] indExclusionGenDurationList = new int[] {50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//{250_000};//{650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000};//}{150};//{100, 300, 500, 700, 900};//{150};//{{550};//{520, 540, 560, 580, 600, 620, 640, 660, 680};//{50, 150, 250, 350, 450, 550, 650};//{50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600};
             double[] turDecayParamList = new double[] {-5};//{-0.5, -1.5, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12.5, -13  .5, -14.5, -15.5};//{-6, -8, -15, -100};
-            double[] localSearchPropList = {0.00};//{0.02, 0.03, 0.04, 0.05};//{0.001};//{0.001, 0.005, 0.01, 0.03, 0.06, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//
-            double[] localSearchArchivePropList = {0.0};//{1.0, 0.0};//{0.001};//{0.0, 0.1, 0.3, 0.6, 1.0};//
+            double[] localSearchPropList = {0.0};//{0.02, 0.03, 0.04, 0.05};//{0.001};//{0.001, 0.005, 0.01, 0.03, 0.06, 0.1};//{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};//
+            double[] localSearchMutationPropList = {0.0};//{1.0, 0.0};//{0.001};//{0.0, 0.1, 0.3, 0.6, 1.0};//
             /*if negative, no decay will be applied!*/ int[] minTournamentSizeList = new int[] {-666};//{-666};//{15};//{30, 40, 50, 60, 70};
             IndividualsPairingMethod[] individualsPairingMethodsList = new IndividualsPairingMethod[]{IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED};//, IndividualsPairingMethod.ALL_POSSIBLE_PAIRS, IndividualsPairingMethod.DISTANT_IMMEDIATE_NEIGHBOUR_PAIR, IndividualsPairingMethod.CROSS_CLUSTER_ALL_POSSIBLE_PAIRS};//ALL_POSSIBLE_PAIRS CROSS_CLUSTER_ALL_POSSIBLE_PAIRS DISTANT_IMMEDIATE_NEIGHBOUR_PAIR DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED
             double[] minMaArchChangesThresholdList = {10};//{2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100}; //{/*0, 10,*/ 20, 50, 100, 150, 200, 250};//{-666.0};//{290};
@@ -127,7 +126,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                 clusteringRunFrequencyInCostList = shuffleIntArray(clusteringRunFrequencyInCostList, parameters.random);
                 isRecalculateCentresList = shuffleBooleanArray(isRecalculateCentresList, parameters.random);
                 isClusteringEveryXCostList = shuffleBooleanArray(isClusteringEveryXCostList, parameters.random);
-                localSearchArchivePropList = shuffleDoubleArray(localSearchArchivePropList, parameters.random);
+                localSearchMutationPropList = shuffleDoubleArray(localSearchMutationPropList, parameters.random);
                 localSearchPropList = shuffleDoubleArray(localSearchPropList, parameters.random);
                 minMaArchChangesThresholdList = shuffleDoubleArray(minMaArchChangesThresholdList, parameters.random);
                 maxMaArchChangesThresholdList = shuffleDoubleArray(maxMaArchChangesThresholdList, parameters.random);
@@ -139,7 +138,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                     *crossoverProbabilityList.length*numberOfClusterList.length*clusterisationAlgorithmIterList.length*edgeClustersDispersion.length*tournamentSizeList.length
                     *populationTurPropList.length*mutationList.length*crossoverList.length*indExclusionUsageLimitList.length
                     *indExclusionGenDurationList.length*turDecayParamList.length*clusteringRunFrequencyInCostList.length*minTournamentSizeList.length*individualsPairingMethodsList.length*isRecalculateCentresList.length
-                    *isClusteringEveryXCostList.length*isPopulationUsedList.length*localSearchArchivePropList.length*localSearchPropList.length*minMaArchChangesThresholdList.length
+                    *isClusteringEveryXCostList.length*isPopulationUsedList.length*localSearchMutationPropList.length*localSearchPropList.length*minMaArchChangesThresholdList.length
                     *maxMaArchChangesThresholdList.length*maArchChangesSizeList.length*initialPopulationTypeList.length*ScheduleBuilderTypeList.length;
             System.out.println("Number of param configurations: " + numberOfParamConfigs);
             String header = "dataset;counter;measure;no of repeats;avgIGD;stdev;uber pareto purity;runs with purity;mnd;tpfs;uber pareto IGD;uber pareto GD"
@@ -219,8 +218,8 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                             boolean isClusteringEveryXCost = isClusteringEveryXCostList[rr];
                                                                                             for (int ss = 0; ss < isClusteringEveryXCostList.length; ss++) {
                                                                                                 boolean isPopulationUsed = isPopulationUsedList[ss];
-                                                                                                for (int tt = 0; tt < localSearchArchivePropList.length; tt++) {
-                                                                                                    double localSearchArchiveProp = localSearchArchivePropList[tt];
+                                                                                                for (int tt = 0; tt < localSearchMutationPropList.length; tt++) {
+                                                                                                    double localSearchMutationProp = localSearchMutationPropList[tt];
                                                                                                     for (int vv = 0; vv < localSearchPropList.length; vv++) {
                                                                                                         double localSearchProp = localSearchPropList[vv];
                                                                                                         for (int xx = 0; xx < minMaArchChangesThresholdList.length; xx++) {
@@ -251,7 +250,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                             double bestAPFHV = -Double.MIN_VALUE;
 
                                                                                                                             String outputFilename = "." + File.separator + "out" + File.separator
-                                                                                                                                    + removePrefixAndTtpPostFixFromFileName(problemPath, instanceWithOPF.get(k).getKey())
+                                                                                                                                    + removePrefixAndPostFixFromFileName(problemPath, ".def", instanceWithOPF.get(k).getKey())
                                                                                                                                     + "_m-" + clusterWeightMeasure.getName()
                                                                                                                                     + "_g" + generationLimit + "_p" + populationSize + "_pm" + initialPopulationType.toString()
                                                                                                                                     + "_m" + mutationProbability + "_c" + crossoverProbability
@@ -261,7 +260,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                     + turDecayParam + "_mt" + minTournamentSize + "_" + indPairingMethod.getName()
                                                                                                                                     + "_m" + mutationType + "_c" + crossoverType + "_cc" + isClusteringEveryXCost
                                                                                                                                     + "_cf" + clusteringRunFrequencyInCost + "_cr" + isRecalculateCentres + "_p" + isPopulationUsed
-                                                                                                                                    + "_l" + localSearchArchiveProp + "_ls" + localSearchProp
+                                                                                                                                    + "_l" + localSearchMutationProp + "_ls" + localSearchProp
                                                                                                                                     + "_ma" + minMaArchChangesThreshold + "_" + maxMaArchChangesThreshold + "_" + maArchChangesSize
                                                                                                                                     + "_sb" + scheduleBuilderType.toString();
 
@@ -281,6 +280,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                 parameters.crossover = new CrossoverFactory().createCrossover(crossoverType);
                                                                                                                                 parameters.scheduleBuilder = new ScheduleBuilderFactory(parameters).createScheduleBuilder(scheduleBuilderType);
                                                                                                                                 parameters.initialPopulation = new InitialPopulationGeneratorFactory(parameters).createInitialPopulation(initialPopulationType);
+                                                                                                                                parameters.localSearchMutationProp = localSearchMutationProp;
 
                                                                                                                                 HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                                                                                                                                 geneticAlgorithm = new CRSGA_MSRCPSP<Schedule>(
@@ -297,8 +297,6 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                         edgeClustersDispVal,
                                                                                                                                         tournamentSize,
                                                                                                                                         populationTurProp,
-                                                                                                                                        -666,
-                                                                                                                                        true,
                                                                                                                                         hv,
                                                                                                                                         optimalParetoFront,
                                                                                                                                         outputFilename,
@@ -313,7 +311,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                         isClusteringEveryXCost,
                                                                                                                                         isRecalculateCentres,
                                                                                                                                         isPopulationUsed,
-                                                                                                                                        localSearchArchiveProp,
+                                                                                                                                        localSearchMutationProp,
                                                                                                                                         localSearchProp,
                                                                                                                                         minMaArchChangesThreshold,
                                                                                                                                         maxMaArchChangesThreshold,
@@ -329,12 +327,12 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                 eachRepeatOptimisationResult.add(geneticAlgorithm.getOptimisationResult());
                                                                                                                                 eachRepeatResult.add(result);
 
-                                                                                                                                String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
+                                                                                                                                String instanceNameForFile = removePrefixAndPostFixFromFileName(problemPath, ".def", instanceName);
                                                                                                                                 if (saveResultFiles.getLevel() >= 1) {
                                                                                                                                     try {
                                                                                                                                         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                                 + File.separator + instanceNameForFile + "_config0_run" + xxx + "_archive.csv"));
-                                                                                                                                        writer.write(printResultsForComparison(result, false));
+                                                                                                                                        writer.write(printResultsForComparison(result, objectiveNames, false));
                                                                                                                                         writer.close();
                                                                                                                                     } catch (
                                                                                                                                             IOException e) {
@@ -351,13 +349,13 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
 
                                                                                                                             int mnd = geneticAlgorithm.getNumberOfNotDominated(uberPareto, optimalApfWithUberPareto);
 
-                                                                                                                            Pair<Pair<List<BaseIndividual<Integer, TTP>>, List<BaseIndividual<Integer, TTP>>>
-                                                                                                                                    , ArrayList<List<BaseIndividual<Integer, TTP>>>> normalisedApfAndResults
+                                                                                                                            Pair<Pair<List<BaseIndividual<Integer, Schedule>>, List<BaseIndividual<Integer, Schedule>>>
+                                                                                                                                    , ArrayList<List<BaseIndividual<Integer, Schedule>>>> normalisedApfAndResults
                                                                                                                                     = normaliseParetoFrontsByMinMax(optimalApfWithUberPareto, uberPareto, eachRepeatResult, schedule,
                                                                                                                                     parameters.evaluator);
-                                                                                                                            List<BaseIndividual<Integer, TTP>> normalisedOptimalPftWithUberPareto = normalisedApfAndResults.getKey().getKey();
-                                                                                                                            List<BaseIndividual<Integer, TTP>> normalisedUberPareto = normalisedApfAndResults.getKey().getValue();
-                                                                                                                            ArrayList<List<BaseIndividual<Integer, TTP>>> normalisedResults = normalisedApfAndResults.getValue();
+                                                                                                                            List<BaseIndividual<Integer, Schedule>> normalisedOptimalPftWithUberPareto = normalisedApfAndResults.getKey().getKey();
+                                                                                                                            List<BaseIndividual<Integer, Schedule>> normalisedUberPareto = normalisedApfAndResults.getKey().getValue();
+                                                                                                                            ArrayList<List<BaseIndividual<Integer, Schedule>>> normalisedResults = normalisedApfAndResults.getValue();
 
 //                        optimalApfWithUberPareto = geneticAlgorithm.getNondominatedFromTwoLists(optimalParetoFront, uberPareto);
                                                                                                                             InvertedGenerationalDistance igdCalculator = new InvertedGenerationalDistance(normalisedOptimalPftWithUberPareto);
@@ -394,11 +392,11 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                 eachRepeatPurity.add(purityValue);
                                                                                                                             }
 
-                                                                                                                            String instanceNameForFile = removePrefixAndTtpPostFixFromFileName(problemPath, instanceName);
+                                                                                                                            String instanceNameForFile = removePrefixAndPostFixFromFileName(problemPath, ".def", instanceName);
                                                                                                                             try {
                                                                                                                                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                         + File.separator + instanceNameForFile + "_UBER_PARETO.csv"));
-                                                                                                                                writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, false));
+                                                                                                                                writer.write(printParetos("uber", uberPareto, "apf", optimalParetoFront, objectiveNames, false, false));
                                                                                                                                 writer.close();
                                                                                                                             } catch (
                                                                                                                                     IOException e) {
@@ -411,7 +409,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
 
                                                                                                                                     writer = new BufferedWriter(new FileWriter(outputFilename
                                                                                                                                             + File.separator + instanceNameForFile + "_apf.csv"));
-                                                                                                                                    writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, false));
+                                                                                                                                    writer.write(printParetos("uber", uberPareto, "uber+apf", optimalApfWithUberPareto, objectiveNames, false, false));
                                                                                                                                     writer.close();
 
                                                                                                                                     writer = new BufferedWriter(new FileWriter(outputFilename
@@ -522,7 +520,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                     + ";" + generationLimit
                                                                                                                                     + ";" + populationSize + ";" + initialPopulationType.toString()
                                                                                                                                     + ";" + scheduleBuilderType.toString() + ";" + mutationProbability + ";" + crossoverProbability
-                                                                                                                                    + ";" + localSearchArchiveProp + ";" + localSearchProp
+                                                                                                                                    + ";" + localSearchMutationProp + ";" + localSearchProp
                                                                                                                                     + ";" + numberOfClusters + ";" + clusterIterLimit + ";" + isClusteringEveryXCost + ";" + isRecalculateCentres
                                                                                                                                     + ";" + clusteringRunFrequencyInCost + ";" + isPopulationUsed + ";" + edgeClustersDispVal + ";" + tournamentSize
                                                                                                                                     + ";" + populationTurProp + ";" + mutationType.name() + ";" + crossoverType.name()
@@ -547,7 +545,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
                                                                                                                                 try {
                                                                                                                                     BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename + File.separator
                                                                                                                                             + bestAPFoutputFile + bestIterNumber + ".csv"));
-                                                                                                                                    writer.write(printResultsForComparison(bestAPF, false));
+                                                                                                                                    writer.write(printResultsForComparison(bestAPF, objectiveNames, false));
                                                                                                                                     writer.close();
                                                                                                                                 } catch (
                                                                                                                                         IOException e) {
@@ -660,14 +658,6 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
         return front;
     }
 
-    private static String removePrefixAndTtpPostFixFromFileName(String prefixPath, String fileName) {
-        if(fileName.endsWith(".ttp")) {
-            int prefixPosition = fileName.lastIndexOf(prefixPath) + prefixPath.length();
-            return fileName.substring(prefixPosition, fileName.lastIndexOf(".ttp"));
-        }
-        return fileName;
-    }
-
     private static Schedule readFile(int k) {
         var definitionFile = baseDir + instanceWithOPF.get(k).getKey();
 
@@ -700,89 +690,22 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
         return parameters;
     }
 
-    private static String printResultsForComparison(List<BaseIndividual<Integer, Schedule>> resultIndividuals, boolean isVerbose) {
-        String output = "";
-        if(isVerbose) {
-            output += "Duration;Cost\n";
-            System.out.println("Duration;Cost");
-        }
-        for (int i = 0; i < resultIndividuals.size(); ++i) {
-            double duration = resultIndividuals.get(i).getObjectives()[0];
-            double cost = resultIndividuals.get(i).getObjectives()[1];
-
-            output += duration + ";" + cost + "\n";
-            if(isVerbose) {
-                System.out.println(duration + ";" + cost);
-            }
-        }
-        return output;
-    }
-
-    private String printParetos(String firstParetoName, List<BaseIndividual<Integer, Schedule>> firstPareto,
-                                       String secondParetoName, List<BaseIndividual<Integer, Schedule>> secondPareto,
-                                       boolean isVerbose) {
-        String output = ";" + firstParetoName + ";;" + secondParetoName + "\n";
-        if(isVerbose) {
-//            output += "Duration;Cost\n";
-            System.out.println("Duration;Cost");
-        }
-        for (int i = 0; i < Math.max(firstPareto.size(), secondPareto.size()); ++i) {
-            double duration = Double.NaN;
-            double cost = Double.NaN;
-            if(firstPareto.size() - 1 >= i) {
-                duration = ((BaseScheduleEvaluator)firstPareto.get(i).getEvaluator()).getDuration();
-                cost = ((BaseScheduleEvaluator)firstPareto.get(i).getEvaluator()).getCost();
-            }
-
-            double apfDuration = Double.NaN;
-            double apfCost = Double.NaN;
-            if(secondPareto.size() - 1 >= i) {
-                apfDuration = secondPareto.get(i).getObjectives()[0];
-                apfCost = (-1)*secondPareto.get(i).getObjectives()[1];
-            }
-
-            if(!Double.isNaN(cost) && !Double.isNaN(duration)) {
-                output += duration + ";" + (-1)*cost + ";";
-            } else {
-                output += ";;";
-            }
-
-            if(!Double.isNaN(apfCost) && !Double.isNaN(apfDuration)) {
-                output += apfDuration + ";" + (-1)*apfCost;
-            } else {
-                output += ";;";
-            }
-            output += "\n";
-
-            if(isVerbose) {
-                System.out.println(output);
-            }
-        }
-        return output;
-    }
-
-    private String printGenes(List<BaseIndividual<Integer, TTP>> resultIndividuals, TTP problem) {
+    private String printGenes(List<BaseIndividual<Integer, Schedule>> resultIndividuals, Schedule problem) {
         String output = "types;";
-        for(int i = 0; i < problem.getSplitPoint(); i++) {
-            output += "city" + i + ";";
-        }
-        for(int i = problem.getSplitPoint(); i < problem.getNumGenes(); i++) {
-            output += "k" + (i - problem.getSplitPoint()) + ";";
+        for(int i = 0; i < problem.getTasks().length; i++) {
+            output += "task" + i + ";";
         }
         output += "\n";
 
         for (int i = 0; i < resultIndividuals.size(); ++i) {
-            BaseIndividual<Integer, TTP> ind = resultIndividuals.get(i);
-            output += "genotype;";
+            BaseIndividual<Integer, Schedule> ind = resultIndividuals.get(i);
+            output += "genotype(assigned resources);";
             for(int j = 0; j < ind.getGenes().size(); j++) {
                 output += ind.getGenes().get(j) + ";";
             }
-            output += "\nfenotype;";
-            for(int j = 0; j < ind.getProblem().getPath().length; j++) {
-                output += ind.getProblem().getPath()[j] + ";";
-            }
-            for(int j = 0; j < ind.getProblem().getSelection().length; j++) {
-                output += ind.getProblem().getSelection()[j] + ";";
+            output += "\ntask finish time;";
+            for(int j = 0; j < ind.getGenes().size(); j++) {
+                output += ind.getProblem().getResource(ind.getGenes().get(j)).getFinish() + ";";
             }
             output += "\n";
         }

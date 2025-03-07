@@ -52,11 +52,6 @@ public class OrderedCrossover extends BaseCrossover<Integer, BaseProblemRepresen
     return result;
   }
 
-  @Override
-  public List<List<Integer>> crossover(double TSPcr, double KNAPcr, List<Integer> firstParent, List<Integer> secondParent, ParameterSet<Integer, BaseProblemRepresentation> parameters) {
-    return null;
-  }
-
   private void changeOrder(List<Integer> genome, int newGene, int position) {
     int newCityPosition = findGenePosition(genome, newGene);
     if (position != newCityPosition) {

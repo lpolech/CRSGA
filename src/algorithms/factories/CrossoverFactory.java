@@ -26,6 +26,8 @@ public class CrossoverFactory {
         return new UniformCrossover();
       case COMPETITION:
         return new CompetitionCrossover();
+      case TTP:
+        return new TTPCrossover();
       default:
         return new BinomialCrossover();
     }

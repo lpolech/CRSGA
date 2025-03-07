@@ -9,5 +9,5 @@ public enum CrossoverType {
   ORDERED,
   UNIFORM,
   COMPETITION,
-
+  TTP
 }
