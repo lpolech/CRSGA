@@ -52,8 +52,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     private boolean isPopulationUsed;
     private final double tspLocalSearchArchiveProp;
     private final double knapLocalSearchArchiveProp;
-    private double KNAPmutationProbability;
-    private double KNAPcrossoverProbability;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
     private ClusterDensityBasedSelection clusterDensityBasedSelection;
     private KmeansClusterisation kmeansCluster;
@@ -76,9 +74,7 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                      int generationLimit,
                      ParameterSet<Integer, PROBLEM> parameters,
                      double TSPmutationProbability,
-                     double KNAPmutationProbability,
                      double TSPcrossoverProbability,
-                     double KNAPcrossoverProbability,
                      String directory,
                      int clusterSize,
                      int clusterIterLimit,
@@ -109,8 +105,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                      int maArchChangesSize) {
         super(problem, populationSize, generationLimit, parameters, TSPmutationProbability, TSPcrossoverProbability);
 
-        this.KNAPmutationProbability = KNAPmutationProbability;
-        this.KNAPcrossoverProbability = KNAPcrossoverProbability;
         this.directory = directory;
         this.populationTurProp = populationTurProp;
         this.clusterSize = clusterSize;

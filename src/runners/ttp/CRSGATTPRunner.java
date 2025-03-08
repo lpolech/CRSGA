@@ -333,6 +333,8 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                             parameters.KNAPcrossoverVersion = KNAPcrossoverVersion;
                                                                                                                                             parameters.TSPmutationVersion = TSPmutationVersion;
                                                                                                                                             parameters.TSPcrossoverVersion = TSPcrossoverVersion;
+                                                                                                                                            parameters.KNAPmutationProbability = KNAPmutationProbability;
+                                                                                                                                            parameters.KNAPcrossoverProbability = KNAPcrossoverProbability;
                                                                                                                                             HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                                                                                                                                             geneticAlgorithm = new CRSGA_TTP<>(
                                                                                                                                                     ttp,
@@ -341,9 +343,7 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                                     generationLimit,
                                                                                                                                                     parameters,
                                                                                                                                                     TSPmutationProbability,
-                                                                                                                                                    KNAPmutationProbability,
                                                                                                                                                     TSPcrossoverProbability,
-                                                                                                                                                    KNAPcrossoverProbability,
                                                                                                                                                     instanceWithOPF.get(k).getKey().split("\\.")[0],
                                                                                                                                                     numberOfClusters,
                                                                                                                                                     clusterIterLimit,
