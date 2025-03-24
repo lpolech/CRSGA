@@ -11,6 +11,7 @@ import algorithms.evolutionary_algorithms.util.IndividualWithDstToItsCentre;
 import algorithms.evolutionary_algorithms.util.NondominatedSorter;
 import algorithms.problem.BaseIndividual;
 import algorithms.problem.BaseProblemRepresentation;
+import algorithms.problem.TTP;
 import algorithms.quality_measure.GenerationalDistance;
 import algorithms.quality_measure.HVMany;
 import algorithms.quality_measure.InvertedGenerationalDistance;
@@ -50,8 +51,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     private final double maxMaArchChangesThreshold;
     private final int maArchChangesSize;
     private boolean isPopulationUsed;
-    private final double tspLocalSearchArchiveProp;
-    private final double knapLocalSearchArchiveProp;
     private NondominatedSorter<BaseIndividual<Integer, PROBLEM>> sorter;
     private ClusterDensityBasedSelection clusterDensityBasedSelection;
     private KmeansClusterisation kmeansCluster;
@@ -61,7 +60,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     private OptimisationResult optimisationResult;
     private int populationTurProp;
     private IndividualsPairingMethod pairingMethod;
-    private double localSearchProp;
     private int numberOfExtraPopulationTriggered;
 
     public OptimisationResult getOptimisationResult() {
@@ -97,9 +95,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
                      boolean isClusteringEveryXCost,
                      boolean isRecalculateCentres,
                      boolean isPopulationUsed,
-                     double tspLocalSearchArchiveProp,
-                     double knapLocalSearchArchiveProp,
-                     double localSearchProp,
                      double minMaArchChangesThreshold,
                      double maxMaArchChangesThreshold,
                      int maArchChangesSize) {
@@ -139,9 +134,6 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
         this.isClusteringEveryXCost = isClusteringEveryXCost;
         this.isRecalculateCentres = isRecalculateCentres;
         this.isPopulationUsed = isPopulationUsed;
-        this.tspLocalSearchArchiveProp = tspLocalSearchArchiveProp;
-        this.knapLocalSearchArchiveProp = knapLocalSearchArchiveProp;
-        this.localSearchProp = localSearchProp;
         
         this.minMaArchChangesThreshold = minMaArchChangesThreshold;
         this.maxMaArchChangesThreshold = maxMaArchChangesThreshold;
@@ -213,7 +205,7 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
         while (cost < generationLimit) {
             int archiveChanges = 0;
 
-            cost = localSearch(cost, generationLimit, archive, localSearchProp);
+            cost = localSearch(cost, generationLimit, archive);
 
             if(costSinceLastMaRecord >= clusteringRunFrequencyInCost) {
                 costSinceLastMaRecord = 0;
@@ -490,16 +482,21 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
 
     }
 
-    private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive, double localSearchProp) {
+    private int localSearch(int currCost, int costLimit, List<BaseIndividual<Integer,PROBLEM>> archive) {
         List<BaseIndividual<Integer, PROBLEM>> localSearchPopulation = new LinkedList<>();
         for(int i = 0; i < archive.size() && currCost <= costLimit; i++) {
-            if(this.parameters.random.nextDouble() < localSearchProp) {
+            if(this.parameters.random.nextDouble() < this.parameters.localSearchOverallProp) {
                 var chosenInd = archive.get(i);
                 List<Integer> chosenIndGenes = chosenInd.getGenes();
-                double originalValue = this.parameters.KNAPmutationProbability;
-                this.parameters.KNAPmutationProbability = this.parameters.knapLocalSearchMutationProp;
+                double originalValue = -777;
+                if(problem instanceof TTP) {
+                    originalValue = this.parameters.KNAPmutationProbability;
+                    this.parameters.KNAPmutationProbability = this.parameters.knapLocalSearchMutationProp;
+                }
                 this.parameters.mutation.mutate(null, this.parameters.localSearchMutationProp, chosenIndGenes, 0, -666, this.parameters);
-                this.parameters.KNAPmutationProbability = originalValue;
+                if(problem instanceof TTP) {
+                    this.parameters.KNAPmutationProbability = originalValue;
+                }
                 var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, this.parameters.evaluator);
                 mutatedInd.buildSolution(mutatedInd.getGenes(), this.parameters);
                 localSearchPopulation.add(mutatedInd);
@@ -514,17 +511,21 @@ public class CRSGA_TTP<PROBLEM extends BaseProblemRepresentation> extends Geneti
     }
 
     private int performLocalSearch(int currCost, int costLimit, List<BaseIndividual<Integer, PROBLEM>> archive,
-                                   List<BaseIndividual<Integer, PROBLEM>> population, double TSPf, double KNAPf,
-                                   double archiveProp) {
-        int numberOfIndividuals = Math.max(1, (int) (archiveProp * archive.size()));
+                                   List<BaseIndividual<Integer, PROBLEM>> population) {
+        int numberOfIndividuals = Math.max(1, (int) (this.parameters.localSearchOverallProp * archive.size()));
         for(int i = 0; i < numberOfIndividuals && currCost <= costLimit; i++) {
             int randomIndex = parameters.random.nextInt(archive.size()); // Generate a random index
             var chosenInd = archive.get(randomIndex);
             List<Integer> chosenIndGenes = chosenInd.getGenes();
-            double originalValue = this.parameters.KNAPmutationProbability;
-            this.parameters.KNAPmutationProbability = KNAPf;
-            this.parameters.mutation.mutate(null, TSPf, chosenIndGenes, 0, -666, this.parameters);
-            this.parameters.KNAPmutationProbability = originalValue;
+            double originalValue = -777.0;
+            if(problem instanceof TTP) {
+                originalValue = this.parameters.KNAPmutationProbability;
+                this.parameters.KNAPmutationProbability = this.parameters.knapLocalSearchMutationProp;
+            }
+            this.parameters.mutation.mutate(null, this.parameters.localSearchMutationProp, chosenIndGenes, 0, -666, this.parameters);
+            if(problem instanceof TTP) {
+                this.parameters.KNAPmutationProbability = originalValue;
+            }
             var mutatedInd = new BaseIndividual<>(problem, chosenIndGenes, parameters.evaluator);
             mutatedInd.buildSolution(mutatedInd.getGenes(), parameters);
             population.add(mutatedInd);

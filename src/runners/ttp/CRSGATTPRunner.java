@@ -335,6 +335,10 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                             parameters.TSPcrossoverVersion = TSPcrossoverVersion;
                                                                                                                                             parameters.KNAPmutationProbability = KNAPmutationProbability;
                                                                                                                                             parameters.KNAPcrossoverProbability = KNAPcrossoverProbability;
+                                                                                                                                            parameters.localSearchMutationProp = tspLocalSearchArchiveProp;
+                                                                                                                                            parameters.knapLocalSearchMutationProp = knapLocalSearchArchiveProp;
+                                                                                                                                            parameters.localSearchOverallProp = localSearchProp;
+
                                                                                                                                             HVMany hv = new HVMany(parameters.evaluator.getNadirPoint());
                                                                                                                                             geneticAlgorithm = new CRSGA_TTP<>(
                                                                                                                                                     ttp,
@@ -366,9 +370,6 @@ public class CRSGATTPRunner extends CRSGARunnerHelper {
                                                                                                                                                     isClusteringEveryXCost,
                                                                                                                                                     isRecalculateCentres,
                                                                                                                                                     isPopulationUsed,
-                                                                                                                                                    tspLocalSearchArchiveProp,
-                                                                                                                                                    knapLocalSearchArchiveProp,
-                                                                                                                                                    localSearchProp,
                                                                                                                                                     minMaArchChangesThreshold,
                                                                                                                                                     maxMaArchChangesThreshold,
                                                                                                                                                     maArchChangesSize

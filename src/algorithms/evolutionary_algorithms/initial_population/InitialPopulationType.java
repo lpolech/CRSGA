@@ -15,9 +15,15 @@ public enum InitialPopulationType {
   READ_MSRCPSP("REDMS");
 
   private String abbreviation;
+  public double numSwapsProportion;
 
   InitialPopulationType(String abbreviation) {
     this.abbreviation = abbreviation;
+  }
+
+  InitialPopulationType(String abbreviation, double numSwapsProportion) {
+    this.numSwapsProportion = numSwapsProportion;
+    this.abbreviation = abbreviation + "(s:" + numSwapsProportion + ")";
   }
 
   public String toString() {
