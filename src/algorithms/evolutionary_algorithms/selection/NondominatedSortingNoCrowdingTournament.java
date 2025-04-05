@@ -30,17 +30,16 @@ public class NondominatedSortingNoCrowdingTournament<GENE extends Number> extend
                                                                   BaseIndividual<GENE, BaseProblemRepresentation> current,
                                                                   BaseIndividual<GENE, BaseProblemRepresentation> trial,
                                                                   ParameterSet<GENE, BaseProblemRepresentation> parameters) {
-//        TODO:2024-04-02 (Chen) - without replacement
+
         // TODO: refactor
-        Set<BaseIndividual<GENE, BaseProblemRepresentation>> selectedIndividuals = new HashSet<>();
         BaseIndividual<GENE, BaseProblemRepresentation> parent;
         BaseIndividual<GENE, BaseProblemRepresentation> pretender;
         int size = nonDominated.size() + population.size();
-        parent = randomizeIndividual(population, nonDominated, size, parameters, selectedIndividuals);
-        pretender = randomizeIndividual(population, nonDominated, size, parameters, selectedIndividuals);
+        parent = randomizeIndividual(population, nonDominated, size, parameters);
+        pretender = randomizeIndividual(population, nonDominated, size, parameters);
         parent = choose(parent, pretender);
         for (int i = 0; i < tournamentSize - 2; ++i) {
-            pretender = randomizeIndividual(population, nonDominated, size, parameters, selectedIndividuals);
+            pretender = randomizeIndividual(population, nonDominated, size, parameters);
             parent = choose(parent, pretender);
         }
 
@@ -50,21 +49,15 @@ public class NondominatedSortingNoCrowdingTournament<GENE extends Number> extend
     private BaseIndividual<GENE, BaseProblemRepresentation> randomizeIndividual(List<BaseIndividual<GENE, BaseProblemRepresentation>> population,
                                                                                 List<BaseIndividual<GENE, BaseProblemRepresentation>> nonDominated,
                                                                                 int size,
-                                                                                ParameterSet<GENE, BaseProblemRepresentation> parameters,
-                                                                                Set<BaseIndividual<GENE, BaseProblemRepresentation>> selectedIndividuals) { //Chen
+                                                                                ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         BaseIndividual<GENE, BaseProblemRepresentation> pretender;
-        do {
-            int random = parameters.random.next(size).intValue();
-            if (random >= nonDominated.size()) {
-                random -= nonDominated.size();
-                pretender = population.get(random);
-            } else {
-                pretender = nonDominated.get(random);
-            }
-        } while (selectedIndividuals.contains(pretender));
-
-        selectedIndividuals.add(pretender);
-
+        int random = parameters.random.next(size).intValue();
+        if (random >= nonDominated.size()) {
+            random -= nonDominated.size();
+            pretender = population.get(random);
+        } else {
+            pretender = nonDominated.get(random);
+        }
         return pretender;
     }
 
