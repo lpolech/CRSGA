@@ -108,9 +108,6 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
 
             boolean shuffleParams = true;
             FILE_OUTPUT_LEVEL saveResultFiles = FILE_OUTPUT_LEVEL.MINIMAL;//FILE_OUTPUT_LEVEL.NONE FILE_OUTPUT_LEVEL.ALL FILE_OUTPUT_LEVEL.MINIMAL FILE_OUTPUT_LEVEL.REASONABLE;
-//            String summaryOutputFileName = "25-03-18_MS-RCPSP_stability_check.csv";
-//            String summaryOutputFileName = "25-03-29_MS-RCPSP.csv";
-//            String summaryOutputFileName = "25-03-28_MS-RCPSP.csv";
             String summaryOutputFileName = "25-04-05_MS-RCPSP.csv";
 
 

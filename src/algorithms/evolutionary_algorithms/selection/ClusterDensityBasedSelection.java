@@ -115,7 +115,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             default:
                 System.err.println("UNKNOWN POINT PAIRING METHOD! PLEASE CHECK!");
         }
-        // without replacement
+        // Without Replacement
         if (!TournamentSelectionConfig.ALLOW_DUPLICATE_SELECTION){
             Set<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> withoutPlacement= new HashSet<>(returnPairs);
             returnPairs = new ArrayList<>(withoutPlacement);
