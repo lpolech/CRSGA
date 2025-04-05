@@ -8,11 +8,9 @@ import algorithms.problem.BaseProblemRepresentation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
+import util.config.TournamentSelectionConfig;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
     public ClusterDensityBasedSelection(int tournamentSize) {
@@ -116,6 +114,11 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                 break;
             default:
                 System.err.println("UNKNOWN POINT PAIRING METHOD! PLEASE CHECK!");
+        }
+        // without replacement
+        if (!TournamentSelectionConfig.ALLOW_DUPLICATE_SELECTION){
+            Set<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> withoutPlacement= new HashSet<>(returnPairs);
+            returnPairs = new ArrayList<>(withoutPlacement);
         }
 //        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
 

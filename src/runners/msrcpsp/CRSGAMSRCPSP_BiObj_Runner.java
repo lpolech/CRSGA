@@ -41,12 +41,12 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
     private static final String problemPath = "assets" + File.separator + "definitions" + File.separator + "MSRCPSP_fixed_idx" + File.separator;
     private static final String apfsPath = "." + File.separator + "apfs" + File.separator + "25-03-24" + File.separator;
     private static final List<Pair<String, String>> instanceWithOPF = Arrays.asList(
-//            new Pair<>(problemPath + "100_5_64_15.def", apfsPath + "100_5_64_15_merged.csv"),
-            new Pair<>(problemPath + "100_10_47_9.def", apfsPath + "100_10_47_9_merged.csv")
-//            new Pair<>(problemPath + "100_20_22_15.def", apfsPath + "100_20_22_15_merged.csv"),
-//            new Pair<>(problemPath + "200_10_84_9.def", apfsPath + "200_10_84_9_merged.csv"),
-//            new Pair<>(problemPath + "200_20_55_9.def", apfsPath + "200_20_55_9_merged.csv"),
-//            new Pair<>(problemPath + "200_40_133_15.def", apfsPath + "200_40_133_15_merged.csv")
+            new Pair<>(problemPath + "100_5_64_15.def", apfsPath + "100_5_64_15_merged.csv"),
+            new Pair<>(problemPath + "100_10_47_9.def", apfsPath + "100_10_47_9_merged.csv"),
+            new Pair<>(problemPath + "100_20_22_15.def", apfsPath + "100_20_22_15_merged.csv"),
+            new Pair<>(problemPath + "200_10_84_9.def", apfsPath + "200_10_84_9_merged.csv"),
+            new Pair<>(problemPath + "200_20_55_9.def", apfsPath + "200_20_55_9_merged.csv"),
+            new Pair<>(problemPath + "200_40_133_15.def", apfsPath + "200_40_133_15_merged.csv")
     );
 
     public static void main(String[] args) {
@@ -111,7 +111,7 @@ public class CRSGAMSRCPSP_BiObj_Runner extends CRSGARunnerHelper {
 //            String summaryOutputFileName = "25-03-18_MS-RCPSP_stability_check.csv";
 //            String summaryOutputFileName = "25-03-29_MS-RCPSP.csv";
 //            String summaryOutputFileName = "25-03-28_MS-RCPSP.csv";
-            String summaryOutputFileName = "25-04-02_MS-RCPSP.csv";
+            String summaryOutputFileName = "25-04-05_MS-RCPSP.csv";
 
 
             if(shuffleParams) {
