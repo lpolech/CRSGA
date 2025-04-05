@@ -1,0 +1,3 @@
+[submodule "submodules/hkplusplus"]
+    path = submodules/hkplusplus
+    url = https://github.com/Daisylbxx/CRSGA.git
