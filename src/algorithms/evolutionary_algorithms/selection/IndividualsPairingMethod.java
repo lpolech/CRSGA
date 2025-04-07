@@ -2,6 +2,7 @@ package algorithms.evolutionary_algorithms.selection;
 
 public enum IndividualsPairingMethod {
     DISTANT_IMMEDIATE_NEIGHBOUR_PAIR("dinp"),
+    DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_PERCENT("dinpp"),
     CROSS_CLUSTER_ALL_POSSIBLE_PAIRS("ccapp"),
     ALL_POSSIBLE_PAIRS("app"),
     DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED("dinps"),
