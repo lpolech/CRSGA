@@ -8,9 +8,11 @@ import algorithms.problem.BaseProblemRepresentation;
 import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
+import util.config.IndividualPairingMethodConfig;
 import util.config.TournamentSelectionConfig;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends BaseProblemRepresentation> {
     public ClusterDensityBasedSelection(int tournamentSize) {
@@ -18,23 +20,24 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
     }
 
     private int tournamentSize;
+
     /* independent cluster selection, random individual in each. Remember to modify the execution part as well! */
     public BaseIndividual<Integer, PROBLEM> selectRandomWheeleBothClusters(
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
 //        Pair<ClustersAndTheirStatistics, List<Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>>>>
-        for(var ind: clusteringResult.getClustersDispersion()) {
+        for (var ind : clusteringResult.getClustersDispersion()) {
             dispersionSum += ind;
         }
         double clusterSelectionRandom = parameters.random.nextDouble() * dispersionSum;
         dispersionSum = 0.0;
 //        Pair<Cluster, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>> chosenCluster = null;
         int chosenClusterIndex = -1;
-        for(int i = 0; i < clusteringResult.getClustersWithIndDstToCentre().size() && chosenClusterIndex == -1; i++) {
+        for (int i = 0; i < clusteringResult.getClustersWithIndDstToCentre().size() && chosenClusterIndex == -1; i++) {
 //            Pair<Double, List<Pair<Double, BaseIndividual<Integer, PROBLEM>>>> cluster = dispersionWithIndDstToCentreAndTheInd.getValue().get(i);
             dispersionSum += clusteringResult.getClustersDispersion().get(i);
-            if(dispersionSum >= clusterSelectionRandom) {
+            if (dispersionSum >= clusterSelectionRandom) {
                 chosenClusterIndex = i;
 //                var clust = dispersionWithIndDstToCentreAndTheInd.getKey().getClusters()[i];
 //                chosenCluster = new Pair<>(clust, cluster.getValue());
@@ -46,7 +49,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
-        var chosenIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenIndividualIndex);
+        var chosenIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenIndividualIndex].recordUsage();
 
         return chosenIndividual.getIndividual();
@@ -58,7 +61,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure) {
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0)); // tur size depents on the number of clusters as at the beginning there is not many clusters
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
@@ -72,16 +75,16 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenFirstIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         var chosenSecondIndividualIndex = chosenFirstIndividualIndex;
-        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
+        while (chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
             chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         }
 
-        var chosenFirstIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenFirstIndividualIndex);
+        var chosenFirstIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenFirstIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
         chosenFirstIndividual.getIndividual().setAdjustedUsageCounter(
                 chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].getGlobalUsageCounter());
 
-        var chosenSecondIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenSecondIndividualIndex);
+        var chosenSecondIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenSecondIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
         chosenSecondIndividual.getIndividual().setAdjustedUsageCounter(
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].getGlobalUsageCounter());
@@ -109,6 +112,13 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR:
                 returnPairs.addAll(addArchiveNeigbouringPairs(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
+            case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_PERCENT:
+                // Check the config value to control whether to run this case
+                if (IndividualPairingMethodConfig.ENABLE_DISTANT_NEIGHBOUR_PAIR_PERCENT) {
+                    // Enable logic for DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_PERCENT
+                    returnPairs.addAll(addArchiveNeigbouringPairsPercent(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
+                }
+                break;
             case DISTANT_IMMEDIATE_NEIGHBOUR_PAIR_SIMPLIFIED:
                 returnPairs.addAll(addArchiveNeigbouringPairsSimplified(clusteringResult, parameters, clusterWeightMeasure, turDecayFunction, currCost));
                 break;
@@ -116,8 +126,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                 System.err.println("UNKNOWN POINT PAIRING METHOD! PLEASE CHECK!");
         }
         // Without Replacement
-        if (!TournamentSelectionConfig.ALLOW_DUPLICATE_SELECTION){
-            Set<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> withoutPlacement= new HashSet<>(returnPairs);
+        if (!TournamentSelectionConfig.ALLOW_DUPLICATE_SELECTION) {
+            Set<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> withoutPlacement = new HashSet<>(returnPairs);
             returnPairs = new ArrayList<>(withoutPlacement);
         }
 //        returnPairs.addAll(addPairsOfArchiveAndPopulation(clusteringResult, parameters, clusterWeightMeasure, population));
@@ -135,9 +145,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
 
         int dynamicTurSize = -666;
-        if(turDecayFunction != null) {
+        if (turDecayFunction != null) {
             double decayTurFun = turDecayFunction.getVal(currCost);
-            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
         } else {
             dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
         }
@@ -154,7 +164,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
             chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
@@ -164,7 +174,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
         int chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
 
-        for(int i = 0; i < chosenClusterSize; i++) {
+        for (int i = 0; i < chosenClusterSize; i++) {
             IndividualWithDstToItsCentre chosenFirstIndividual;
             chosenFirstIndividual =
                     (IndividualWithDstToItsCentre) chosenCluster.getCluster()
@@ -200,9 +210,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
         int dynamicTurSize = -666;
-        if(turDecayFunction != null) {
+        if (turDecayFunction != null) {
             double decayTurFun = turDecayFunction.getVal(currCost);
-            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
         } else {
             dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
         }
@@ -219,7 +229,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
             chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
@@ -229,7 +239,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
         int chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
 
-        for(int i = 0; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
+        for (int i = 0; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
             IndividualWithDstToItsCentre chosenFirstIndividual;
             if (i >= chosenClusterSize) {
                 chosenFirstIndividual =
@@ -245,7 +255,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                 chosenFirstIndividual.getIndividual().recordUsage();
             }
             for (int j = 0; j < chosenClusterSize + chosenClusterNeighbourSize; j++) {
-                if(i == j) {
+                if (i == j) {
                     continue;
                 }
                 IndividualWithDstToItsCentre chosenSecondIndividual;
@@ -279,9 +289,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
 
         int dynamicTurSize = -666;
-        if(turDecayFunction != null) {
+        if (turDecayFunction != null) {
             double decayTurFun = turDecayFunction.getVal(currCost);
-            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
         } else {
             dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
         }
@@ -298,7 +308,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
             chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
@@ -311,12 +321,12 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         List<Pair<Integer, Double>> pointsIndexWithOneObjectiveVal = new ArrayList<>(chosenClusterSize + chosenClusterNeighbourSize);
         int mainObjectiveNumber = parameters.random.nextInt(parameters.evaluator.getNumObjectives());
 
-        for(int i = 0; i < chosenClusterSize; i++) {
+        for (int i = 0; i < chosenClusterSize; i++) {
             pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringCluster.getPoints()[i].getCoordinate(mainObjectiveNumber)));
         }
 
-        for(int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
-            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i-chosenClusterSize].getCoordinate(mainObjectiveNumber)));
+        for (int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
+            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i - chosenClusterSize].getCoordinate(mainObjectiveNumber)));
         }
 
         pointsIndexWithOneObjectiveVal.sort(new Comparator<Pair<Integer, Double>>() {
@@ -328,7 +338,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         });
 
         boolean crossClusterPairCreated = false;
-        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i=i+1) {
+        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i = i + 1) {
             int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
             int chosenSecondIndividualIndex;
 
@@ -336,8 +346,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
             } else {
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
-                if((chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize)
-                    || (chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize)) { // cross cluster pair
+                if ((chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize)
+                        || (chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize)) { // cross cluster pair
                     crossClusterPairCreated = true;
                 }
                 i++;
@@ -346,31 +356,31 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             IndividualWithDstToItsCentre chosenFirstIndividual;
             IndividualWithDstToItsCentre chosenSecondIndividual;
 
-            if(chosenFirstIndividualIndex >= chosenClusterSize) {
+            if (chosenFirstIndividualIndex >= chosenClusterSize) {
                 chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
             } else {
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
             }
 
-            if(chosenSecondIndividualIndex >= chosenClusterSize) {
+            if (chosenSecondIndividualIndex >= chosenClusterSize) {
                 chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
                 chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
                                 .get(chosenSecondIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
             } else {
                 chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
                                 .get(chosenSecondIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
@@ -381,35 +391,35 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
 
         IndividualWithDstToItsCentre chosenFirstIndividual;
         IndividualWithDstToItsCentre chosenSecondIndividual;
-        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size() && !crossClusterPairCreated && pointsIndexWithOneObjectiveVal.size() >= i+1; i++) {
+        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size() && !crossClusterPairCreated && pointsIndexWithOneObjectiveVal.size() >= i + 1; i++) {
             int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
-            int chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i+1).getKey();
-            if(chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize) { // cross cluster pair
+            int chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+            if (chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize) { // cross cluster pair
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
 
                 chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
                 chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
                                 .get(chosenSecondIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
 
                 returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
                 crossClusterPairCreated = true;
-            } else if(chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize) { // cross cluster pair
+            } else if (chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize) { // cross cluster pair
                 chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
 
                 chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
                                 .get(chosenSecondIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
                 chosenSecondIndividual.getIndividual().recordUsage();
@@ -422,7 +432,8 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         return returnPairs;
     }
 
-    public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addArchiveNeigbouringPairs(
+    //CHEN
+    public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addArchiveNeigbouringPairsPercent(
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
@@ -432,9 +443,9 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
 
         int dynamicTurSize = -666;
-        if(turDecayFunction != null) {
+        if (turDecayFunction != null) {
             double decayTurFun = turDecayFunction.getVal(currCost);
-            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) /100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
         } else {
             dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
         }
@@ -451,7 +462,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
             chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
@@ -460,16 +471,16 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
 
         int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
         int chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
-
+        // TODO: euclidean value instead of chosing one objective
         List<Pair<Integer, Double>> pointsIndexWithOneObjectiveVal = new ArrayList<>(chosenClusterSize + chosenClusterNeighbourSize);
         int mainObjectiveNumber = parameters.random.nextInt(parameters.evaluator.getNumObjectives());
 
-        for(int i = 0; i < chosenClusterSize; i++) {
+        for (int i = 0; i < chosenClusterSize; i++) {
             pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringCluster.getPoints()[i].getCoordinate(mainObjectiveNumber)));
         }
 
-        for(int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
-            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i-chosenClusterSize].getCoordinate(mainObjectiveNumber)));
+        for (int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
+            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i - chosenClusterSize].getCoordinate(mainObjectiveNumber)));
         }
 
         pointsIndexWithOneObjectiveVal.sort(new Comparator<Pair<Integer, Double>>() {
@@ -480,76 +491,186 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             }
         });
 
-        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i=i+1) {
+        List<Object[]> allPairs = new ArrayList<>();
+        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i++) {
             int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
             double chosenFirstIndividualFitness = pointsIndexWithOneObjectiveVal.get(i).getValue();
             int chosenSecondIndividualIndex;
 
             if (i == (pointsIndexWithOneObjectiveVal.size() - 1)) { // last point
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
-            } else if(i == 0) { //first point
+                // Store both distances (distToLeft and distToRight) as you don't need to compare them
+                double distToLeft = Math.abs(chosenFirstIndividualFitness - pointsIndexWithOneObjectiveVal.get(i - 1).getValue());
+                allPairs.add(new Object[]{chosenFirstIndividualIndex, chosenSecondIndividualIndex, distToLeft});
+            } else if (i == 0) { // first point
                 chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+                // Store both distances (distToLeft and distToRight) as you don't need to compare them
+                double distToRight = Math.abs(chosenFirstIndividualFitness - pointsIndexWithOneObjectiveVal.get(i + 1).getValue());
+                allPairs.add(new Object[]{chosenFirstIndividualIndex, chosenSecondIndividualIndex, distToRight});
             } else {
                 int leftNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
                 double leftNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i - 1).getValue();
                 int rightNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
                 double rightNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i + 1).getValue();
 
-                double distToLeft = chosenFirstIndividualFitness - leftNeighbourFitness;
-                double distToRight = rightNeighbourFitness - chosenFirstIndividualFitness;
-                if(distToLeft < distToRight) {
-                    chosenSecondIndividualIndex = rightNeighbourIndex;
-                } else {
-                    chosenSecondIndividualIndex = leftNeighbourIndex;
-                }
+                // Calculate both distances without comparing them
+                double distToLeft = Math.abs(chosenFirstIndividualFitness - leftNeighbourFitness);
+                double distToRight = Math.abs(rightNeighbourFitness - chosenFirstIndividualFitness);
+
+                // Add both distances to the list
+                allPairs.add(new Object[]{chosenFirstIndividualIndex, leftNeighbourIndex, distToLeft});
+                allPairs.add(new Object[]{chosenFirstIndividualIndex, rightNeighbourIndex, distToRight});
             }
+        }
+
+
+        allPairs.sort(Comparator.comparingDouble(o -> (double) o[2]));
+
+
+        int topK = (int) (allPairs.size() * 0.9);
+        List<Object[]> selectedPairs = allPairs.subList(0, topK);
+
+
+
+        for (Object[] pair : selectedPairs) {
+            int chosenFirstIndividualIndex = (int) pair[0];
+            int chosenSecondIndividualIndex = (int) pair[1];
+
             IndividualWithDstToItsCentre chosenFirstIndividual;
             IndividualWithDstToItsCentre chosenSecondIndividual;
 
-            if(chosenFirstIndividualIndex >= chosenClusterSize) {
-                chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
-                chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
-                                .get(chosenFirstIndividualIndex);
+            if (chosenFirstIndividualIndex >= chosenClusterSize) {
+                chosenFirstIndividualIndex -= chosenClusterSize;
+                chosenFirstIndividual = (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster().get(chosenFirstIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
-                chosenFirstIndividual.getIndividual().recordUsage();
             } else {
-                chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
-                                .get(chosenFirstIndividualIndex);
+                chosenFirstIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenFirstIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
-                chosenFirstIndividual.getIndividual().recordUsage();
             }
+            chosenFirstIndividual.getIndividual().recordUsage();
 
-            if(chosenSecondIndividualIndex >= chosenClusterSize) {
-                chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
-                chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
-                                .get(chosenSecondIndividualIndex);
+            if (chosenSecondIndividualIndex >= chosenClusterSize) {
+                chosenSecondIndividualIndex -= chosenClusterSize;
+                chosenSecondIndividual = (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster().get(chosenSecondIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
-                chosenSecondIndividual.getIndividual().recordUsage();
             } else {
-                chosenSecondIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
-                                .get(chosenSecondIndividualIndex);
+                chosenSecondIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenSecondIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
-                chosenSecondIndividual.getIndividual().recordUsage();
             }
+            chosenSecondIndividual.getIndividual().recordUsage();
 
             returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
         }
 
         return returnPairs;
+//        boolean crossClusterPairCreated = false;
+//
+//        for (Object[] pair : selectedPairs) {
+//            int chosenFirstIndividualIndex = (int) pair[0];
+//            int chosenSecondIndividualIndex = (int) pair[1];
+//
+//            if ((chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize)
+//                    || (chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize)) {
+//                crossClusterPairCreated = true;
+//            }
+//
+//            IndividualWithDstToItsCentre chosenFirstIndividual;
+//            IndividualWithDstToItsCentre chosenSecondIndividual;
+//
+//            if (chosenFirstIndividualIndex >= chosenClusterSize) {
+//                chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
+//                chosenFirstIndividual =
+//                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+//                                .get(chosenFirstIndividualIndex);
+//                chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+//                chosenFirstIndividual.getIndividual().recordUsage();
+//            } else {
+//                chosenFirstIndividual =
+//                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+//                                .get(chosenFirstIndividualIndex);
+//                chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+//                chosenFirstIndividual.getIndividual().recordUsage();
+//            }
+//
+//            if (chosenSecondIndividualIndex >= chosenClusterSize) {
+//                chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
+//                chosenSecondIndividual =
+//                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+//                                .get(chosenSecondIndividualIndex);
+//                chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+//                chosenSecondIndividual.getIndividual().recordUsage();
+//            } else {
+//                chosenSecondIndividual =
+//                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+//                                .get(chosenSecondIndividualIndex);
+//                chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+//                chosenSecondIndividual.getIndividual().recordUsage();
+//            }
+//
+//            returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
+//        }
+//
+//        IndividualWithDstToItsCentre chosenFirstIndividual;
+//        IndividualWithDstToItsCentre chosenSecondIndividual;
+//        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size() && !crossClusterPairCreated && pointsIndexWithOneObjectiveVal.size() >= i + 1; i++) {
+//            int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
+//            int chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+//            if (chosenFirstIndividualIndex < chosenClusterSize && chosenSecondIndividualIndex >= chosenClusterSize) { // cross cluster pair
+//                chosenFirstIndividual =
+//                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+//                                .get(chosenFirstIndividualIndex);
+//                chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+//                chosenFirstIndividual.getIndividual().recordUsage();
+//
+//                chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
+//                chosenSecondIndividual =
+//                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+//                                .get(chosenSecondIndividualIndex);
+//                chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+//                chosenSecondIndividual.getIndividual().recordUsage();
+//
+//                returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
+//                crossClusterPairCreated = true;
+//            } else if (chosenFirstIndividualIndex >= chosenClusterSize && chosenSecondIndividualIndex < chosenClusterSize) { // cross cluster pair
+//                chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
+//                chosenFirstIndividual =
+//                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+//                                .get(chosenFirstIndividualIndex);
+//                chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+//                chosenFirstIndividual.getIndividual().recordUsage();
+//
+//                chosenSecondIndividual =
+//                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+//                                .get(chosenSecondIndividualIndex);
+//                chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+//                chosenSecondIndividual.getIndividual().recordUsage();
+//
+//                returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
+//                crossClusterPairCreated = true;
+//            }
+//        }
+//
+//        return returnPairs;
     }
 
-    public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addPairsOfArchiveAndPopulation(
+
+    public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addArchiveNeigbouringPairs(
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters,
             QualityMeasure clusterWeightMeasure,
-            List<BaseIndividual<Integer, PROBLEM>> population) {
+            ParameterFunctions turDecayFunction,
+            int currCost) {
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
-        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) /100.0)); // tur size depends on the number of clusters as at the beginning there is not many clusters
+
+        int dynamicTurSize = -666;
+        if (turDecayFunction != null) {
+            double decayTurFun = turDecayFunction.getVal(currCost);
+            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        } else {
+            dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
+        }
+//        System.out.println(decayTurFun);
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
@@ -562,7 +683,7 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenClusterNeighbourIndex = chosenClusterIndex;
-        if(!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
             chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
         }
         var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
@@ -575,12 +696,12 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         List<Pair<Integer, Double>> pointsIndexWithOneObjectiveVal = new ArrayList<>(chosenClusterSize + chosenClusterNeighbourSize);
         int mainObjectiveNumber = parameters.random.nextInt(parameters.evaluator.getNumObjectives());
 
-        for(int i = 0; i < chosenClusterSize; i++) {
+        for (int i = 0; i < chosenClusterSize; i++) {
             pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringCluster.getPoints()[i].getCoordinate(mainObjectiveNumber)));
         }
 
-        for(int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
-            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i-chosenClusterSize].getCoordinate(mainObjectiveNumber)));
+        for (int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
+            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i - chosenClusterSize].getCoordinate(mainObjectiveNumber)));
         }
 
         pointsIndexWithOneObjectiveVal.sort(new Comparator<Pair<Integer, Double>>() {
@@ -591,7 +712,119 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             }
         });
 
-        for(int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i=i+1) {
+        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i = i + 1) {
+            int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
+            double chosenFirstIndividualFitness = pointsIndexWithOneObjectiveVal.get(i).getValue();
+            int chosenSecondIndividualIndex;
+
+            if (i == (pointsIndexWithOneObjectiveVal.size() - 1)) { // last point
+                chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
+            } else if (i == 0) { //first point
+                chosenSecondIndividualIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+            } else {
+                int leftNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i - 1).getKey();
+                double leftNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i - 1).getValue();
+                int rightNeighbourIndex = pointsIndexWithOneObjectiveVal.get(i + 1).getKey();
+                double rightNeighbourFitness = pointsIndexWithOneObjectiveVal.get(i + 1).getValue();
+
+                double distToLeft = chosenFirstIndividualFitness - leftNeighbourFitness;
+                double distToRight = rightNeighbourFitness - chosenFirstIndividualFitness;
+                if (distToLeft < distToRight) {
+                    chosenSecondIndividualIndex = rightNeighbourIndex;
+                } else {
+                    chosenSecondIndividualIndex = leftNeighbourIndex;
+                }
+            }
+            IndividualWithDstToItsCentre chosenFirstIndividual;
+            IndividualWithDstToItsCentre chosenSecondIndividual;
+
+            if (chosenFirstIndividualIndex >= chosenClusterSize) {
+                chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
+                chosenFirstIndividual =
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+                                .get(chosenFirstIndividualIndex);
+                chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+                chosenFirstIndividual.getIndividual().recordUsage();
+            } else {
+                chosenFirstIndividual =
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+                                .get(chosenFirstIndividualIndex);
+                chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
+                chosenFirstIndividual.getIndividual().recordUsage();
+            }
+
+            if (chosenSecondIndividualIndex >= chosenClusterSize) {
+                chosenSecondIndividualIndex = chosenSecondIndividualIndex - chosenClusterSize;
+                chosenSecondIndividual =
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
+                                .get(chosenSecondIndividualIndex);
+                chosenClusteringNeighbourCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+                chosenSecondIndividual.getIndividual().recordUsage();
+            } else {
+                chosenSecondIndividual =
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
+                                .get(chosenSecondIndividualIndex);
+                chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
+                chosenSecondIndividual.getIndividual().recordUsage();
+            }
+
+            returnPairs.add(new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual()));
+        }
+
+        return returnPairs;
+
+    }
+
+    public List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> addPairsOfArchiveAndPopulation(
+            ClusteringResult clusteringResult,
+            ParameterSet<GENE, BaseProblemRepresentation> parameters,
+            QualityMeasure clusterWeightMeasure,
+            List<BaseIndividual<Integer, PROBLEM>> population) {
+        List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
+        int numberOfClusters = clusteringResult.getClustersDispersion().size();
+        int dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0)); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
+
+        for (int i = 0; i < dynamicTurSize - 1; ++i) {
+            chosenClusterIndex = chooseCluster(chosenClusterIndex,
+                    (int) (parameters.random.nextDouble() * numberOfClusters),
+                    clusteringResult, clusterWeightMeasure);
+        }
+
+        var chosenCluster = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterIndex);
+        var chosenClusteringCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterIndex];
+        chosenClusteringCluster.getCenter().recordUsage();
+        var chosenClusterNeighbourIndex = chosenClusterIndex;
+        if (!getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).isEmpty()) {
+            chosenClusterNeighbourIndex = getClusterNeighbourIndeces(clusteringResult, chosenClusterIndex).get(0);
+        }
+        var chosenClusterNeighbour = clusteringResult.getClustersWithIndDstToCentre().get(chosenClusterNeighbourIndex);
+        var chosenClusteringNeighbourCluster = clusteringResult.getClustersAndTheirStatistics().getClusters()[chosenClusterNeighbourIndex];
+        chosenClusteringNeighbourCluster.getCenter().recordUsage();
+
+        int chosenClusterSize = chosenClusteringCluster.getNumberOfPoints();
+        int chosenClusterNeighbourSize = chosenClusteringNeighbourCluster.getNumberOfPoints();
+
+        List<Pair<Integer, Double>> pointsIndexWithOneObjectiveVal = new ArrayList<>(chosenClusterSize + chosenClusterNeighbourSize);
+        int mainObjectiveNumber = parameters.random.nextInt(parameters.evaluator.getNumObjectives());
+
+        for (int i = 0; i < chosenClusterSize; i++) {
+            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringCluster.getPoints()[i].getCoordinate(mainObjectiveNumber)));
+        }
+
+        for (int i = chosenClusterSize; i < chosenClusterSize + chosenClusterNeighbourSize; i++) {
+            pointsIndexWithOneObjectiveVal.add(new Pair<>(i, chosenClusteringNeighbourCluster.getPoints()[i - chosenClusterSize].getCoordinate(mainObjectiveNumber)));
+        }
+
+        pointsIndexWithOneObjectiveVal.sort(new Comparator<Pair<Integer, Double>>() {
+            public int compare(Pair<Integer, Double> o1, Pair<Integer, Double> o2) {
+                if (Objects.equals(o1.getValue(), o2.getValue()))
+                    return 0;
+                return o1.getValue() < o2.getValue() ? -1 : 1;
+            }
+        });
+
+        for (int i = 0; i < pointsIndexWithOneObjectiveVal.size(); i = i + 1) {
             int chosenFirstIndividualIndex = pointsIndexWithOneObjectiveVal.get(i).getKey();
             double chosenFirstIndividualFitness = pointsIndexWithOneObjectiveVal.get(i).getValue();
             int chosenSecondIndividualIndex;
@@ -599,16 +832,16 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             IndividualWithDstToItsCentre chosenFirstIndividual;
             IndividualWithDstToItsCentre chosenSecondIndividual;
 
-            if(chosenFirstIndividualIndex >= chosenClusterSize) {
+            if (chosenFirstIndividualIndex >= chosenClusterSize) {
                 chosenFirstIndividualIndex = chosenFirstIndividualIndex - chosenClusterSize;
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenClusterNeighbour.getCluster()
+                        (IndividualWithDstToItsCentre) chosenClusterNeighbour.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringNeighbourCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
             } else {
                 chosenFirstIndividual =
-                        (IndividualWithDstToItsCentre)chosenCluster.getCluster()
+                        (IndividualWithDstToItsCentre) chosenCluster.getCluster()
                                 .get(chosenFirstIndividualIndex);
                 chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
                 chosenFirstIndividual.getIndividual().recordUsage();
@@ -643,14 +876,14 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenFirstIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         var chosenSecondIndividualIndex = chosenFirstIndividualIndex;
-        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
+        while (chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
             chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         }
 
-        var chosenFirstIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenFirstIndividualIndex);
+        var chosenFirstIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenFirstIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
 
-        var chosenSecondIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenSecondIndividualIndex);
+        var chosenSecondIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenSecondIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
 
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());
@@ -682,15 +915,15 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
             ClusteringResult clusteringResult,
             ParameterSet<GENE, BaseProblemRepresentation> parameters) {
         double dispersionSum = 0.0;
-        for(var ind: clusteringResult.getClustersDispersion()) {
+        for (var ind : clusteringResult.getClustersDispersion()) {
             dispersionSum += ind;
         }
         double clusterSelectionRandom = parameters.random.nextDouble() * dispersionSum;
         dispersionSum = 0.0;
         int chosenClusterIndex = -1;
-        for(int i = 0; i < clusteringResult.getClustersWithIndDstToCentre().size() && chosenClusterIndex == -1; i++) {
+        for (int i = 0; i < clusteringResult.getClustersWithIndDstToCentre().size() && chosenClusterIndex == -1; i++) {
             dispersionSum += clusteringResult.getClustersDispersion().get(i);
-            if(dispersionSum >= clusterSelectionRandom) {
+            if (dispersionSum >= clusterSelectionRandom) {
                 chosenClusterIndex = i;
             }
         }
@@ -700,14 +933,14 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         chosenClusteringCluster.getCenter().recordUsage();
         var chosenFirstIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         var chosenSecondIndividualIndex = chosenFirstIndividualIndex;
-        while(chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
+        while (chosenFirstIndividualIndex == chosenSecondIndividualIndex && chosenCluster.getCluster().size() > 1) {
             chosenSecondIndividualIndex = parameters.random.nextInt(chosenCluster.getCluster().size());
         }
 
-        var chosenFirstIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenFirstIndividualIndex);
+        var chosenFirstIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenFirstIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenFirstIndividualIndex].recordUsage();
 
-        var chosenSecondIndividual = (IndividualWithDstToItsCentre)chosenCluster.getCluster().get(chosenSecondIndividualIndex);
+        var chosenSecondIndividual = (IndividualWithDstToItsCentre) chosenCluster.getCluster().get(chosenSecondIndividualIndex);
         chosenClusteringCluster.getPoints()[chosenSecondIndividualIndex].recordUsage();
 
         return new Pair<>(chosenFirstIndividual.getIndividual(), chosenSecondIndividual.getIndividual());

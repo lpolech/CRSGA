@@ -1,5 +1,5 @@
 package util.config;
 
 public class TournamentSelectionConfig {
-    public static final boolean ALLOW_DUPLICATE_SELECTION = false; //without replacement
+    public static final boolean ALLOW_DUPLICATE_SELECTION = true; //without replacement
 }
