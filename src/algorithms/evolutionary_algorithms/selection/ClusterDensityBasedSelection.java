@@ -9,6 +9,7 @@ import interfaces.QualityMeasure;
 import javafx.util.Pair;
 import util.ParameterFunctions;
 import util.config.IndividualPairingMethodConfig;
+import util.config.SimulatedAnnealingConfig;
 import util.config.TournamentSelectionConfig;
 
 import java.util.*;
@@ -288,14 +289,32 @@ public class ClusterDensityBasedSelection<GENE extends Number, PROBLEM extends B
         List<Pair<BaseIndividual<Integer, PROBLEM>, BaseIndividual<Integer, PROBLEM>>> returnPairs = new ArrayList<>();
         int numberOfClusters = clusteringResult.getClustersDispersion().size();
 
-        int dynamicTurSize = -666;
-        if (turDecayFunction != null) {
-            double decayTurFun = turDecayFunction.getVal(currCost);
-            dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0))); // tur size depends on the number of clusters as at the beginning there is not many clusters
+        int dynamicTurSize;
+        if (SimulatedAnnealingConfig.SIMULATED_ANNEALING) {
+            // Simulated Annealing
+            double initialTemperature = 100.0;
+            double temperatureDecayRate = 0.995;
+            double temperature = initialTemperature * Math.pow(temperatureDecayRate, currCost);
+
+            if (currCost % 100 == 0 && returnPairs.size() == 0) {
+                temperature = initialTemperature;
+            }
+
+            if (turDecayFunction != null) {
+                dynamicTurSize = Math.max(3, (int) Math.round(((turDecayFunction.getVal(currCost) * numberOfClusters) / 100.0) * temperature));
+            } else {
+                dynamicTurSize = Math.max(3, (int) ((this.tournamentSize * numberOfClusters) / 100.0 * temperature));
+            }
+
         } else {
-            dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
+            if (turDecayFunction != null) {
+                double decayTurFun = turDecayFunction.getVal(currCost);
+                dynamicTurSize = Math.max(1, (int) Math.round(((decayTurFun * numberOfClusters) / 100.0)));
+            } else {
+                dynamicTurSize = Math.max(1, (int) ((this.tournamentSize * numberOfClusters) / 100.0));
+            }
         }
-//        System.out.println(decayTurFun);
+
         int chosenClusterIndex = (int) (parameters.random.nextDouble() * numberOfClusters);
 
         for (int i = 0; i < dynamicTurSize - 1; ++i) {
